@@ -1,0 +1,772 @@
+<meta name="dash-one-writer">
+<style>
+.gx { --gx-accent: #0f8b8d; --gx-accent-soft: color-mix(in srgb, #0f8b8d 18%, transparent); --gx-accent-mid: color-mix(in srgb, #0f8b8d 50%, transparent); font-family: var(--font-anthropic-sans); display: flex; flex-direction: column; gap: var(--cds-gap-xl); }
+.gx-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0 0 var(--cds-gap-xs); text-wrap: balance; }
+.gx-head p { margin: 0; max-width: 70ch; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); line-height: 1.5; }
+.gx .gx-head p b { color: var(--color-fg); font-weight: 600; }
+.gx-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr)); gap: var(--cds-gap-md); }
+.gx-kpi { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
+.gx-kpi.is-key { background: var(--gx-accent-soft); border-color: transparent; }
+.gx-kpi .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .02em; }
+.gx-kpi .val { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; min-height: 1.1em; }
+.gx-kpi.is-key .val { color: var(--gx-accent); }
+.gx-kpi .sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.gx .gx-kpi .sub b { font-weight: 600; color: var(--color-fg); }
+.gx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); align-items: start; }
+.gx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+.gx-card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+.gx-card .note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; line-height: 1.45; }
+.gx-chart { position: relative; min-height: 220px; }
+.gx-chart svg { display: block; }
+.gx-chart .bar { cursor: pointer; }
+.gx-chart .bar:hover rect.fg, .gx-chart .bar.is-on rect.fg { opacity: .8; }
+.gx-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+.gx-tip .t { color: var(--cds-text-secondary); }
+.gx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-legend i { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; vertical-align: -1px; margin-right: .35rem; }
+.gx-btn { font: inherit; font-size: var(--cds-font-size-caption); background: none; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: .3rem .7rem; color: var(--color-fg); cursor: pointer; align-self: flex-start; }
+.gx-btn:hover { background: var(--color-bg); }
+.gx-btn:focus-visible, .gx-table th button:focus-visible, .gx-search:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+.gx-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.gx-search { font: inherit; font-size: var(--cds-font-size-body); padding: .4rem .6rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); flex: 1 1 14rem; min-width: 0; }
+.gx-filtro { display: inline-flex; gap: .4rem; align-items: center; font-size: var(--cds-font-size-caption); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: .2rem .3rem .2rem .7rem; }
+.gx-filtro button { font: inherit; border: none; background: none; cursor: pointer; color: var(--color-fg-muted); padding: 0 .3rem; }
+.gx-tablebox { max-height: 34rem; overflow: auto; border-top: 1px solid var(--color-border-line); }
+.gx-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.gx-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; }
+.gx-table th button { font: inherit; background: none; border: none; color: var(--color-fg-muted); padding: .5rem .5rem; cursor: pointer; width: 100%; text-align: inherit; white-space: nowrap; }
+.gx-table th.num, .gx-table td.num { text-align: right; }
+.gx-table td { padding: .45rem .5rem; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+.gx-table td:first-child { font-weight: 500; }
+.gx-pill { display: inline-block; padding: .05rem .45rem; border-radius: 999px; font-size: .72rem; border: 1px solid var(--color-border-line); white-space: nowrap; }
+.gx-pill.mixta { color: var(--gx-accent); border-color: currentColor; }
+.gx-pill.nocturna { color: var(--color-fg); border-color: currentColor; font-weight: 600; }
+.gx-exc { color: var(--gx-accent); font-weight: 600; }
+.gx-count { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-crit { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.55; margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+@media (max-width: 640px) { .gx-table .hide-sm { display: none; } }
+.gx-legend i.sw-a { background: var(--gx-accent); }
+.gx-legend i.sw-m { background: var(--gx-accent-soft); }
+.gx-legend i.sw-b { background: var(--gx-accent-mid); }
+.gx-pill.g48 { background: var(--gx-accent); color: var(--color-bg); border-color: transparent; }
+.gx-pill.g46 { background: var(--gx-accent-soft); color: var(--color-fg); border-color: transparent; }
+.gx-seg { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+.gx-seg button { font: inherit; font-size: var(--cds-font-size-caption); background: none; border: none; padding: .35rem .7rem; color: var(--color-fg-muted); cursor: pointer; }
+.gx-seg button + button { border-left: 1px solid var(--color-border-line); }
+.gx-seg button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.gx-seg button[aria-pressed=true] { background: var(--gx-accent); color: var(--color-bg); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .gx { --gx-accent: #3cc7c4; --gx-accent-soft: color-mix(in srgb, #3cc7c4 22%, transparent); --gx-accent-mid: color-mix(in srgb, #3cc7c4 55%, transparent); } }
+:root[data-theme="dark"] .gx { --gx-accent: #3cc7c4; --gx-accent-soft: color-mix(in srgb, #3cc7c4 22%, transparent); --gx-accent-mid: color-mix(in srgb, #3cc7c4 55%, transparent); }
+.gx-rol-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: end; }
+.gx-rol-tools label { display: flex; flex-direction: column; gap: .25rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); flex: 1 1 14rem; min-width: 0; }
+.gx-select { font: inherit; font-size: var(--cds-font-size-body); padding: .4rem .6rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); width: 100%; }
+.gx-select:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+.gx-rol-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: var(--cds-gap-sm); }
+.gx-rol-stats div { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; }
+.gx-rol-stats .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-rol-stats .val { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; min-height: 1.2em; }
+.gx-rol-stats .is-a .val { color: var(--gx-accent); }
+.gx-sem td.d { white-space: nowrap; text-align: center; }
+.gx-sem th.d { text-align: center; }
+.gx-sem td.d .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
+.gx-sem td.d.libre { color: var(--color-fg-muted); }
+.gx-sem td.d.full { background: var(--gx-accent-soft); }
+.gx-years { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: var(--cds-gap-sm); }
+.gx-year { font: inherit; text-align: left; background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; cursor: pointer; color: var(--color-fg); }
+.gx-year:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+.gx-year[aria-pressed=true] { border-color: var(--gx-accent); background: var(--gx-accent-soft); }
+.gx-year .y { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-year .n { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; min-height: 1.1em; }
+.gx-year[aria-pressed=true] .n { color: var(--gx-accent); }
+.gx-year .s { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.gx-pill.nuevo { background: var(--gx-accent); color: var(--color-bg); border-color: transparent; }
+.gx-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-lg); align-items: start; }
+.gx-split > * { min-width: 0; }
+.gx-split h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.gx-tabs { display: flex; flex-wrap: wrap; gap: .25rem; border-bottom: 1px solid var(--color-border-line); margin-top: calc(-1 * var(--cds-gap-md)); }
+.gx-tabs button { font: inherit; font-size: var(--cds-font-size-body); background: none; border: none; border-bottom: 2px solid transparent; padding: .5rem .8rem; color: var(--color-fg-muted); cursor: pointer; margin-bottom: -1px; }
+.gx-tabs button[aria-selected=true] { color: var(--color-fg); border-bottom-color: var(--gx-accent); font-weight: 500; }
+.gx-tabs button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.gx-tab { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+.gx-details { gap: 0; }
+.gx-details summary { cursor: pointer; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-details[open] summary { margin-bottom: var(--cds-gap-sm); }
+.gx-tl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
+.gx-tl-col { display: flex; flex-direction: column; gap: var(--cds-gap-sm); padding: var(--cds-pad-md); background: var(--color-bg); border-radius: var(--cds-radius); border-top: 3px solid var(--gx-accent-mid); min-width: 0; }
+.gx-tl-col.is-peak { border-top-color: var(--gx-accent); background: var(--gx-accent-soft); }
+.gx-tl-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-sm); }
+.gx-tl-head .yr { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); }
+.gx-tl-head .lim { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-tl-num { display: flex; align-items: baseline; gap: .4rem; }
+.gx-tl-num .n { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); color: var(--gx-accent); font-variant-numeric: tabular-nums; line-height: 1; min-width: 1ch; }
+.gx-tl-num .u { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-tl-new { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding-bottom: var(--cds-pad-xs); border-bottom: 1px solid var(--color-border-line); }
+.gx .gx-tl-new b { color: var(--color-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+.gx-tl-roles { display: flex; flex-direction: column; gap: .15rem; flex: 1; min-height: 3rem; }
+.gx-tl-roles details { font-size: var(--cds-font-size-caption); }
+.gx-tl-roles summary { cursor: pointer; display: flex; justify-content: space-between; gap: .5rem; padding: .2rem 0; list-style: none; }
+.gx-tl-roles summary::-webkit-details-marker { display: none; }
+.gx-tl-roles summary::before { content: "›"; color: var(--color-fg-muted); transition: transform var(--cds-dur-slow); display: inline-block; width: .6rem; flex: none; }
+.gx-tl-roles details[open] summary::before { transform: rotate(90deg); }
+.gx-tl-roles summary .p { flex: 1; min-width: 0; }
+.gx-tl-roles summary .c { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--gx-accent); }
+.gx-tl-roles ul { list-style: none; margin: 0 0 .3rem .6rem; padding: 0 0 0 .5rem; border-left: 2px solid var(--gx-accent-soft); display: grid; gap: .15rem; }
+.gx-tl-roles li { display: flex; justify-content: space-between; gap: .5rem; color: var(--color-fg); }
+.gx-tl-roles li .h { color: var(--color-fg-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.gx-tl-roles .mas { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding-top: .2rem; }
+.gx-tl-col .gx-btn { align-self: stretch; text-align: center; }
+.gx-tipo-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-sm); }
+.gx-link { font-size: var(--cds-font-size-caption); color: var(--gx-accent); font-weight: 600; text-decoration: none; }
+.gx-link:hover { text-decoration: underline; }
+.gx-tipos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-sm); }
+.gx-tipo { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .2rem; }
+.gx-tipo .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-tipo .val { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.gx-tipo .val small { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-tipo .rule { font-size: var(--cds-font-size-caption); font-weight: 600; color: var(--gx-accent); }
+.gx-tipo .rule.pend { color: var(--color-warn); }
+.gx-sel { font: inherit; font-size: var(--cds-font-size-caption); padding: .4rem .5rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); max-width: 100%; }
+.gx-sel:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="gx">
+  <header class="gx-head" id="resumen">
+    <h1>Reducción de jornada 48 → 46 hrs (2027)</h1>
+    <p><b data-draw="kpi" data-source="kpis" data-field="sobre46" data-row="0">—</b> personas trabajan más de 46 hrs y deben cambiar su jornada en 2027: <b data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</b> hacen 48 hrs y <b data-draw="kpi" data-source="kpis" data-field="entre" data-row="0">—</b> entre 46 y 48. El puesto más expuesto es <b data-draw="kpi" data-source="kpis" data-field="top_puesto" data-row="0">—</b>.</p>
+  </header>
+  <nav class="gx-tabs" role="tablist" aria-label="Secciones">
+    <button type="button" role="tab" data-tab="t-resumen" aria-selected="true">Resumen</button>
+    <button type="button" role="tab" data-tab="t-personas" aria-selected="false">Personas</button>
+    <button type="button" role="tab" data-tab="t-rol" aria-selected="false">Jornadas por rol</button>
+    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">2027–2030</button>
+  </nav>
+
+  <section class="gx-tab" id="t-resumen">
+  <section class="gx-kpis" aria-label="Indicadores clave">
+    <div class="gx-kpi is-key">
+      <span class="lbl">Personas con jornada de 48 hrs</span>
+      <span class="val" data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</span>
+      <span class="sub"><b data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="pct" data-row="0">—</b> de la plantilla capturada</span>
+    </div>
+    <div class="gx-kpi">
+      <span class="lbl">Entre 46 y 48 hrs</span>
+      <span class="val" data-draw="kpi" data-source="kpis" data-field="entre" data-row="0">—</span>
+      <span class="sub">también se pasan de 46 · total <b data-draw="kpi" data-source="kpis" data-field="sobre46" data-row="0">—</b></span>
+    </div>
+    <div class="gx-kpi">
+      <span class="lbl">Horas por semana a reacomodar</span>
+      <span class="val" data-draw="kpi" data-fmt="dec" data-source="kpis" data-field="horas_exceso" data-row="0">—</span>
+      <span class="sub">para bajar a todos a 46 · ≈ <b data-draw="kpi" data-fmt="dec" data-source="kpis" data-field="plazas_eq" data-row="0">—</b> plazas de 46 hrs</span>
+    </div>
+    <div class="gx-kpi">
+      <span class="lbl">Contratos firmados a 48 hrs</span>
+      <span class="val" data-draw="kpi" data-source="kpis" data-field="contrato48" data-row="0">—</span>
+      <span class="sub"><b data-draw="kpi" data-source="kpis" data-field="contrato48_ok" data-row="0">—</b> ya trabajan 46 hrs o menos</span>
+    </div>
+  </section>
+  <article class="gx-card" id="por-tipo">
+    <div class="gx-tipo-head"><h2>Ajuste por tipo de jornada · <span data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</span> personas con 48 hrs</h2><a class="gx-link" href="https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k" target="_blank" rel="noopener">Ver avance de contratos →</a></div>
+    <div class="gx-tipos">
+      <div class="gx-tipo"><span class="lbl">Diurna</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="d48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="d48_pct" data-row="0">—</small></span><span class="rule">Bajar 2 hrs → 46 hrs</span></div>
+      <div class="gx-tipo"><span class="lbl">Mixta</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="m48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="m48_pct" data-row="0">—</small></span><span class="rule">Bajar 3 hrs → 45 hrs (su máximo no cambia)</span></div>
+      <div class="gx-tipo"><span class="lbl">Nocturna</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="n48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="n48_pct" data-row="0">—</small></span><span class="rule pend">Ajuste por confirmar</span></div>
+    </div>
+  </article>
+  <div class="gx-grid">
+    <article class="gx-card" id="por-puesto">
+      <h2>¿Qué puestos se pasan de 46 hrs?</h2>
+      <p class="note">Personas por puesto que se pasan de 46 hrs, sobre el total del puesto. Clic en una barra para ver los nombres.</p>
+      <div class="gx-legend"><span><i class="sw-a"></i>48 hrs</span><span><i class="sw-b"></i>Entre 46 y 48 hrs</span><span><i class="sw-m"></i>Total del puesto</span></div>
+      <div class="gx-chart" data-draw="puestos" data-source="por_puesto"></div>
+      <button type="button" class="gx-btn" id="gx-toggle-puestos" aria-expanded="false"><span class="t-more">Mostrar todos los puestos</span><span class="t-less" hidden>Mostrar solo los 8 principales</span></button>
+    </article>
+  </div>
+  <article class="gx-card" id="lo-que-viene">
+    <h2>Lo que viene: quién se va sumando cada año</h2>
+    <p class="note">Con los horarios de hoy, cada año se suman personas que quedan arriba del nuevo límite. Debajo de cada año están los puestos que entran en esa etapa; abre un puesto para ver los nombres.</p>
+    <div class="gx-tl">
+      <div class="gx-tl-col">
+        <div class="gx-tl-head"><span class="yr">2027</span><span class="lim">Límite 46 hrs</span></div>
+        <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2027">—</span><span class="u">personas a ajustar</span></div>
+        <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2027">—</b> personas arrancan el ajuste</div>
+        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2027" data-source="etapas_personas"></div>
+        <button type="button" class="gx-btn" data-go="2027">Ver personas de 2027</button>
+      </div>
+      <div class="gx-tl-col is-peak">
+        <div class="gx-tl-head"><span class="yr">2028</span><span class="lim">Límite 44 hrs</span></div>
+        <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2028">—</span><span class="u">personas a ajustar</span></div>
+        <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2028">—</b> se suman en esta etapa</div>
+        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2028" data-source="etapas_personas"></div>
+        <button type="button" class="gx-btn" data-go="2028">Ver personas de 2028</button>
+      </div>
+      <div class="gx-tl-col">
+        <div class="gx-tl-head"><span class="yr">2029</span><span class="lim">Límite 42 hrs</span></div>
+        <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2029">—</span><span class="u">personas a ajustar</span></div>
+        <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2029">—</b> se suman en esta etapa</div>
+        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2029" data-source="etapas_personas"></div>
+        <button type="button" class="gx-btn" data-go="2029">Ver personas de 2029</button>
+      </div>
+      <div class="gx-tl-col">
+        <div class="gx-tl-head"><span class="yr">2030</span><span class="lim">Límite 40 hrs</span></div>
+        <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2030">—</span><span class="u">personas a ajustar</span></div>
+        <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2030">—</b> se suman en esta etapa</div>
+        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2030" data-source="etapas_personas"></div>
+        <button type="button" class="gx-btn" data-go="2030">Ver personas de 2030</button>
+      </div>
+    </div>
+  </article>
+  </section>
+
+  <section class="gx-tab" id="t-personas" hidden>
+  <div class="gx-grid">
+      <article class="gx-card" id="por-ubicacion">
+        <h2>¿En qué sucursales?</h2>
+        <p class="note">Personas que se pasan de 46 hrs, sobre el total de la sucursal.</p>
+        <div class="gx-chart" data-draw="ubicaciones" data-source="por_ubicacion"></div>
+      </article>
+  </div>
+  <article class="gx-card" id="personas">
+    <h2>Personas que se pasan de 46 hrs</h2>
+    <p class="note">Ordenadas por horas reconocidas. «Ajuste» son las horas a bajar según el tipo de jornada: diurna a 46, mixta a 45 (su máximo no cambia) y nocturna por confirmar.</p>
+    <div class="gx-tools">
+      <span class="gx-seg" role="group" aria-label="Grupo"><button type="button" data-grupo="" aria-pressed="true">Todos</button><button type="button" data-grupo="48 hrs" aria-pressed="false">48 hrs</button><button type="button" data-grupo="46–48 hrs" aria-pressed="false">46–48 hrs</button></span>
+      <select class="gx-sel" id="gx-f-tipo" aria-label="Tipo de jornada"><option value="">Todos los tipos</option><option>Diurna</option><option>Mixta</option><option>Nocturna</option></select>
+      <select class="gx-sel" id="gx-f-suc" aria-label="Sucursal" data-draw="opt-suc" data-source="afectados"></select>
+      <select class="gx-sel" id="gx-f-puesto" aria-label="Puesto" data-draw="opt-puesto" data-source="afectados"></select>
+      <input class="gx-search" id="gx-search" type="search" placeholder="Buscar nombre, puesto o sucursal" aria-label="Buscar en la tabla">
+      <span class="gx-filtro" id="gx-filtro" hidden>Puesto: <span data-draw="filtro">—</span><button type="button" id="gx-filtro-x" aria-label="Quitar filtro de puesto">✕</button></span>
+      <span class="gx-count"><span data-draw="conteo">—</span> personas</span>
+    </div>
+    <div class="gx-tablebox">
+      <table class="gx-table" data-source="afectados" data-row-key="nombre">
+        <thead><tr>
+          <th data-field="nombre"><button type="button" data-sort="nombre">Nombre</button></th>
+          <th data-field="puesto"><button type="button" data-sort="puesto">Puesto</button></th>
+          <th data-field="grupo"><button type="button" data-sort="grupo">Grupo</button></th>
+          <th data-field="ubicacion" class="hide-sm"><button type="button" data-sort="ubicacion">Sucursal</button></th>
+          <th data-field="tipo_jornada" class="hide-sm"><button type="button" data-sort="tipo_jornada">Jornada</button></th>
+          <th data-field="horas_reales" class="num"><button type="button" data-sort="horas_reales">Hrs reales</button></th>
+          <th data-field="ajuste" class="num"><button type="button" data-sort="ajuste">Ajuste</button></th>
+          <th data-field="horas_contrato" class="num hide-sm"><button type="button" data-sort="horas_contrato">Contrato</button></th>
+        </tr></thead>
+        <tbody data-draw="tabla"></tbody>
+      </table>
+    </div>
+  </article>
+  </section>
+
+  <section class="gx-tab" id="t-rol" hidden>
+  <article class="gx-card" id="jornadas-por-rol">
+    <h2>Jornadas por rol</h2>
+    <p class="note">Elige un puesto, o deja «Todos los puestos», para ver el horario de cada persona, día por día. Los días de 8 hrs o más van sombreados. Incluye a todas las personas del puesto, se pasen o no de 46 hrs.</p>
+    <div class="gx-rol-tools">
+      <label for="gx-rol">Puesto<select class="gx-select" id="gx-rol" data-draw="rol-opciones" data-source="horarios"></select></label>
+      <label for="gx-suc">Sucursal<select class="gx-select" id="gx-suc" data-draw="suc-opciones" data-source="horarios"></select></label>
+    </div>
+    <div class="gx-rol-stats" data-source="horarios">
+      <div><span class="lbl">Personas</span><span class="val" data-draw="rol-stat" data-k="n">—</span></div>
+      <div class="is-a"><span class="lbl">Con 48 hrs</span><span class="val" data-draw="rol-stat" data-k="g48">—</span></div>
+      <div><span class="lbl">Entre 46 y 48 hrs</span><span class="val" data-draw="rol-stat" data-k="g46">—</span></div>
+      <div><span class="lbl">Dentro de 46 hrs</span><span class="val" data-draw="rol-stat" data-k="ok">—</span></div>
+      <div><span class="lbl">Promedio semanal</span><span class="val" data-draw="rol-stat" data-k="prom">—</span></div>
+    </div>
+    <div class="gx-tablebox">
+      <table class="gx-table gx-sem" data-source="horarios" data-row-key="nombre">
+        <thead><tr>
+          <th data-field="nombre"><button type="button" data-rsort="nombre">Nombre</button></th>
+          <th data-field="puesto"><button type="button" data-rsort="puesto">Puesto</button></th>
+          <th data-field="ubicacion" class="hide-sm"><button type="button" data-rsort="ubicacion">Sucursal</button></th>
+          <th data-field="lun" class="d">Lun</th>
+          <th data-field="mar" class="d">Mar</th>
+          <th data-field="mie" class="d">Mié</th>
+          <th data-field="jue" class="d">Jue</th>
+          <th data-field="vie" class="d">Vie</th>
+          <th data-field="sab" class="d">Sáb</th>
+          <th data-field="dom" class="d">Dom</th>
+          <th data-field="horas_reales" class="num"><button type="button" data-rsort="horas_reales">Total</button></th>
+        </tr></thead>
+        <tbody data-draw="rol-tabla"></tbody>
+      </table>
+    </div>
+  </article>
+  </section>
+
+  <section class="gx-tab" id="t-etapas" hidden>
+  <article class="gx-card" id="calendario-2030">
+    <h2>Quién debe cambiar de jornada en cada etapa (2027–2030)</h2>
+    <p class="note">Con los horarios de hoy, las personas que quedan arriba del máximo semanal de cada año. Elige un año para ver a las personas y los puestos que tendrán que ajustar su jornada en esa etapa. «Nuevas» son las que no tenían que cambiar en la etapa anterior.</p>
+    <div class="gx-years" role="group" aria-label="Año de la reforma">
+      <button type="button" class="gx-year" data-anio="2027" aria-pressed="false"><span class="y">2027 · límite 46 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2027">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2027">—</span> nuevas en esta etapa</span></button>
+      <button type="button" class="gx-year" data-anio="2028" aria-pressed="true"><span class="y">2028 · límite 44 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2028">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2028">—</span> nuevas en esta etapa</span></button>
+      <button type="button" class="gx-year" data-anio="2029" aria-pressed="false"><span class="y">2029 · límite 42 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2029">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2029">—</span> nuevas en esta etapa</span></button>
+      <button type="button" class="gx-year" data-anio="2030" aria-pressed="false"><span class="y">2030 · límite 40 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2030">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2030">—</span> nuevas en esta etapa</span></button>
+    </div>
+    <div class="gx-split">
+      <div>
+        <h3>Puestos que deben ajustar</h3>
+        <div class="gx-legend"><span><i class="sw-a"></i>Nuevas en esta etapa</span><span><i class="sw-b"></i>Ya venían de la etapa anterior</span></div>
+        <div class="gx-chart" data-draw="etapa-puestos" data-source="etapas_personas"></div>
+      </div>
+      <div>
+        <h3>Personas</h3>
+        <div class="gx-tools">
+          <span class="gx-seg" role="group" aria-label="Mostrar"><button type="button" data-solo="" aria-pressed="true">Todas</button><button type="button" data-solo="nuevas" aria-pressed="false">Solo nuevas</button></span>
+          <input class="gx-search" id="gx-search-etapa" type="search" placeholder="Buscar nombre, puesto o sucursal" aria-label="Buscar personas de la etapa">
+          <span class="gx-count"><span data-draw="etapa-conteo">—</span> personas</span>
+        </div>
+        <div class="gx-tablebox">
+          <table class="gx-table" data-source="etapas_personas" data-row-key="nombre">
+            <thead><tr>
+              <th data-field="nombre">Nombre</th>
+              <th data-field="puesto">Puesto</th>
+              <th data-field="ubicacion" class="hide-sm">Sucursal</th>
+              <th data-field="horas_reales" class="num">Hrs hoy</th>
+              <th class="num">Recorte</th>
+              <th data-field="desde" class="num">Desde</th>
+            </tr></thead>
+            <tbody data-draw="etapa-tabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+  </section>
+
+  <details class="gx-card gx-details" id="criterios">
+    <summary>Criterios del análisis</summary>
+    <ul class="gx-crit">
+      <li>Fuente: revisión de jornadas 48 hrs (hoja Base de Datos, corte 5 nov 2026). Solo colaboradores activos en TabBD; quienes no tienen horario capturado quedan fuera del cálculo.</li>
+      <li>Horas reales = jornada reconocida semanal, ya descontada la comida según el criterio de cada persona. Grupo «48 hrs» = 48 hrs reconocidas o más; grupo «46–48 hrs» = más de 46 y menos de 48.</li>
+      <li>Calendario de la reforma (DOF 3 mar 2026): 46 hrs en 2027, 44 en 2028, 42 en 2029 y 40 en 2030, sin reducir salario ni prestaciones. Las etapas usan los horarios de hoy; «Recorte» son las horas a bajar para quedar en el límite de ese año.</li>
+      <li>Ajuste por tipo (acuerdo de la junta del 5 nov): diurna baja a 46 hrs, mixta a 45 hrs (su máximo legal no cambia con la reforma), nocturna por confirmar. Pendiente con el abogado: si con 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
+      <li>Plazas equivalentes = horas a reacomodar ÷ 46. Es una referencia de capacidad, no una propuesta de contratación.</li>
+      <li>Contratos a 48 hrs: hay que actualizarlos aunque la persona ya trabaje menos, para que el documento refleje la nueva jornada.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+const LIMITE = 46;
+window.GX = { todos: false, puesto: null, grupo: '', tipo: '', suc: '', q: '', sort: 'horas_reales', dir: -1 };
+
+dash.calc('afectados', {
+  title: 'Personas que se pasan de 46 hrs',
+  description: 'Colaboradores con horario capturado y más de 46 hrs reconocidas, en dos grupos (48 hrs o más, y entre 46 y 48), con las horas que exceden el nuevo límite.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => plantilla
+    .filter((r) => r.captura === 'Capturado' && Number(r.horas_reales) > 46)
+    .map((r) => ({ nombre: r.nombre, grupo: Number(r.horas_reales) >= 48 ? '48 hrs' : '46–48 hrs', puesto: r.puesto, ubicacion: r.ubicacion, division: r.division, tipo_jornada: r.tipo_jornada, horas_reales: Number(r.horas_reales), exceso: Number(r.horas_reales) - 46, ajuste: r.tipo_jornada === 'Mixta' ? Number(r.horas_reales) - 45 : r.tipo_jornada === 'Nocturna' ? null : Number(r.horas_reales) - 46, horas_contrato: (r.horas_contrato == null || r.horas_contrato === '') ? null : Number(r.horas_contrato) }))
+});
+
+dash.calc('kpis', {
+  title: 'Indicadores de jornada',
+  description: 'Conteos de la plantilla capturada con 48 hrs y con más de 46 hrs, frente al nuevo límite de 46.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => {
+    const cap = plantilla.filter((r) => r.captura === 'Capturado');
+    const af = cap.filter((r) => Number(r.horas_reales) >= 48);
+    const s46 = cap.filter((r) => Number(r.horas_reales) > 46);
+    const cuenta = {};
+    af.forEach((r) => { cuenta[r.puesto] = (cuenta[r.puesto] || 0) + 1; });
+    const top = Object.entries(cuenta).sort((a, b) => b[1] - a[1])[0] || ['', 0];
+    const exceso = s46.reduce((s, r) => s + Number(r.horas_reales) - 46, 0);
+    const c48 = plantilla.filter((r) => Number(r.horas_contrato) === 48);
+    return [{
+      activos: plantilla.length,
+      capturados: cap.length,
+      afectados: af.length,
+      pct: Math.round(af.length / cap.length * 1000) / 10,
+      entre: s46.length - af.length,
+      sobre46: s46.length,
+      puestos: new Set(s46.map((r) => r.puesto)).size,
+      puestos_total: new Set(plantilla.map((r) => r.puesto)).size,
+      horas_exceso: Math.round(exceso * 10) / 10,
+      plazas_eq: Math.round(exceso / 46 * 10) / 10,
+      contrato48: c48.length,
+      contrato48_ok: c48.filter((r) => r.captura === 'Capturado' && Number(r.horas_reales) <= 46).length,
+      mixtas: s46.filter((r) => r.tipo_jornada === 'Mixta').length,
+      d48: af.filter((r) => r.tipo_jornada === 'Diurna').length,
+      m48: af.filter((r) => r.tipo_jornada === 'Mixta').length,
+      n48: af.filter((r) => r.tipo_jornada === 'Nocturna').length,
+      d48_pct: af.length ? Math.round(af.filter((r) => r.tipo_jornada === 'Diurna').length / af.length * 1000) / 10 : 0,
+      m48_pct: af.length ? Math.round(af.filter((r) => r.tipo_jornada === 'Mixta').length / af.length * 1000) / 10 : 0,
+      n48_pct: af.length ? Math.round(af.filter((r) => r.tipo_jornada === 'Nocturna').length / af.length * 1000) / 10 : 0,
+      top_puesto: top[0],
+      top_puesto_n: top[1]
+    }];
+  }
+});
+
+dash.calc('por_puesto', {
+  title: 'Más de 46 hrs por puesto',
+  description: 'Por puesto: personas con 48 hrs, personas entre 46 y 48 hrs, y total capturado.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => {
+    const m = {};
+    plantilla.filter((r) => r.captura === 'Capturado').forEach((r) => {
+      m[r.puesto] = m[r.puesto] || { puesto: r.puesto, afectados: 0, entre: 0, total: 0 };
+      m[r.puesto].total += 1;
+      if (Number(r.horas_reales) >= 48) m[r.puesto].afectados += 1; else if (Number(r.horas_reales) > 46) m[r.puesto].entre += 1;
+    });
+    return Object.values(m).filter((d) => d.afectados + d.entre > 0).sort((a, b) => (b.afectados + b.entre) - (a.afectados + a.entre) || b.afectados - a.afectados);
+  }
+});
+
+dash.calc('por_ubicacion', {
+  title: 'Más de 46 hrs por sucursal',
+  description: 'Por sucursal: personas con 48 hrs, personas entre 46 y 48 hrs, y total capturado.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => {
+    const m = {};
+    plantilla.filter((r) => r.captura === 'Capturado').forEach((r) => {
+      m[r.ubicacion] = m[r.ubicacion] || { ubicacion: r.ubicacion, afectados: 0, entre: 0, total: 0 };
+      m[r.ubicacion].total += 1;
+      if (Number(r.horas_reales) >= 48) m[r.ubicacion].afectados += 1; else if (Number(r.horas_reales) > 46) m[r.ubicacion].entre += 1;
+    });
+    return Object.values(m).sort((a, b) => (b.afectados + b.entre) - (a.afectados + a.entre));
+  }
+});
+
+
+const fmtN = d3.format(',');
+const fmtD = (v) => (Math.round(v * 10) / 10).toLocaleString('es-MX', { maximumFractionDigits: 1 });
+
+dash.draw('kpi', (el) => {
+  const k = dash.data('kpis');
+  if (k.status !== 'ok' || !k.data.length) { el.textContent = '—'; return; }
+  const v = k.data[0][el.dataset.field];
+  const f = el.dataset.fmt;
+  el.textContent = f === 'pct' ? fmtD(v) + '%' : f === 'dec' ? fmtD(v) : typeof v === 'number' ? fmtN(v) : String(v);
+});
+
+function tipFor(box) {
+  let tip = box.querySelector('.gx-tip');
+  if (!tip) { tip = document.createElement('div'); tip.className = 'gx-tip'; tip.hidden = true; box.appendChild(tip); }
+  return tip;
+}
+function showTip(box, tip, ev, title, line) {
+  tip.replaceChildren();
+  const t = document.createElement('div'); t.className = 't'; t.textContent = title;
+  const l = document.createElement('div'); l.textContent = line;
+  tip.append(t, l); tip.hidden = false;
+  const r = box.getBoundingClientRect();
+  let x = ev.clientX - r.left + 12, y = ev.clientY - r.top + 12;
+  const w = tip.offsetWidth;
+  if (x + w > r.width) x = Math.max(0, ev.clientX - r.left - w - 12);
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+
+function hbars(el, rows, key, onClick, selected, tipTxt) {
+  el.replaceChildren();
+  const W = el.clientWidth || 400;
+  const rowH = 24, gap = 6;
+  const svg = d3.select(el).append('svg').attr('width', '100%');
+  const meas = svg.append('text').attr('font-size', 12).style('font-family', 'var(--font-anthropic-sans)');
+  let maxL = 0;
+  rows.forEach((d) => { meas.text(d[key]); maxL = Math.max(maxL, meas.node().getComputedTextLength()); });
+  meas.text('999 / 999'); const valW = meas.node().getComputedTextLength() + 8;
+  meas.remove();
+  const labW = Math.min(maxL + 10, W * 0.46);
+  const H = rows.length * (rowH + gap);
+  svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+  const x = d3.scaleLinear([0, d3.max(rows, (d) => d.total) || 1], [0, Math.max(10, W - labW - valW)]);
+  const tip = tipFor(el);
+  const g = svg.selectAll('g.bar').data(rows).join('g').attr('class', 'bar').attr('transform', (d, i) => `translate(0, ${i * (rowH + gap)})`);
+  g.classed('is-on', (d) => selected && d[key] === selected);
+  g.append('text').attr('x', labW - 8).attr('y', rowH / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 12)
+    .style('fill', 'var(--color-fg)').style('font-family', 'var(--font-anthropic-sans)')
+    .each(function (d) { const t = d3.select(this); let s = String(d[key] ?? 'Sin puesto'); t.text(s); while (this.getComputedTextLength() > labW - 10 && s.length > 4) { s = s.slice(0, -1); t.text(s + '…'); } });
+  g.append('rect').attr('x', labW).attr('y', 3).attr('height', rowH - 6).attr('width', (d) => x(d.total)).attr('rx', 3).style('fill', 'var(--gx-accent-soft)');
+  g.append('rect').attr('class', 'fg').attr('x', labW).attr('y', 3).attr('height', rowH - 6).attr('width', (d) => x(d.afectados)).attr('rx', 3).style('fill', 'var(--gx-accent)');
+  g.append('rect').attr('class', 'fg').attr('x', (d) => labW + x(d.afectados)).attr('y', 3).attr('height', rowH - 6).attr('width', (d) => x(d.entre)).style('fill', 'var(--gx-accent-mid)');
+  g.append('text').attr('x', (d) => labW + x(d.total) + 6).attr('y', rowH / 2).attr('dy', '0.35em').attr('font-size', 12)
+    .style('fill', 'var(--color-fg-muted)').style('font-variant-numeric', 'tabular-nums').style('font-family', 'var(--font-anthropic-sans)')
+    .text((d) => `${d.afectados + d.entre} / ${d.total}`);
+  g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', rowH).style('fill', 'transparent')
+    .on('mousemove', (ev, d) => showTip(el, tip, ev, d[key], tipTxt ? tipTxt(d) : `${d.afectados} con 48 hrs · ${d.entre} entre 46 y 48 · de ${d.total}`))
+    .on('mouseleave', () => { tip.hidden = true; })
+    .on('click', (ev, d) => onClick && onClick(d[key]));
+}
+
+function filtrarPuesto(p) {
+  GX.puesto = GX.puesto === p ? null : p;
+  document.querySelectorAll('#gx-filtro').forEach((n) => { n.hidden = !GX.puesto; });
+  dash.draw('tabla'); dash.draw('filtro'); dash.draw('conteo'); dash.draw('puestos'); dash.draw('opt-puesto');
+  if (GX.puesto) abrirTab('t-personas');
+}
+
+dash.draw('puestos', (el) => {
+  const p = dash.data('por_puesto');
+  if (p.status !== 'ok') { el.replaceChildren(); return; }
+  const rows = GX.todos ? p.data : p.data.slice(0, 8);
+  hbars(el, rows, 'puesto', filtrarPuesto, GX.puesto);
+});
+
+dash.draw('ubicaciones', (el) => {
+  const p = dash.data('por_ubicacion');
+  if (p.status !== 'ok') { el.replaceChildren(); return; }
+  hbars(el, p.data, 'ubicacion', null, null);
+});
+
+
+function filas() {
+  const a = dash.data('afectados');
+  if (a.status !== 'ok') return null;
+  const q = GX.q.trim().toLowerCase();
+  let rows = a.data.filter((r) => (!GX.puesto || r.puesto === GX.puesto) && (!GX.grupo || r.grupo === GX.grupo) && (!GX.tipo || r.tipo_jornada === GX.tipo) && (!GX.suc || r.ubicacion === GX.suc) && (!q || `${r.nombre} ${r.puesto} ${r.ubicacion}`.toLowerCase().includes(q)));
+  const k = GX.sort, dir = GX.dir;
+  rows = rows.slice().sort((x, y) => {
+    const a1 = x[k], b1 = y[k];
+    if (typeof a1 === 'number' || typeof b1 === 'number') return ((a1 ?? -1) - (b1 ?? -1)) * dir || String(x.nombre ?? '').localeCompare(String(y.nombre ?? ''));
+    return String(a1).localeCompare(String(b1), 'es') * dir;
+  });
+  return rows;
+}
+
+dash.draw('tabla', (tb) => {
+  const rows = filas();
+  tb.replaceChildren();
+  if (!rows) return;
+  rows.forEach((r) => {
+    const tr = document.createElement('tr');
+    const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+    td(r.nombre); td(r.puesto);
+    const tg = td(''); const pg = document.createElement('span'); pg.className = 'gx-pill ' + (r.grupo === '48 hrs' ? 'g48' : 'g46'); pg.textContent = r.grupo; tg.appendChild(pg);
+    td(r.ubicacion, 'hide-sm');
+    const tj = td('', 'hide-sm'); const pill = document.createElement('span'); pill.className = 'gx-pill ' + String(r.tipo_jornada).toLowerCase(); pill.textContent = r.tipo_jornada; tj.appendChild(pill);
+    td(fmtD(r.horas_reales), 'num'); td(r.ajuste == null ? 'Por confirmar' : '−' + fmtD(r.ajuste), 'num gx-exc'); td(r.horas_contrato == null ? '—' : fmtD(r.horas_contrato), 'num hide-sm');
+    tb.appendChild(tr);
+  });
+});
+
+dash.draw('conteo', (el) => { const rows = filas(); el.textContent = rows ? fmtN(rows.length) : '—'; });
+dash.draw('filtro', (el) => { el.textContent = GX.puesto || '—'; });
+
+document.querySelectorAll('#gx-toggle-puestos').forEach((b) => b.addEventListener('click', () => {
+  GX.todos = !GX.todos;
+  b.setAttribute('aria-expanded', String(GX.todos));
+  b.querySelectorAll('.t-more').forEach((n) => { n.hidden = GX.todos; });
+  b.querySelectorAll('.t-less').forEach((n) => { n.hidden = !GX.todos; });
+  dash.draw('puestos');
+}));
+document.querySelectorAll('.gx-seg button[data-grupo]').forEach((b) => b.addEventListener('click', () => {
+  GX.grupo = b.dataset.grupo;
+  document.querySelectorAll('.gx-seg button[data-grupo]').forEach((n) => n.setAttribute('aria-pressed', String(n.dataset.grupo === GX.grupo)));
+  dash.draw('tabla'); dash.draw('conteo');
+}));
+document.querySelectorAll('#gx-search').forEach((i) => i.addEventListener('input', () => { GX.q = i.value; dash.draw('tabla'); dash.draw('conteo'); }));
+document.querySelectorAll('#gx-filtro-x').forEach((b) => b.addEventListener('click', () => filtrarPuesto(GX.puesto)));
+document.querySelectorAll('.gx-table th button[data-sort]').forEach((b) => b.addEventListener('click', () => {
+  const k = b.dataset.sort;
+  if (GX.sort === k) GX.dir = -GX.dir; else { GX.sort = k; GX.dir = ['horas_reales', 'ajuste', 'horas_contrato'].includes(k) ? -1 : 1; }
+  document.querySelectorAll('.gx-table th').forEach((th) => th.removeAttribute('aria-sort'));
+  b.parentElement.setAttribute('aria-sort', GX.dir === 1 ? 'ascending' : 'descending');
+  dash.draw('tabla');
+}));
+
+window.GXR = { rol: '', suc: '', sort: 'horas_reales', dir: -1 };
+const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+const PU = (r) => (r.puesto == null || r.puesto === '' || r.puesto === 'nan') ? 'Sin puesto' : String(r.puesto);
+const TX = (v) => v == null ? '' : String(v);
+function rolFilas() {
+  const h = dash.data('horarios');
+  if (h.status !== 'ok') return null;
+  const k = GXR.sort, dir = GXR.dir;
+  return h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && (!GXR.suc || TX(r.ubicacion) === GXR.suc) && r.tipo_jornada !== 'Sin captura')
+    .sort((a, b) => k === 'horas_reales' ? ((Number(a.horas_reales) - Number(b.horas_reales)) * dir || TX(a.nombre).localeCompare(TX(b.nombre))) : TX(a[k]).localeCompare(TX(b[k]), 'es') * dir);
+}
+function redrawRol() { ['suc-opciones', 'rol-stat', 'rol-tabla'].forEach((n) => dash.draw(n)); }
+dash.draw('rol-opciones', (sel) => {
+  const h = dash.data('horarios');
+  const rows = h.status === 'ok' ? h.data.filter((r) => r.tipo_jornada !== 'Sin captura') : [];
+  const cnt = d3.rollup(rows, (v) => v.length, PU);
+  const lista = [...cnt.keys()].sort((a, b) => TX(a).localeCompare(TX(b), 'es'));
+  sel.replaceChildren(new Option(`Todos los puestos (${rows.length})`, ''), ...lista.map((p) => new Option(`${p} (${cnt.get(p)})`, p)));
+  if (GXR.rol && !lista.includes(GXR.rol)) GXR.rol = '';
+  sel.value = GXR.rol;
+  sel.onchange = () => { GXR.rol = sel.value; GXR.suc = ''; redrawRol(); };
+});
+dash.draw('suc-opciones', (sel) => {
+  const h = dash.data('horarios');
+  const rows = h.status === 'ok' ? h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && r.tipo_jornada !== 'Sin captura') : [];
+  const lista = [...new Set(rows.map((r) => TX(r.ubicacion)))].sort((a, b) => a.localeCompare(b, 'es'));
+  sel.replaceChildren(new Option('Todas las sucursales', ''), ...lista.map((u) => new Option(u, u)));
+  if (GXR.suc && !lista.includes(GXR.suc)) GXR.suc = '';
+  sel.value = GXR.suc;
+  sel.onchange = () => { GXR.suc = sel.value; dash.draw('rol-stat'); dash.draw('rol-tabla'); };
+});
+dash.draw('rol-stat', (el) => {
+  const rows = rolFilas();
+  if (!rows) { el.textContent = '—'; return; }
+  const h = rows.map((r) => Number(r.horas_reales));
+  const v = { n: rows.length, g48: h.filter((x) => x >= 48).length, g46: h.filter((x) => x > 46 && x < 48).length, ok: h.filter((x) => x <= 46).length, prom: h.length ? fmtD(d3.mean(h)) + ' hrs' : '—' }[el.dataset.k];
+  el.textContent = typeof v === 'number' ? fmtN(v) : v;
+});
+dash.draw('rol-tabla', (tb) => {
+  const rows = rolFilas();
+  tb.replaceChildren();
+  if (!rows) return;
+  rows.forEach((r) => {
+    const tr = document.createElement('tr');
+    const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+    td(TX(r.nombre)); td(PU(r)); td(TX(r.ubicacion), 'hide-sm');
+    DIAS.forEach((d) => {
+      const hrs = Number(r[d + '_h']) || 0;
+      const c = td(r[d] ? r[d] : 'Descanso', 'd' + (r[d] ? (hrs >= 8 ? ' full' : '') : ' libre'));
+      if (r[d]) { const sp = document.createElement('span'); sp.className = 'h'; sp.textContent = fmtD(hrs) + ' h'; c.appendChild(sp); }
+    });
+    const tot = Number(r.horas_reales);
+    td(fmtD(tot), 'num' + (tot > 46 ? ' gx-exc' : ''));
+    tb.appendChild(tr);
+  });
+});
+document.querySelectorAll('.gx-sem th button[data-rsort]').forEach((b) => b.addEventListener('click', () => {
+  const k = b.dataset.rsort;
+  if (GXR.sort === k) GXR.dir = -GXR.dir; else { GXR.sort = k; GXR.dir = k === 'horas_reales' ? -1 : 1; }
+  document.querySelectorAll('.gx-sem th').forEach((th) => th.removeAttribute('aria-sort'));
+  b.parentElement.setAttribute('aria-sort', GXR.dir === 1 ? 'ascending' : 'descending');
+  dash.draw('rol-tabla');
+}));
+
+window.GXE = { anio: 2028, solo: '', q: '' };
+const LIMITES = { 2027: 46, 2028: 44, 2029: 42, 2030: 40 };
+dash.calc('etapas_personas', {
+  title: 'Personas por encima del límite 2027–2030',
+  description: 'Colaboradores con horario capturado y más de 40 hrs reconocidas, con el primer año en que su jornada queda arriba del límite (46, 44, 42 o 40 hrs).',
+  inputs: ['plantilla'],
+  fn: (plantilla) => plantilla
+    .filter((r) => r.captura === 'Capturado' && Number(r.horas_reales) > 40)
+    .map((r) => { const h = Number(r.horas_reales); return { nombre: r.nombre, puesto: r.puesto == null || r.puesto === '' ? 'Sin puesto' : r.puesto, ubicacion: r.ubicacion, horas_reales: h, desde: h > 46 ? 2027 : h > 44 ? 2028 : h > 42 ? 2029 : 2030 }; })
+});
+dash.calc('etapas', {
+  title: 'Personas sobre el límite por año',
+  description: 'Por año de la reforma: personas arriba del máximo semanal y cuántas son nuevas respecto a la etapa anterior.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => {
+    const h = plantilla.filter((r) => r.captura === 'Capturado').map((r) => Number(r.horas_reales));
+    return [[2027, 46, Infinity], [2028, 44, 46], [2029, 42, 44], [2030, 40, 42]].map(([anio, lim, prev]) => ({ anio, limite: lim, personas: h.filter((x) => x > lim).length, nuevos: h.filter((x) => x > lim && x <= prev).length }));
+  }
+});
+dash.draw('etapa-n', (el) => {
+  const e = dash.data('etapas');
+  const row = e.status === 'ok' ? e.data.find((r) => String(r.anio) === el.dataset.where.split('=')[1]) : null;
+  el.textContent = row ? fmtN(row.personas) : '—';
+});
+dash.draw('etapa-nuevos', (el) => {
+  const e = dash.data('etapas');
+  const row = e.status === 'ok' ? e.data.find((r) => String(r.anio) === el.dataset.where.split('=')[1]) : null;
+  el.textContent = row ? fmtN(row.nuevos) : '—';
+});
+function etapaFilas() {
+  const p = dash.data('etapas_personas');
+  if (p.status !== 'ok') return null;
+  const lim = LIMITES[GXE.anio], q = GXE.q.trim().toLowerCase();
+  return p.data.filter((r) => r.horas_reales > lim && (!GXE.solo || r.desde === GXE.anio) && (!q || `${r.nombre} ${r.puesto} ${r.ubicacion}`.toLowerCase().includes(q)))
+    .sort((a, b) => b.horas_reales - a.horas_reales || String(a.nombre).localeCompare(String(b.nombre)));
+}
+dash.draw('etapa-puestos', (el) => {
+  const p = dash.data('etapas_personas');
+  if (p.status !== 'ok') { el.replaceChildren(); return; }
+  const lim = LIMITES[GXE.anio];
+  const m = new Map();
+  p.data.filter((r) => r.horas_reales > lim).forEach((r) => {
+    const d = m.get(r.puesto) || { puesto: r.puesto, afectados: 0, entre: 0, total: 0 };
+    if (r.desde === GXE.anio) d.afectados += 1; else d.entre += 1;
+    d.total = d.afectados + d.entre; m.set(r.puesto, d);
+  });
+  const rows = [...m.values()].sort((a, b) => b.total - a.total || b.afectados - a.afectados);
+  hbars(el, rows, 'puesto', null, null, (d) => `${d.total} deben ajustar · ${d.afectados} nuevas · ${d.entre} ya venían`);
+});
+dash.draw('etapa-tabla', (tb) => {
+  const rows = etapaFilas();
+  tb.replaceChildren();
+  if (!rows) return;
+  const lim = LIMITES[GXE.anio];
+  rows.forEach((r) => {
+    const tr = document.createElement('tr');
+    const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+    td(String(r.nombre)); td(String(r.puesto)); td(String(r.ubicacion), 'hide-sm');
+    td(fmtD(r.horas_reales), 'num'); td('−' + fmtD(r.horas_reales - lim), 'num gx-exc');
+    const c = td('', 'num'); const pl = document.createElement('span'); pl.className = 'gx-pill' + (r.desde === GXE.anio ? ' nuevo' : ''); pl.textContent = String(r.desde); c.appendChild(pl);
+    tb.appendChild(tr);
+  });
+});
+dash.draw('etapa-conteo', (el) => { const rows = etapaFilas(); el.textContent = rows ? fmtN(rows.length) : '—'; });
+function redrawEtapa() { ['etapa-puestos', 'etapa-tabla', 'etapa-conteo'].forEach((n) => dash.draw(n)); }
+document.querySelectorAll('.gx-year[data-anio]').forEach((b) => b.addEventListener('click', () => {
+  GXE.anio = Number(b.dataset.anio);
+  document.querySelectorAll('.gx-year[data-anio]').forEach((n) => n.setAttribute('aria-pressed', String(Number(n.dataset.anio) === GXE.anio)));
+  redrawEtapa();
+}));
+document.querySelectorAll('button[data-solo]').forEach((b) => b.addEventListener('click', () => {
+  GXE.solo = b.dataset.solo;
+  document.querySelectorAll('button[data-solo]').forEach((n) => n.setAttribute('aria-pressed', String(n.dataset.solo === GXE.solo)));
+  redrawEtapa();
+}));
+document.querySelectorAll('#gx-search-etapa').forEach((i) => i.addEventListener('input', () => { GXE.q = i.value; dash.draw('etapa-tabla'); dash.draw('etapa-conteo'); }));
+
+function abrirTab(id) {
+  document.querySelectorAll('.gx-tab').forEach((t) => { t.hidden = t.id !== id; });
+  document.querySelectorAll('.gx-tabs button[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+  dash.setLink(id);
+}
+document.querySelectorAll('.gx-tabs button[data-tab]').forEach((b) => b.addEventListener('click', () => abrirTab(b.dataset.tab)));
+document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => {
+  GXE.anio = Number(b.dataset.go);
+  document.querySelectorAll('.gx-year[data-anio]').forEach((n) => n.setAttribute('aria-pressed', String(Number(n.dataset.anio) === GXE.anio)));
+  abrirTab('t-etapas');
+  redrawEtapa();
+}));
+const linkTab = location.hash.slice(1);
+if (document.getElementById(linkTab) && document.getElementById(linkTab).classList.contains('gx-tab')) abrirTab(linkTab);
+
+
+dash.draw('etapa-roles', (el) => {
+  const p = dash.data('etapas_personas');
+  el.replaceChildren();
+  if (p.status !== 'ok') return;
+  const anio = Number(el.dataset.anio);
+  const nuevos = p.data.filter((r) => r.desde === anio);
+  const grupos = d3.groups(nuevos, (r) => String(r.puesto ?? 'Sin puesto')).sort((x, y) => y[1].length - x[1].length || x[0].localeCompare(y[0], 'es'));
+  const TOPE = 6;
+  grupos.slice(0, TOPE).forEach(([puesto, rows]) => {
+    const det = document.createElement('details');
+    const sum = document.createElement('summary');
+    const pp = document.createElement('span'); pp.className = 'p'; pp.textContent = puesto;
+    const cc = document.createElement('span'); cc.className = 'c'; cc.textContent = fmtN(rows.length);
+    sum.append(pp, cc);
+    const ul = document.createElement('ul');
+    rows.slice().sort((x, y) => y.horas_reales - x.horas_reales || String(x.nombre).localeCompare(String(y.nombre))).forEach((r) => {
+      const li = document.createElement('li');
+      const n = document.createElement('span'); n.textContent = String(r.nombre);
+      const h = document.createElement('span'); h.className = 'h'; h.textContent = `${fmtD(r.horas_reales)} h`;
+      li.append(n, h); ul.appendChild(li);
+    });
+    det.append(sum, ul); el.appendChild(det);
+  });
+  if (grupos.length > TOPE) {
+    const m = document.createElement('div'); m.className = 'mas';
+    const resto = grupos.slice(TOPE).reduce((s, g) => s + g[1].length, 0);
+    m.textContent = `+ ${grupos.length - TOPE} puestos más (${resto} personas)`;
+    el.appendChild(m);
+  }
+});
+
+dash.draw('opt-suc', (sel) => {
+  const a = dash.data('afectados');
+  const vals = a.status === 'ok' ? [...new Set(a.data.map((r) => String(r.ubicacion)))].sort((x, y) => x.localeCompare(y, 'es')) : [];
+  sel.replaceChildren(new Option('Todas las sucursales', ''), ...vals.map((v) => new Option(v, v)));
+  sel.value = GX.suc;
+  sel.onchange = () => { GX.suc = sel.value; dash.draw('tabla'); dash.draw('conteo'); };
+});
+dash.draw('opt-puesto', (sel) => {
+  const a = dash.data('afectados');
+  const vals = a.status === 'ok' ? [...new Set(a.data.map((r) => String(r.puesto)))].sort((x, y) => x.localeCompare(y, 'es')) : [];
+  sel.replaceChildren(new Option('Todos los puestos', ''), ...vals.map((v) => new Option(v, v)));
+  sel.value = GX.puesto || '';
+  sel.onchange = () => { GX.puesto = sel.value || null; document.querySelectorAll('#gx-filtro').forEach((n) => { n.hidden = !GX.puesto; }); ['tabla', 'conteo', 'filtro', 'puestos'].forEach((n) => dash.draw(n)); };
+});
+document.querySelectorAll('#gx-f-tipo').forEach((sel) => sel.addEventListener('change', () => { GX.tipo = sel.value; dash.draw('tabla'); dash.draw('conteo'); }));
+</script>
