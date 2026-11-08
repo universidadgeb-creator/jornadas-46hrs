@@ -1,0 +1,201 @@
+<section class="gx-tab" id="t-seg" hidden>
+  <p class="seg-intro">Captura el líder, el nuevo horario y marca cuando el nuevo contrato esté firmado. Todo se guarda solo y lo ve todo el equipo. El nuevo horario viene precargado con la propuesta 2027; valídalo o corrígelo con cada gerente.</p>
+    <div class="top">
+      <section class="card prog" aria-label="Avance">
+        <div class="lbl">Nuevo contrato realizado</div>
+        <div class="big"><span id="p-done">—</span> <span>de <span id="p-total">—</span></span></div>
+        <div class="bar" aria-hidden="true"><i id="p-bar"></i></div>
+        <div class="sub"><b id="p-pct">—</b> de avance · <span id="p-hor">—</span> con nuevo horario capturado · <span id="p-lid">—</span> con líder asignado</div>
+      </section>
+      <section class="tipos" aria-label="Por tipo de jornada">
+        <button type="button" class="tipo" data-tipo="Diurna" aria-pressed="false">
+          <span class="lbl">Diurna</span><span class="n"><span data-k="Diurna-n">—</span><small data-k="Diurna-pct">—</small></span>
+          <span class="rule">Bajar 2 hrs → 46 hrs</span><span class="av"><span data-k="Diurna-done">—</span> con contrato nuevo</span>
+        </button>
+        <button type="button" class="tipo" data-tipo="Mixta" aria-pressed="false">
+          <span class="lbl">Mixta</span><span class="n"><span data-k="Mixta-n">—</span><small data-k="Mixta-pct">—</small></span>
+          <span class="rule">Bajar 3 hrs → 45 hrs (máximo actual)</span><span class="av"><span data-k="Mixta-done">—</span> con contrato nuevo</span>
+        </button>
+        <button type="button" class="tipo" data-tipo="Nocturna" aria-pressed="false">
+          <span class="lbl">Nocturna</span><span class="n"><span data-k="Nocturna-n">—</span><small data-k="Nocturna-pct">—</small></span>
+          <span class="rule pend">Ajuste por confirmar</span><span class="av"><span data-k="Nocturna-done">—</span> con contrato nuevo</span>
+        </button>
+      </section>
+    </div>
+
+    <section aria-label="Por sucursal">
+      <h2 class="h2">Propuesta por sucursal</h2>
+      <div class="sucs" id="sucs"><span class="status">Cargando sucursales…</span></div>
+    </section>
+
+    <section class="card" aria-label="Personas">
+      <div class="filters">
+        <label for="f-tipo">Tipo de jornada<select id="f-tipo"><option value="">Todas</option><option>Diurna</option><option>Mixta</option><option>Nocturna</option></select></label>
+        <label for="f-suc">Sucursal<select id="f-suc"><option value="">Todas</option></select></label>
+        <label for="f-puesto">Puesto<select id="f-puesto"><option value="">Todos</option></select></label>
+        <label for="f-est">Estado<select id="f-est"><option value="">Todos</option><option value="pend">Pendiente</option><option value="done">Contrato realizado</option></select></label>
+        <label for="f-q" class="grow">Buscar<input id="f-q" type="search" placeholder="Nombre, puesto o líder"></label>
+        <button type="button" class="btn" id="f-clear">Limpiar filtros</button>
+        <span class="count"><b id="f-count">—</b> personas</span>
+      </div>
+    </section>
+
+    <div class="tablebox">
+      <table>
+        <thead><tr>
+          <th>Colaborador</th><th>Sucursal</th><th>Tipo</th><th class="num">Hrs hoy</th><th class="num">Meta</th><th>Horario actual</th>
+          <th>Líder</th><th>Nuevo horario</th><th class="num">Nuevas hrs</th><th>Nuevo contrato</th><th>Comentario</th>
+        </tr></thead>
+        <tbody id="rows"><tr><td colspan="11" class="empty">Cargando la lista de personas…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="status" id="status"></p>
+
+    <section class="card">
+      <h2 class="h2">Criterios</h2>
+      <ul class="notes">
+        <li>Lista: colaboradores activos con jornada reconocida de 48 hrs o más (base del 5 nov 2026).</li>
+        <li>Diurna baja a 46 hrs en 2027. Mixta se queda en su máximo actual de 45 hrs, que no cambia con la reforma. Nocturna: pendiente de confirmar.</li>
+        <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
+        <li>«Nuevas hrs» se marca en naranja si sigue arriba de la meta del tipo de jornada.</li>
+      </ul>
+    </section>
+  </section>
+
+<script>
+(() => {
+  const META = { Diurna: 46, Mixta: 45, Nocturna: null };
+  const TIPOS = ['Diurna', 'Mixta', 'Nocturna'];
+  let rows = [];
+  let db = null, canWrite = true;
+  const F = { tipo: '', suc: '', puesto: '', est: '', q: '' };
+  const $ = (id) => document.getElementById(id);
+  const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('es-MX', { maximumFractionDigits: 1 });
+  const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '0%';
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+
+  function setOptions(sel, values, label) {
+    const cur = sel.value;
+    sel.replaceChildren(new Option(label, ''), ...values.map((v) => new Option(v, v)));
+    sel.value = values.includes(cur) ? cur : '';
+  }
+
+  function filtered() {
+    const q = F.q.trim().toLowerCase();
+    return rows.filter((r) => (!F.tipo || r.tipo === F.tipo) && (!F.suc || r.sucursal === F.suc) && (!F.puesto || r.puesto === F.puesto)
+      && (!F.est || (F.est === 'done' ? r.contrato : !r.contrato))
+      && (!q || `${r.nombre} ${r.puesto} ${r.lider || ''}`.toLowerCase().includes(q)));
+  }
+
+  function renderSummary() {
+    const total = rows.length, done = rows.filter((r) => r.contrato).length;
+    $('p-done').textContent = done; $('p-total').textContent = total;
+    $('p-pct').textContent = pct(done, total);
+    $('p-bar').style.width = total ? (done / total * 100) + '%' : '0';
+    $('p-hor').textContent = rows.filter((r) => (r.nuevo_horario || '').trim()).length;
+    $('p-lid').textContent = rows.filter((r) => (r.lider || '').trim()).length;
+    TIPOS.forEach((t) => {
+      const g = rows.filter((r) => r.tipo === t);
+      document.querySelectorAll(`[data-k="${t}-n"]`).forEach((n) => { n.textContent = g.length; });
+      document.querySelectorAll(`[data-k="${t}-pct"]`).forEach((n) => { n.textContent = pct(g.length, total); });
+      document.querySelectorAll(`[data-k="${t}-done"]`).forEach((n) => { n.textContent = `${g.filter((r) => r.contrato).length} de ${g.length}`; });
+    });
+    document.querySelectorAll('.tipo').forEach((b) => b.setAttribute('aria-pressed', String(F.tipo === b.dataset.tipo)));
+    const m = d3group(rows, 'sucursal');
+    const box = $('sucs'); box.replaceChildren();
+    [...m.entries()].sort((a, b) => b[1].length - a[1].length).forEach(([s, g]) => {
+      const d = g.filter((r) => r.contrato).length;
+      const b = el('button', 'suc'); b.type = 'button'; b.setAttribute('aria-pressed', String(F.suc === s));
+      const mix = g.filter((r) => r.tipo === 'Mixta').length, diu = g.filter((r) => r.tipo === 'Diurna').length, noc = g.length - mix - diu;
+      b.append(el('span', 'nm', s), el('span', 'ct', `${g.length} personas · ${diu} diurna · ${mix} mixta${noc ? ' · ' + noc + ' nocturna' : ''}`), el('span', 'ct', `${d} de ${g.length} con contrato nuevo`));
+      const mini = el('span', 'mini'); const i = el('i'); i.style.width = (d / g.length * 100) + '%'; mini.appendChild(i); b.appendChild(mini);
+      b.addEventListener('click', () => { F.suc = F.suc === s ? '' : s; $('f-suc').value = F.suc; render(); });
+      box.appendChild(b);
+    });
+    if (!rows.length) box.replaceChildren(el('span', 'status', 'Sin datos todavía.'));
+    setOptions($('f-suc'), [...m.keys()].sort((a, b) => a.localeCompare(b, 'es')), 'Todas');
+    setOptions($('f-puesto'), [...new Set(rows.map((r) => r.puesto))].sort((a, b) => a.localeCompare(b, 'es')), 'Todos');
+  }
+
+  function d3group(arr, k) { const m = new Map(); arr.forEach((r) => { const v = r[k] || '—'; if (!m.has(v)) m.set(v, []); m.get(v).push(r); }); return m; }
+
+  async function save(id, patch, node) {
+    if (!db) return;
+    node && node.classList.add('saving');
+    try { await db.doc('personas/' + id).update(patch); $('status').textContent = 'Guardado.'; }
+    catch (e) { $('status').textContent = 'No se pudo guardar el cambio. Revisa que tengas permiso de edición e inténtalo de nuevo.'; }
+    finally { node && node.classList.remove('saving'); }
+  }
+
+  function textInput(r, field, ph, cls) {
+    const i = el('input', cls || ''); i.type = 'text'; i.value = r[field] || ''; i.placeholder = ph; i.id = `${field}-${r.id}`; i.disabled = !canWrite;
+    i.setAttribute('aria-label', `${ph} de ${r.nombre}`);
+    i.addEventListener('change', () => { const v = i.value.trim(); if (v !== (r[field] || '')) { r[field] = v; save(r.id, { [field]: v }, i); renderSummary(); renderResumen(); } });
+    return i;
+  }
+
+  function renderRows() {
+    const list = filtered().sort((a, b) => Number(a.contrato) - Number(b.contrato) || a.sucursal.localeCompare(b.sucursal, 'es') || a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
+    $('f-count').textContent = list.length;
+    const tb = $('rows');
+    if (document.activeElement && tb.contains(document.activeElement) && document.activeElement.tagName === 'INPUT' && document.activeElement.type !== 'checkbox') return;
+    tb.replaceChildren();
+    if (!list.length) { const tr = el('tr'); const td = el('td', 'empty', rows.length ? 'Nadie coincide con estos filtros.' : 'Aún no hay personas en la lista.'); td.colSpan = 11; tr.appendChild(td); tb.appendChild(tr); return; }
+    list.forEach((r) => {
+      const tr = el('tr', r.contrato ? 'done' : '');
+      const meta = META[r.tipo];
+      const c1 = el('td', 'nm'); c1.append(el('b', '', r.nombre), el('span', '', r.puesto)); tr.appendChild(c1);
+      tr.appendChild(el('td', '', r.sucursal));
+      const ct = el('td'); ct.appendChild(el('span', 'pill ' + r.tipo, r.tipo)); tr.appendChild(ct);
+      tr.appendChild(el('td', 'num', fmt(r.horas_actuales)));
+      tr.appendChild(meta == null ? el('td', 'num meta pend', 'Por confirmar') : el('td', 'num meta', `${meta} (−${fmt(r.horas_actuales - meta)})`));
+      tr.appendChild(el('td', 'hor', r.horario_actual));
+      const cl = el('td'); cl.appendChild(textInput(r, 'lider', 'Líder')); tr.appendChild(cl);
+      const cn = el('td'); cn.appendChild(textInput(r, 'nuevo_horario', 'Ej. L–V 07:00–14:45', 'wide')); tr.appendChild(cn);
+      const ch = el('td', 'num');
+      const n = el('input'); n.type = 'number'; n.step = '0.5'; n.min = '0'; n.max = '60'; n.id = `nh-${r.id}`; n.disabled = !canWrite;
+      n.setAttribute('aria-label', `Nuevas horas de ${r.nombre}`);
+      n.value = r.nuevas_horas == null ? '' : r.nuevas_horas;
+      n.addEventListener('change', () => { const v = n.value === '' ? null : Number(n.value); r.nuevas_horas = v; save(r.id, { nuevas_horas: v }, n); renderRows(); });
+      ch.appendChild(n);
+      if (r.nuevas_horas != null && meta != null) ch.appendChild(r.nuevas_horas > meta ? el('span', 'flag', `Arriba de ${meta}`) : el('span', 'okflag', 'Cumple'));
+      tr.appendChild(ch);
+      const cc = el('td'); const lab = el('label', 'chk'); const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!r.contrato; cb.id = `ct-${r.id}`; cb.disabled = !canWrite;
+      cb.addEventListener('change', () => { r.contrato = cb.checked; save(r.id, { contrato: cb.checked }, lab); render(); });
+      lab.append(cb, el('span', '', r.contrato ? 'Realizado' : 'Pendiente')); cc.appendChild(lab); tr.appendChild(cc);
+      const co = el('td'); co.appendChild(textInput(r, 'comentario', 'Comentario')); tr.appendChild(co);
+      tb.appendChild(tr);
+    });
+  }
+
+  function renderResumen() {
+    const total = rows.length, done = rows.filter((r) => r.contrato).length;
+    const v = { done, total, pct: pct(done, total), hor: rows.filter((r) => (r.nuevo_horario || '').trim()).length,
+      lid: rows.filter((r) => (r.lider || '').trim()).length };
+    document.querySelectorAll('[data-seg]').forEach((n) => { n.textContent = v[n.dataset.seg]; });
+    document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
+  }
+
+  function render() { renderSummary(); renderRows(); renderResumen(); }
+
+  [['f-tipo', 'tipo'], ['f-suc', 'suc'], ['f-puesto', 'puesto'], ['f-est', 'est']].forEach(([id, k]) => $(id).addEventListener('change', (e) => { F[k] = e.target.value; render(); }));
+  $('f-q').addEventListener('input', (e) => { F.q = e.target.value; renderRows(); });
+  $('f-clear').addEventListener('click', () => { Object.keys(F).forEach((k) => { F[k] = ''; }); ['f-tipo', 'f-suc', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); render(); });
+  document.querySelectorAll('.tipo').forEach((b) => b.addEventListener('click', () => { F.tipo = F.tipo === b.dataset.tipo ? '' : b.dataset.tipo; $('f-tipo').value = F.tipo; render(); }));
+  document.addEventListener('focusout', () => setTimeout(() => { if (!document.activeElement || document.activeElement.tagName !== 'INPUT') renderRows(); }, 0));
+
+  (async () => {
+    const claude = window.claude;
+    if (!claude || !claude.use) { $('rows').replaceChildren(); $('status').textContent = 'Abre esta página desde Claude para ver y editar el seguimiento.'; document.querySelectorAll('[data-seg]').forEach((n) => { n.textContent = '—'; }); return; }
+    db = await claude.use('db');
+    if (!db) { $('status').textContent = 'No se pudo conectar con la lista. Inicia sesión en Claude y vuelve a abrir la página.'; return; }
+    const user = await claude.use('user');
+    if (user) { const c = await user.can('data.write'); if (c === false) { canWrite = false; $('status').textContent = 'Tienes acceso de solo lectura.'; } }
+    db.collection('personas').onSnapshot((snap) => {
+      const docs = snap.docs || snap;
+      rows = docs.map((d) => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
+      render();
+    }, () => { $('status').textContent = 'No se pudo cargar la lista. Recarga la página.'; });
+  })();
+})();
+</script>

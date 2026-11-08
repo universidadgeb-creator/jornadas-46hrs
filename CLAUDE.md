@@ -10,11 +10,12 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 
 | Pieza | Qué es | Dónde |
 |---|---|---|
-| Tablero «Jornada 46 hrs 2027» | Dashboard de análisis (artifact de tipo Dashboard en claude.ai) | https://claude.ai/artifact/Rcd92fe4fQ8SdhX3g5cSo1 · código en `dashboard/index.html` |
+| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Personas, Jornadas por rol, 2027–2030 y Seguimiento (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
+| Tablero anterior (respaldo, ya no se usa) | Dashboard de análisis (artifact de tipo Dashboard en claude.ai) | https://claude.ai/artifact/Rcd92fe4fQ8SdhX3g5cSo1 · su código, `dashboard/index.html`, sigue siendo la fuente de las pestañas de análisis |
 | Versión para proyectar | El mismo tablero en un HTML autónomo y sin internet, con d3 y los datos incrustados | `dashboard/Jornada_46hrs_2027_proyectar.html` |
-| «Nuevas jornadas por rol» | Documento vivo de seguimiento con las 58 personas de 48 hrs (artifact con base de datos compartida) | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · código en `seguimiento/nuevas_jornadas.html` |
+| Captura de seguimiento | La pestaña «Seguimiento» de la página única (las 58 personas de 48 hrs) | `seguimiento/captura.html` + `seguimiento/captura_estilos.css` |
 | Datos | Excel fuente y los dos CSV que lee el tablero | `datos/` |
-| Scripts | Regeneran los CSV, la versión para proyectar y la propuesta de horarios | `scripts/build_csv.py` · `scripts/build_proyectar.py` · `scripts/propuesta.py` |
+| Scripts | Regeneran los CSV, la versión para proyectar, la página única y la propuesta de horarios | `scripts/build_csv.py` · `scripts/build_proyectar.py` · `scripts/build_unificado.py` · `scripts/propuesta.py` |
 
 ## Fuente de datos
 
@@ -62,13 +63,20 @@ Detalles técnicos:
 - La página del tablero en claude.ai vive en su base de datos: documento `files/index.html` (campo `text`). Para publicar un cambio: leerlo, confirmar que es igual a `dashboard/index.html` del último commit y hacer `update` con el texto nuevo y `edit: {via, at}`.
 - GitHub: https://github.com/universidadgeb-creator/jornadas-46hrs (público, por decisión de Patty). GitHub Pages publica `main` en https://universidadgeb-creator.github.io/jornadas-46hrs/ (el `index.html` de la raíz lleva a la versión para proyectar).
 
-## Documento vivo «Nuevas jornadas por rol»
+## Página única: cómo se arma y se publica
+
+- `scripts/build_unificado.py` junta `dashboard/index.html` (análisis, con un `dash` local y los CSV incrustados, como la versión para proyectar), `seguimiento/captura.html` y `captura_estilos.css`, y agrega la pestaña «Seguimiento» y la tarjeta «Avance del cambio de contrato» en el Resumen (lee la misma colección `personas`).
+- d3 se carga de cdnjs (7.8.5). En este contenedor cdnjs está bloqueado: para probar en local, servir d3 desde la copia que trae la versión para proyectar.
+- Flujo para cualquier cambio: editar `dashboard/index.html` o `seguimiento/captura*` → `python scripts/build_proyectar.py` → `python scripts/build_unificado.py` → publicar `seguimiento/nuevas_jornadas.html` en el artifact HcTgQg9… (sin `capabilities`, para conservar `db` y `user`).
+- El enlace directo a una pestaña usa el hash: `#t-seg` abre Seguimiento.
+
+## Seguimiento (colección `personas`)
 
 - Colección `personas`: un documento por persona, con id = slug del nombre.
 - Campos fijos: `nombre`, `puesto`, `sucursal`, `division`, `tipo`, `horas_actuales`, `horario_actual`.
 - Campos editables: `lider`, `nuevo_horario`, `nuevas_horas`, `contrato` (bool), `comentario`.
 - Muestra el avance (X de 58 con contrato nuevo), totales por tipo con número y %, avance por sucursal y filtros por tipo, sucursal, puesto y estado.
-- Para que los gerentes editen, hay que compartirlo con permiso de edición.
+- Para que los gerentes editen, hay que compartir la página única con permiso de edición (desde Compartir en claude.ai).
 - 8 nov 2026: se precargaron `nuevo_horario` y `nuevas_horas` de 57 personas con la propuesta automática (`scripts/propuesta.py`), solo donde estaban vacíos. Corona Miranda quedó sin propuesta hasta corregir su captura. Los gerentes validan o corrigen; `contrato` sigue en falso. El `comentario` de esos 57 dice «Propuesta inicial, por validar»; el de Corona Miranda, «Sin propuesta: revisar captura del domingo (20:30–13:30)». Si un gerente cambia el horario, conviene que borre o cambie esa nota.
 
 ## Pendientes
@@ -78,5 +86,5 @@ Detalles técnicos:
 3. Confirmar el ajuste para jornada **nocturna** y la duda de mixta y nocturna a 40 hrs con el abogado.
 4. Juntas: gerentes de Easy Fit (propuesta por sucursal), Vivo (después del 9 nov, cuando regrese Isma) y Center (Antonio y líderes) la siguiente semana. Center será piloto del reloj checador (~15 días) y después habrá capacitación con Vivo (200+ colaboradores).
 5. Calendario de jornada de 44 hrs: presentarlo y agendarlo con Operaciones en junio de 2027.
-6. Posible mejora: que el tablero lea el avance del documento vivo. Hoy viven separados.
+6. ~~Que el tablero lea el avance del documento vivo~~: resuelto con la página única (8 nov 2026).
 7. Hallazgo: 13 mixtas tienen entre 45 y 46 hrs. No entran en el corte de 2027 (>46), pero ya pasan del máximo legal de la mixta (45). Por decidir si se ajustan también.

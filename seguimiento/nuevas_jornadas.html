@@ -1,154 +1,1092 @@
-<title>Nuevas jornadas por rol</title>
+<title>Jornada 46 hrs 2027</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <style>
-/* Layout: encabezado con avance, franja de reglas por tipo, resumen por sucursal, filtros y tabla editable */
+/* Una sola columna con pestañas: Resumen, Personas, Jornadas por rol, 2027–2030 y Seguimiento */
 :root {
-  --bg: #f4f7f7; --panel: #ffffff; --fg: #17252b; --muted: #5b6a70; --line: #dce4e5;
-  --accent: #0f8b8d; --accent-soft: #d6ecec; --accent-mid: #7cc3c3; --ok: #2f7d4f; --ok-soft: #dcefe3; --warn: #a15c00; --warn-soft: #fbecd6;
-  --sans: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
-  --r: 8px;
+  --color-fg: #17252b; --color-fg-muted: #5b6a70; --color-bg: #f4f7f7; --color-panel: #ffffff; --color-border-line: #dce4e5;
+  --color-ok: #2f7d4f; --color-ok-soft: #dcefe3; --color-warn: #a15c00; --color-warn-soft: #fbecd6; --color-bad: #a15c00;
+  --color-accent: #0f8b8d; --color-accent-soft: #d6ecec; --color-accent-mid: #7cc3c3;
+  --cds-chart-muted: #c9d3d5; --cds-chart-axis: #b7c2c4; --cds-chart-grid: #e7ecec; --cds-chart-status-critical: #a15c00;
+  --cds-surface-popover: #ffffff; --cds-border: #dce4e5; --cds-shadow-popover: 0 6px 20px rgba(20, 40, 45, .14); --cds-text-secondary: #5b6a70;
+  --font-anthropic-sans: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-anthropic-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --cds-font-size-caption: .8rem; --cds-font-size-body: .95rem; --cds-font-size-heading: 1.12rem; --cds-font-size-title: 1.9rem; --cds-font-weight-medium: 600;
+  --cds-gap-xs: .25rem; --cds-gap-sm: .5rem; --cds-gap-md: 1rem; --cds-gap-lg: 1.5rem; --cds-gap-xl: 2rem;
+  --cds-pad-xs: .25rem; --cds-pad-sm: .5rem; --cds-pad-md: .85rem; --cds-pad-lg: 1.25rem; --cds-radius: 8px;
+  --cds-dur-slow: .25s; --cds-ease-out: cubic-bezier(.2, .7, .2, 1);
+  --bg: var(--color-bg); --panel: var(--color-panel); --fg: var(--color-fg); --muted: var(--color-fg-muted); --line: var(--color-border-line);
+  --accent: var(--color-accent); --accent-soft: var(--color-accent-soft); --accent-mid: var(--color-accent-mid);
+  --ok: var(--color-ok); --ok-soft: var(--color-ok-soft); --warn: var(--color-warn); --warn-soft: var(--color-warn-soft);
+  --sans: var(--font-anthropic-sans); --serif: var(--font-anthropic-serif); --r: var(--cds-radius);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #11191c; --panel: #172226; --fg: #e5eeef; --muted: #9aabb0; --line: #2a3a3f;
-  --accent: #3cc7c4; --accent-soft: #1d3b3c; --accent-mid: #2b7d7c; --ok: #6fcf97; --ok-soft: #1c3427; --warn: #f0b264; --warn-soft: #3a2c17; color-scheme: dark; } }
+  --color-fg: #e5eeef; --color-fg-muted: #9aabb0; --color-bg: #11191c; --color-panel: #172226; --color-border-line: #2a3a3f;
+  --color-ok: #6fcf97; --color-ok-soft: #1c3427; --color-warn: #f0b264; --color-warn-soft: #3a2c17; --color-bad: #f0b264;
+  --color-accent: #3cc7c4; --color-accent-soft: #1d3b3c; --color-accent-mid: #2b7d7c;
+  --cds-chart-muted: #33464c; --cds-chart-axis: #4a5c62; --cds-chart-grid: #22323a; --cds-chart-status-critical: #f0b264;
+  --cds-surface-popover: #1d2a2f; --cds-border: #2a3a3f; --cds-shadow-popover: 0 6px 20px rgba(0, 0, 0, .45); --cds-text-secondary: #9aabb0;
+  color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --bg: #11191c; --panel: #172226; --fg: #e5eeef; --muted: #9aabb0; --line: #2a3a3f;
-  --accent: #3cc7c4; --accent-soft: #1d3b3c; --accent-mid: #2b7d7c; --ok: #6fcf97; --ok-soft: #1c3427; --warn: #f0b264; --warn-soft: #3a2c17; color-scheme: dark; }
-body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; }
-.wrap { max-width: 1320px; margin-inline: auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 18px; }
-h1 { font-family: var(--serif); font-weight: 400; font-size: 2rem; margin: 0; text-wrap: balance; }
-.lead { margin: 4px 0 0; color: var(--muted); max-width: 72ch; line-height: 1.5; }
-.top { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr); gap: 14px; }
-@media (max-width: 820px) { .top { grid-template-columns: 1fr; } }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; min-width: 0; }
-.lbl { font-size: 12px; color: var(--muted); letter-spacing: .02em; }
-.prog .big { font-family: var(--serif); font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; margin-top: 6px; }
-.prog .big span { color: var(--muted); font-size: 1.3rem; }
-.bar { height: 10px; background: var(--accent-soft); border-radius: 99px; overflow: hidden; margin: 12px 0 6px; }
-.bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; width: 0; transition: width .4s ease; }
-.prog .sub { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.tipos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-@media (max-width: 560px) { .tipos { grid-template-columns: 1fr; } }
-.tipo { border-radius: var(--r); padding: 12px 14px; background: var(--bg); display: flex; flex-direction: column; gap: 4px; cursor: pointer; border: 1px solid transparent; font: inherit; text-align: left; color: inherit; }
-.tipo[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
-.tipo:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.tipo .n { font-family: var(--serif); font-size: 1.8rem; line-height: 1.05; font-variant-numeric: tabular-nums; }
-.tipo .n small { font-family: var(--sans); font-size: 13px; color: var(--muted); margin-left: 4px; }
-.tipo .rule { font-size: 12px; font-weight: 600; color: var(--accent); }
-.tipo .rule.pend { color: var(--warn); }
-.tipo .av { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.sucs { display: flex; flex-wrap: wrap; gap: 8px; }
-.suc { font: inherit; display: flex; flex-direction: column; gap: 2px; min-width: 9.5rem; flex: 1 1 9.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 12px; cursor: pointer; text-align: left; color: inherit; }
-.suc[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.suc .nm { font-weight: 600; font-size: 13px; }
-.suc .ct { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.suc .mini { height: 4px; background: var(--accent-soft); border-radius: 99px; overflow: hidden; margin-top: 4px; }
-.suc .mini i { display: block; height: 100%; background: var(--accent); width: 0; }
-.h2 { font-size: 15px; font-weight: 600; margin: 0 0 8px; }
-.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
-.filters label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); flex: 1 1 10rem; min-width: 0; }
-.filters label.grow { flex: 2 1 16rem; }
-select, input[type=search], input[type=text], input[type=number] { font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; width: 100%; box-sizing: border-box; }
-.btn { font: inherit; font-size: 13px; background: none; border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; color: var(--fg); cursor: pointer; }
-.tablebox { overflow: auto; max-height: 70vh; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; }
-th { position: sticky; top: 0; z-index: 1; background: var(--panel); text-align: left; font-weight: 600; font-size: 12px; color: var(--muted); padding: 10px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
-td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-tr.done td { background: color-mix(in srgb, var(--ok-soft) 55%, transparent); }
-.nm b { display: block; font-weight: 600; }
-.nm span { color: var(--muted); font-size: 12px; }
-.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); white-space: nowrap; }
-.pill.Mixta { background: var(--accent-soft); border-color: transparent; }
-.pill.Nocturna { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
-.meta { font-weight: 600; }
-.meta.pend { color: var(--warn); font-weight: 500; font-size: 12px; }
-.hor { font-size: 12px; color: var(--muted); max-width: 15rem; }
-td input[type=text] { min-width: 9rem; }
-td input.wide { min-width: 13rem; }
-td input[type=number] { width: 5.2rem; text-align: right; }
-.chk { display: flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; }
-.chk input { width: 18px; height: 18px; accent-color: var(--ok); }
-.flag { display: block; font-size: 11px; color: var(--warn); margin-top: 3px; }
-.okflag { display: block; font-size: 11px; color: var(--ok); margin-top: 3px; }
-.saving { opacity: .55; }
-.status { font-size: 12px; color: var(--muted); }
-.empty { padding: 28px; text-align: center; color: var(--muted); }
-.notes { font-size: 12px; color: var(--muted); line-height: 1.55; margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
-.count { font-size: 12px; color: var(--muted); align-self: center; white-space: nowrap; }
-@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+  --color-fg: #e5eeef; --color-fg-muted: #9aabb0; --color-bg: #11191c; --color-panel: #172226; --color-border-line: #2a3a3f;
+  --color-ok: #6fcf97; --color-ok-soft: #1c3427; --color-warn: #f0b264; --color-warn-soft: #3a2c17; --color-bad: #f0b264;
+  --color-accent: #3cc7c4; --color-accent-soft: #1d3b3c; --color-accent-mid: #2b7d7c;
+  --cds-chart-muted: #33464c; --cds-chart-axis: #4a5c62; --cds-chart-grid: #22323a; --cds-chart-status-critical: #f0b264;
+  --cds-surface-popover: #1d2a2f; --cds-border: #2a3a3f; --cds-shadow-popover: 0 6px 20px rgba(0, 0, 0, .45); --cds-text-secondary: #9aabb0;
+  color-scheme: dark; }
+body { background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); }
+#dash-root { max-width: 1320px; margin-inline: auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.gx b, .gx strong { font-weight: 600; }
+
+/* Pestaña «Seguimiento»: estilos acotados a #t-seg para no chocar con el tablero */
+#t-seg { display: flex; flex-direction: column; gap: 18px; font-size: 14px; }
+#t-seg .seg-intro { margin: 0; color: var(--muted); max-width: 72ch; line-height: 1.5; font-size: var(--cds-font-size-body); }
+#t-seg .top { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr); gap: 14px; }
+@media (max-width: 820px) { #t-seg .top { grid-template-columns: 1fr; } }
+#t-seg .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; min-width: 0; }
+#t-seg .lbl { font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+#t-seg .prog .big { font-family: var(--serif); font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; margin-top: 6px; }
+#t-seg .prog .big span { color: var(--muted); font-size: 1.3rem; }
+#t-seg .bar, .seg-bar { height: 10px; background: var(--accent-soft); border-radius: 99px; overflow: hidden; margin: 12px 0 6px; }
+#t-seg .bar i, .seg-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; width: 0; transition: width .4s ease; }
+#t-seg .prog .sub { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+#t-seg .tipos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { #t-seg .tipos { grid-template-columns: 1fr; } }
+#t-seg .tipo { border-radius: var(--r); padding: 12px 14px; background: var(--bg); display: flex; flex-direction: column; gap: 4px; cursor: pointer; border: 1px solid transparent; font: inherit; text-align: left; color: inherit; }
+#t-seg .tipo[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+#t-seg .tipo:focus-visible, #t-seg button:focus-visible, #t-seg select:focus-visible, #t-seg input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#t-seg .tipo .n { font-family: var(--serif); font-size: 1.8rem; line-height: 1.05; font-variant-numeric: tabular-nums; }
+#t-seg .tipo .n small { font-family: var(--sans); font-size: 13px; color: var(--muted); margin-left: 4px; }
+#t-seg .tipo .rule { font-size: 12px; font-weight: 600; color: var(--accent); }
+#t-seg .tipo .rule.pend { color: var(--warn); }
+#t-seg .tipo .av { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+#t-seg .sucs { display: flex; flex-wrap: wrap; gap: 8px; }
+#t-seg .suc { font: inherit; display: flex; flex-direction: column; gap: 2px; min-width: 9.5rem; flex: 1 1 9.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 12px; cursor: pointer; text-align: left; color: inherit; }
+#t-seg .suc[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+#t-seg .suc .nm { font-weight: 600; font-size: 13px; }
+#t-seg .suc .ct { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+#t-seg .suc .mini { height: 4px; background: var(--accent-soft); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+#t-seg .suc .mini i { display: block; height: 100%; background: var(--accent); width: 0; }
+#t-seg .h2 { font-size: 15px; font-weight: 600; margin: 0 0 8px; }
+#t-seg .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+#t-seg .filters label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); flex: 1 1 10rem; min-width: 0; }
+#t-seg .filters label.grow { flex: 2 1 16rem; }
+#t-seg select, #t-seg input[type=search], #t-seg input[type=text], #t-seg input[type=number] { font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; width: 100%; box-sizing: border-box; }
+#t-seg .btn { font: inherit; font-size: 13px; background: none; border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; color: var(--fg); cursor: pointer; }
+#t-seg .tablebox { overflow: auto; max-height: 70vh; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+#t-seg table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; }
+#t-seg th { position: sticky; top: 0; z-index: 1; background: var(--panel); text-align: left; font-weight: 600; font-size: 12px; color: var(--muted); padding: 10px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+#t-seg td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+#t-seg tr.done td { background: color-mix(in srgb, var(--ok-soft) 55%, transparent); }
+#t-seg .nm b { display: block; font-weight: 600; }
+#t-seg .nm span { color: var(--muted); font-size: 12px; }
+#t-seg .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#t-seg .pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); white-space: nowrap; }
+#t-seg .pill.Mixta { background: var(--accent-soft); border-color: transparent; }
+#t-seg .pill.Nocturna { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+#t-seg .meta { font-weight: 600; }
+#t-seg .meta.pend { color: var(--warn); font-weight: 500; font-size: 12px; }
+#t-seg .hor { font-size: 12px; color: var(--muted); max-width: 15rem; }
+#t-seg td input[type=text] { min-width: 9rem; }
+#t-seg td input.wide { min-width: 13rem; }
+#t-seg td input[type=number] { width: 5.2rem; text-align: right; }
+#t-seg .chk { display: flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; }
+#t-seg .chk input { width: 18px; height: 18px; accent-color: var(--ok); }
+#t-seg .flag { display: block; font-size: 11px; color: var(--warn); margin-top: 3px; }
+#t-seg .okflag { display: block; font-size: 11px; color: var(--ok); margin-top: 3px; }
+#t-seg .saving { opacity: .55; }
+#t-seg .status { font-size: 12px; color: var(--muted); margin: 0; }
+#t-seg .empty { padding: 28px; text-align: center; color: var(--muted); }
+#t-seg .notes { font-size: 12px; color: var(--muted); line-height: 1.55; margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
+#t-seg .count { font-size: 12px; color: var(--muted); align-self: center; white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { #t-seg .bar i, .seg-bar i { transition: none; } }
+
+/* Tarjeta de avance en el Resumen */
+.seg-avance { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--cds-gap-sm) var(--cds-gap-lg); align-items: center; }
+.seg-avance .big { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.seg-avance .big small { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); color: var(--color-fg-muted); }
+.seg-avance .seg-bar { margin: .4rem 0 .2rem; }
+.seg-avance .sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.seg-avance .sub b { color: var(--color-fg); font-weight: 600; }
+@media (max-width: 560px) { .seg-avance { grid-template-columns: 1fr; } }
+.gx-btn-acc { font: inherit; font-size: var(--cds-font-size-caption); font-weight: 600; background: var(--gx-accent); color: var(--color-bg); border: none; border-radius: var(--cds-radius); padding: .5rem .9rem; cursor: pointer; white-space: nowrap; }
+.gx-btn-acc:focus-visible, button.gx-link:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+button.gx-link { background: none; border: none; padding: 0; font-family: inherit; cursor: pointer; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+(function(){
+  const raw = { plantilla: "nombre,puesto,division,ubicacion,tipo_jornada,horas_reales,horas_contrato,dias,captura\nMejia Romero Michelle,Lider de Acton Academy,Nuevos Negocios,Nuevos Negocios,Diurna,40.0,48.0,5,Capturado\nMantecon Siordia Raul Eduardo,Lider de Seven Nutrition,Nuevos Negocios,Nuevos Negocios,Diurna,40.0,48.0,5,Capturado\nMartinez Infante Hector Alonso,Lider de White mouse,Nuevos Negocios,Nuevos Negocios,Diurna,40.0,48.0,5,Capturado\nMartinez Martinez Berenice,Gerente de Sucursal,EASY FIT,La Estancia,Diurna,40.0,48.0,5,Capturado\nSantana Hernandez Francisco Joel,Gerente de Sucursal,EASY FIT,Iteso,Diurna,40.0,48.0,5,Capturado\nRebollar Luna Irma Leticia,Gerente de Sucursal,EASY FIT,Aleira,Diurna,40.0,48.0,5,Capturado\nOrozco Aceves Erika Mercedes,Gerente de Sucursal,EASY FIT,Cañadas,Diurna,40.0,48.0,5,Capturado\nOrozco Mora Liliana,Guide Acton Academy,Nuevos Negocios,Nuevos Negocios,Diurna,40.0,48.0,5,Capturado\nSotelo Delgadillo Alberto Ivan,Gerente de Sucursal,EASY FIT,Ávila Camacho,Diurna,40.0,48.0,5,Capturado\nVillarreal Damy Patricio,Lider de Nuevos negovios,Nuevos Negocios,Nuevos Negocios,Diurna,48.0,48.0,6,Capturado\nOrtega Cardenas Marcela Arianeth,R.P.,EASY FIT,La Estancia,Diurna,45.0,48.0,6,Capturado\nMantecon Siordia Carlos Fernando,Lider de Seven,Nuevos Negocios,Nuevos Negocios,Diurna,40.0,48.0,5,Capturado\nCalderon Lomeli Eduardo,Guia,EASY FIT,La Estancia,Mixta,46.5,48.0,6,Capturado\nPerez Luna Cristina Alejandra,Coordinador de Turno,EASY FIT,Aleira,Mixta,47.0,48.0,6,Capturado\nSandoval Garcia Sonia Berenice,Técnico de Orden y Limpieza,EASY FIT,Ávila Camacho,Diurna,47.5,48.0,6,Capturado\nCerda Gutierrez Barbara Elizabeth,Coordinador de Turno,EASY FIT,Cañadas,Mixta,47.0,48.0,6,Capturado\nBedoy Ruiz Andrea Viridiana,Capitan de Limpieza,VIVO 47,Gourmeteria,Mixta,48.0,48.0,6,Capturado\nCarrillo Burciaga Olivia,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nCortes Ponce Armando,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nCruz Acosta Leticia,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Diurna,48.0,48.0,6,Capturado\nDueñas Jimenez Alicia,Cajero,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nEsparza Velazquez Rosa Elizabeth,Auxiliar Administrativo,VIVO 47,Naciones,Diurna,45.0,48.0,6,Capturado\nGarcia Arana Miguel Angel,Concierge,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nGarcia Melendez Rangel,Coach Tutorial,VIVO 47,Valle Real,Mixta,30.0,24.0,5,Capturado\nHernandez Hernandez Manuel,Tecnico en Mantenimiento,VIVO 47,Naciones,Nocturna,35.0,48.0,5,Capturado\nHurtado Olivares Catalina,Recepcion,VIVO 47,Naciones,Mixta,47.0,48.0,6,Capturado\nLuna Guitron Edgar,Ejecutivo de Membresia,VIVO 47,Naciones,Diurna,47.0,48.0,6,Capturado\nMares Virgen Cristian Paul,Coach Tutorial,VIVO 47,Naciones,Diurna,46.0,24.0,4,Capturado\nPulido Ortiz Mario Alberto,Coach FT 47,VIVO 47,Naciones,Diurna,24.0,20.0,5,Capturado\nRodriguez Hernandez Nelly,Maestra kids,VIVO 47,Naciones,Mixta,37.5,37.5,6,Capturado\nRodriguez Sandoval Francisco Jesús,Tecnico en Mantenimiento,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nToscano Arce Julieta,Coach de Mobility,VIVO 47,Naciones,Mixta,40.0,48.0,6,Capturado\nValencia Gonzalez Jonathan Misael,Coach Tutorial,VIVO 47,Valle Real,Diurna,20.0,24.0,5,Capturado\nLope Ayala Leticia del Rosario,Técnico de Orden y Limpieza,EASY FIT,Aleira,Diurna,47.5,48.0,6,Capturado\nRosas Gonzalez Salvador Vidal,Coordinador de Turno,EASY FIT,Iteso,Mixta,47.0,48.0,6,Capturado\nBarrios Arteaga Vitalina,Técnico de Orden y Limpieza,EASY FIT,Iteso,Mixta,47.5,48.0,6,Capturado\nHernandez Rivera Maria Nanci,Capitan de Orden y Limpieza,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nSandoval Monrreal Alfredo,Coach Tutorial,VIVO 47,Naciones,Mixta,45.0,24.0,6,Capturado\nDe Anda Lopez Antonio,Técnico de Orden y Limpieza,EASY FIT,Ávila Camacho,Mixta,47.5,48.0,6,Capturado\nDinero Garcia Jesus Alicia,Capitan de Limpieza,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nBañales Tovar Erika Monserrat,Maestra de Ludoteca,VIVO 47,Valle Real,Diurna,33.5,33.5,6,Capturado\nLopez Gonzalez Maria Dolores,Instructor de Acuática,VIVO 47,Naciones,Mixta,30.0,30.0,5,Capturado\nRamos Orozco Candida,Capitan de Limpieza,VIVO 47,Gourmeteria,Mixta,46.0,48.0,6,Capturado\nCruz Montaño Monica,Técnico de Orden y Limpieza,EASY FIT,Cañadas,Diurna,48.0,48.0,6,Capturado\nMillan Valdivia Gabriel,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nCaldera Garcia Gonzalo,Coach Tutorial,VIVO 47,Valle Real,Mixta,30.0,24.0,5,Capturado\nAguayo Lopez Bianca Araceli,Auxiliar de Nóminas,Oficina de Soporte,GEBienestar,Diurna,40.0,48.0,5,Capturado\nBerlanga Galvez Juan Pablo,Coach Deportivo,VIVO 47,Gourmeteria,Diurna,40.0,40.0,5,Capturado\nLopez Velasco Antonio de Jesus,Técnico de Orden y Limpieza,EASY FIT,La Estancia,Diurna,47.0,48.0,6,Capturado\nVillalobos Villela Katia Alejandra,Maestra kids,VIVO 47,Naciones,Diurna,30.0,37.5,5,Capturado\nBadillo Nuñez Roberto Rodolfo,R.P.,EASY FIT,La Estancia,Mixta,46.5,48.0,6,Capturado\nAcuña Robledo Andrea,Técnico de Orden y Limpieza,EASY FIT,Ávila Camacho,Mixta,47.5,48.0,6,Capturado\nTalavera Ortiz Maria Teresa,Técnico de Orden y Limpieza,EASY FIT,Ávila Camacho,Mixta,47.5,48.0,6,Capturado\nMejia Ruiz Virginia Florencia,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nCalderon Garza Emma Liyana,Maestra de Ludoteca,VIVO 47,Gourmeteria,Mixta,37.0,37.0,6,Capturado\nMata Arellano Cesar Gerardo,Coach Tutorial,VIVO 47,Valle Real,Mixta,40.0,24.0,5,Capturado\nReyes Ornelas Diego Andres,Asesor deportivo,EASY FIT,Aleira,Diurna,42.5,40.0,6,Capturado\nVera Lopez Julio Cesar,ATP,EASY FIT,Iteso,Sin captura,0.0,24.0,0,Pendiente\nFlores Duarte Karla Beatriz,Coordinador de Turno,EASY FIT,Aleira,Mixta,47.0,48.0,6,Capturado\nRamos Cardenas Nidia Lizzette,Técnico de Orden y Limpieza,EASY FIT,Ávila Camacho,Diurna,47.5,48.0,6,Capturado\nHernandez Muños Jose Emmanuel,Coach Deportivo,VIVO 47,Valle Real,Diurna,40.0,40.0,6,Capturado\nLozano Mendez Juan Antonio,Nutriologo,VIVO 47,Valle Real,Mixta,41.0,40.0,6,Capturado\nSalgado Jaramillo Maria Esther,Maestra de Ludoteca,VIVO 47,Valle Real,Diurna,32.5,32.5,5,Capturado\nAzamar Olivares Luis Arturo,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nLuna Guitron Miriam Mayeli,Concierge,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nPerez Arodys Fernando,ATP,EASY FIT,La Estancia,Sin captura,0.0,48.0,0,Pendiente\nGuzman Martinez Claudia Alejandra,Recepcion,VIVO 47,Gourmeteria,Mixta,46.0,48.0,6,Capturado\nGoyas Ruano Rosa Maria,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nJimenez Rivera Rosalba,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Diurna,48.0,48.0,6,Capturado\nArce Cota Saul Javier,Coach Deportivo,VIVO 47,Gourmeteria,Mixta,32.0,40.0,4,Capturado\nTellez Villalba Ingrid Itzel,Capitan de Orden y Limpieza,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nRodriguez Salcido Alfredo de Jesus,Asesor deportivo,EASY FIT,Iteso,Diurna,40.0,40.0,5,Capturado\nPosadas Gonzalez Viridiana,Maestra de Ludoteca,VIVO 47,Valle Real,Diurna,30.0,30.0,6,Capturado\nDe la Cruz Gutierrez Evelin Rubi,Maestra de Ludoteca,VIVO 47,Gourmeteria,Diurna,37.0,40.0,6,Capturado\nGrajeda Aguayo Silvia Isabel,Gerente en turno,VIVO 47,Naciones,Mixta,45.0,48.0,6,Capturado\nSanchez Salazar Ileana Nereida,Nutriologo,VIVO 47,Valle Real,Diurna,40.0,40.0,6,Capturado\nFong Siordia Carlos Emmanuel,Concierge,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nMontes Calixto Leticia,Nutriologo,VIVO 47,Gourmeteria,Diurna,40.0,40.0,6,Capturado\nVillegas Velazquez Paulo,Coach Deportivo,VIVO 47,Valle Real,Mixta,48.0,40.0,6,Capturado\nGonzalez Castañeda Francisco Javier,Asesor deportivo,EASY FIT,Aleira,Mixta,32.5,30.0,6,Capturado\nMelendez Mendoza Alejandra,Técnico de Orden y Limpieza,EASY FIT,Cañadas,Mixta,47.5,48.0,6,Capturado\nLeal Ruiz Ricardo,Asesor deportivo,EASY FIT,La Estancia,Mixta,40.0,40.0,5,Capturado\nNovas Piedra Luis Antonio,Coach Deportivo,VIVO 47,Valle Real,Mixta,40.0,40.0,5,Capturado\nMedina Plascencia Mario,Tecnico en Mantenimiento,VIVO 47,Naciones,Nocturna,14.0,48.0,2,Capturado\nEcheverria Camacho Janeth Guadalupe,Nutriologo,VIVO 47,Naciones,Mixta,41.0,40.0,6,Capturado\nGarcia Lara Priscila Gabriela,Coach Deportivo,VIVO 47,Naciones,Mixta,45.0,40.0,6,Capturado\nLuna Gutierrez Perla Del Carmen,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,42.0,48.0,6,Capturado\nLedezma Politrom Jose Antonio,Coach Deportivo,VIVO 47,Gourmeteria,Diurna,30.0,40.0,6,Capturado\nCorona Miranda Jesus Alejandro,Asesor deportivo,EASY FIT,Ávila Camacho,Nocturna,56.0,30.0,6,Capturado\nTorres Campos Veronica,Técnico de Orden y Limpieza,EASY FIT,Iteso,Diurna,48.0,48.0,6,Capturado\nPalacios Lopez Alma Livier,Asesor deportivo,EASY FIT,Ávila Camacho,Diurna,48.0,40.0,6,Capturado\nLara Vaca Luis Armando,Coach Deportivo,VIVO 47,Valle Real,Mixta,41.0,40.0,6,Capturado\nRojas Juarez Jessica Marlene,Coach Deportivo,VIVO 47,Valle Real,Diurna,35.0,40.0,5,Capturado\nArechiga Alvarez Carlos Alberto,Coach Deportivo,VIVO 47,Gourmeteria,Diurna,5.0,40.0,1,Capturado\nAldrete Diaz Jeronimo de Jesus,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nGonzalez Franco Sergio Manuel Olimpio,Ejecutivo de Membresia,VIVO 47,Valle Real,Diurna,36.0,48.0,6,Capturado\nOlague Flores Ana,Técnico de Orden y Limpieza,EASY FIT,La Estancia,Mixta,30.0,30.0,5,Capturado\nSolis Cisneros Alan Ismael,Coach Deportivo,VIVO 47,Valle Real,Mixta,46.0,40.0,6,Capturado\nHernandez Sauceda Victor,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Diurna,42.0,48.0,6,Capturado\nHernandez Medina Jose Alberto,Asesor deportivo,EASY FIT,Iteso,Mixta,40.0,40.0,5,Capturado\nMedina Hernandez Cesar Abraham,Barista,Nuevos Negocios,Nuevos Negocios,Diurna,48.0,48.0,6,Capturado\nVillalva Huerta Paola Marisol,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nMurguia Campos Jennifer Vanessa,Coach de Estiramiento,VIVO 47,Valle Real,Mixta,40.0,40.0,6,Capturado\nRivera Rodriguez Abel,Guia,EASY FIT,La Estancia,Mixta,45.5,48.0,6,Capturado\nFigueroa Gutierrez Adan Alejandro,Coach Deportivo,VIVO 47,Valle Real,Diurna,41.0,40.0,6,Capturado\nSolis Mejia Alicia Karina,Maestra kids,VIVO 47,Naciones,Diurna,30.0,30.0,6,Capturado\nClemente Alvarado Fernando,Instructor de Acuática,VIVO 47,Naciones,Diurna,30.0,30.0,5,Capturado\nSaucedo Cortes Omar,Tecnico en Mantenimiento,VIVO 47,Gourmeteria,Diurna,46.0,48.0,6,Capturado\nLara Medel Guillermo,Asesor deportivo,EASY FIT,Iteso,Diurna,30.0,30.0,6,Capturado\nGuzman Rodriguez Raymundo Josue,Asesor deportivo,EASY FIT,Ávila Camacho,Mixta,30.0,30.0,5,Capturado\nMorales De Lira Lizbeth Anahi,Lider de Servicio,EASY FIT,Ávila Camacho,Mixta,47.0,48.0,6,Capturado\nRojas Espinoza Tania Veronica,Nutriologo,VIVO 47,Naciones,Diurna,40.0,40.0,6,Capturado\nOrnelas Araiza Sarahi,Instructor de Acuática,VIVO 47,Naciones,Diurna,30.0,30.0,6,Capturado\nLio Gonzalez Gloria Yadhira,Recepcion,VIVO 47,Naciones,Mixta,40.0,48.0,5,Capturado\nRodriguez Avalos Oscar Sinuhe,Instructor de Acuática,VIVO 47,Naciones,Mixta,30.0,30.0,5,Capturado\nGonzalez Barrera Delia Catalina,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nMarban Salcedo Gisela Guadalupe,Ejecutivo de Membresia,VIVO 47,Naciones,Mixta,45.0,48.0,6,Capturado\nSalazar Delgadillo Jose,Concierge,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nSalazar Garcia Ana Cecilia,Coach de Estiramiento,VIVO 47,Gourmeteria,Diurna,40.0,40.0,6,Capturado\nVazquez Lopez Paola Nicole,Recepcion,VIVO 47,Valle Real,Mixta,46.0,48.0,6,Capturado\nResendiz Gonzalez Abril,Maestra de Ludoteca,VIVO 47,Valle Real,Diurna,31.0,31.0,6,Capturado\nLopez Valdes Luz Kerena,Instructor de Acuática,VIVO 47,Naciones,Diurna,30.0,30.0,5,Capturado\nHernandez Can Icaro Cuauhtemoc,Tecnico en Mantenimiento,VIVO 47,Naciones,Mixta,47.0,48.0,6,Capturado\nCamarillo Baeza Belen Montserrat,Cajero,VIVO 47,Valle Real,Diurna,46.0,48.0,6,Capturado\nPeña Sierra Erick Samuel,Coach de Mobility,VIVO 47,Naciones,Diurna,40.0,40.0,6,Capturado\nSilva Aguiñaga Edith Guadalupe,Lider de Servicio,EASY FIT,Iteso,Mixta,47.0,48.0,6,Capturado\nLomeli Cruz Jose Manuel,Coach Deportivo,VIVO 47,Valle Real,Mixta,40.0,40.0,5,Capturado\nSerrano Davalos Axeel Sair,Lider de Servicio,EASY FIT,Aleira,Mixta,47.0,48.0,6,Capturado\nSalcedo Perez Israel Atlai,Coach Deportivo,VIVO 47,Valle Real,Diurna,42.0,40.0,6,Capturado\nMancilla Hernandez Anali,Maestra kids,VIVO 47,Naciones,Mixta,30.0,30.0,6,Capturado\nValerio Alvarez Diana Guadalupe,Coordinador de Turno,EASY FIT,Iteso,Mixta,47.0,48.0,6,Capturado\nMaldonado Calderon Jennifer Valeria,Coach Deportivo,VIVO 47,Naciones,Mixta,40.0,40.0,6,Capturado\nReal Romero Jorge Alberto,Técnico de Orden y Limpieza,EASY FIT,Cañadas,Mixta,47.5,48.0,6,Capturado\nAltiery Mahel Marc,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nOrozco Mateo Andrea Lizeth,Maestra kids,VIVO 47,Naciones,Diurna,30.0,30.0,6,Capturado\nRios Covarrubias Angel Isaac,Coach de Mobility,VIVO 47,Gourmeteria,Diurna,40.0,40.0,6,Capturado\nPerez Gonzalez Karla Sofia,Coach de Estiramiento,VIVO 47,Naciones,Mixta,40.0,40.0,6,Capturado\nGarcia Silva Eduardo Samuel,Coach de Estiramiento,VIVO 47,Valle Real,Diurna,39.0,36.0,6,Capturado\nCordero Rivera Ana Karla,Lider de Servicio,EASY FIT,Cañadas,Mixta,47.0,48.0,6,Capturado\nGuzman Lopez Grecia Cassandra,Auxiliar Administrativo Acuatica,VIVO 47,Naciones,Mixta,40.0,48.0,5,Capturado\nSantana Sandoval Ana,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nGonzalez Sevilla Israel Avimelec,Coach Deportivo,VIVO 47,Gourmeteria,Mixta,40.0,40.0,6,Capturado\nPerez Medina Karen Montserrat,Maestra de Ludoteca,VIVO 47,Gourmeteria,Diurna,39.5,40.0,6,Capturado\nSandoval Gutierrez Kevin Eli,Coach Deportivo,VIVO 47,Naciones,Diurna,40.0,40.0,6,Capturado\nOrozco Curiel Victor Axel,Asesor deportivo,EASY FIT,Cañadas,Mixta,40.0,40.0,6,Capturado\nAlaniz Aguilar Aldo,Instructor de Acuática,VIVO 47,Naciones,Diurna,31.0,30.0,6,Capturado\nOrtiz Perez David,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nLopez Gonzalez Jose Alejandro,Coach de Mobility,VIVO 47,Naciones,Mixta,39.5,40.0,6,Capturado\nGamiño Mata Marco Antonio,Coach Deportivo,VIVO 47,Naciones,Mixta,40.0,40.0,6,Capturado\nFlores Palos Paloma Berenice,Lider de Servicio,EASY FIT,Cañadas,Mixta,47.0,48.0,6,Capturado\nSalas Peregrina Karen Cecilia,Líder de Comunicación Interna y Endomarketing,Oficina de Soporte,GEBienestar,Diurna,25.0,20.0,5,Capturado\nDiaz Castellanos Barbara Selene,Coordinador de Turno,EASY FIT,Cañadas,Mixta,47.0,48.0,6,Capturado\nZuñiga Cano Oscar Benjamin,Coordinador de Turno,EASY FIT,Ávila Camacho,Mixta,47.0,48.0,6,Capturado\nPerea Carrillo America Polette,Cajero,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nMonjaras Sanchez Jonathan Omar,Coach Deportivo,VIVO 47,Gourmeteria,Mixta,40.0,40.0,6,Capturado\nTrillo Godoy Jose de Jesus,Coach de Mobility,VIVO 47,Valle Real,Mixta,40.0,40.0,6,Capturado\nEsqueda Gonzalez Gustavo Noe,Ejecutivo de Membresia,VIVO 47,Valle Real,Diurna,48.0,48.0,6,Capturado\nMoreno Llamas Raul Alejandro,Coach de Estiramiento,VIVO 47,Gourmeteria,Diurna,27.0,27.0,6,Capturado\nSalamanca Abarca Erick Salvador,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mixta,48.0,48.0,6,Capturado\nZarate Aceves Gustavo Damian,Tecnico en Mantenimiento,VIVO 47,Valle Real,Diurna,45.0,48.0,6,Capturado\nJimenez Raya Ramses,Coach de Estiramiento,VIVO 47,Valle Real,Diurna,27.0,27.0,6,Capturado\nDe Alba Valencia Blanca Sarahi,Auxiliar de Compras,Oficina de Soporte,GEBienestar,Diurna,40.0,48.0,5,Capturado\nVazquez Hernandez Jesus Alberto,Coach de Estiramiento,VIVO 47,Naciones,Diurna,27.0,27.0,6,Capturado\nNavarro Aceves Ana Mayra Elizabeth,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Diurna,42.0,48.0,6,Capturado\nGonzalez Soto Jorge Enrique,Concierge,VIVO 47,Gourmeteria,Diurna,48.0,48.0,6,Capturado\nLopez Reyes Celis Carolina,Nutriologo,VIVO 47,Gourmeteria,Mixta,40.0,40.0,6,Capturado\nCortes Perez Moises Azael,Coach Deportivo,VIVO 47,Gourmeteria,Mixta,46.0,40.0,6,Capturado\nAlcala Muro Santiago,Coach de Mobility,VIVO 47,Valle Real,Mixta,40.0,40.0,6,Capturado\nSantolaya Guerrero Regina,Coach de Estiramiento,VIVO 47,Gourmeteria,Diurna,27.0,27.0,6,Capturado\nContreras Castillo Kimberly,Coach de Estiramiento,VIVO 47,Gourmeteria,Diurna,27.0,27.0,6,Capturado\nSalazar Hernandez Maria del Rosario,Recepcion,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nVelazquez Almanza Moises Aaron,Tecnico en Mantenimiento,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nMendoza Vejar Alejandra,Ejecutivo de Membresia,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nMora Silva Gerardo Refugio,Coordinador de Turno,EASY FIT,Ávila Camacho,Mixta,47.0,48.0,6,Capturado\nVelazquez Jimenez Maria Fernanda,Coach de Estiramiento,VIVO 47,Valle Real,Mixta,27.0,27.0,5,Capturado\nMiranda Silva Valeria Dulce Fabiola,Concierge,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nGarcia Navarro Luis Alejandro,Técnico de Orden y Limpieza,EASY FIT,Iteso,Mixta,47.5,48.0,6,Capturado\nSanchez Alamos David Alejandro,Capitan de Limpieza,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nLeal Plazola Hilda Guadalupe,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nJimenez Magdaleno Alejandra,Ejecutivo de Membresia,VIVO 47,Gourmeteria,Mixta,48.0,48.0,6,Capturado\nCorona Becerra Lizbeth,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mixta,46.0,48.0,6,Capturado\nGomez de Anda Alberto,Coach de Estiramiento,VIVO 47,Naciones,Mixta,27.0,27.0,6,Capturado\nGarcia Delgado Daniel,Concierge,VIVO 47,Gourmeteria,Mixta,46.0,48.0,6,Capturado\nOrozco Sandoval Maria del Carmen,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Mixta,48.0,48.0,6,Capturado\nMartinez Arellano Oscar,Técnico de Orden y Limpieza,EASY FIT,Ávila Camacho,Diurna,47.5,48.0,6,Capturado\nIbarra Hernandez Oscar Eduardo,Coach Funcional,VIVO 47,Naciones,Mixta,42.0,40.0,6,Capturado\nHernandez Rosales Samantha,Instructor de Acuática,VIVO 47,Naciones,Diurna,25.0,30.0,6,Capturado\nOrozco Andrade Luis Carlos,Instructor de Acuática,VIVO 47,Naciones,Diurna,25.0,30.0,6,Capturado\nVizcaino Cortes Mariana Leticia,Instructor de Acuática,VIVO 47,Naciones,Diurna,30.0,30.0,5,Capturado\nRamirez Devora Diego Alonso,Coach Deportivo,VIVO 47,Naciones,Mixta,40.0,40.0,6,Capturado\nNavarro Jimenez Jose Luis,Coach Deportivo,VIVO 47,Valle Real,Diurna,40.0,40.0,6,Capturado\nBravo Navarro Citlalith Jeanette,Coach de Estiramiento,VIVO 47,Valle Real,Diurna,27.0,27.0,6,Capturado\nBravo Hernandez Christian Brandon,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mixta,48.0,48.0,6,Capturado\nCabrera Siordia Christopher,Mensajero,Oficina de Soporte,GEBienestar,Diurna,30.0,48.0,5,Capturado\nAlamos Garcia saul Alonso,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nGonzalez Boruel Natalia,Coach de Estiramiento,VIVO 47,Valle Real,Diurna,27.0,27.0,6,Capturado\nMontes Rodriguez Luis Gerardo,Coach de Mobility,EASY FIT,La Estancia,Mixta,40.0,40.0,6,Capturado\nZamora Ramirez Jose Tonatiuh,Coach Deportivo,VIVO 47,Naciones,Mixta,40.0,40.0,6,Capturado\nGuzman Soto Alejandra,Auxiliar de Kids,EASY FIT,Cañadas,Diurna,30.0,30.0,6,Capturado\nLopez Dueñas Byron,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,48.0,48.0,6,Capturado\nOrnelas Cerda Erika Osmin,Cajero,VIVO 47,Naciones,Mixta,47.0,48.0,6,Capturado\nGallegos Alvarez Carlos Jahir,Coach de Estiramiento,VIVO 47,Valle Real,Mixta,22.5,27.0,5,Capturado\nOrtiz Vazquez Jaime Alejandro,Barista,Nuevos Negocios,Nuevos Negocios,Diurna,48.0,48.0,6,Capturado\nMartinez Lopez Edder,Coach Deportivo,VIVO 47,Naciones,Diurna,42.0,40.0,6,Capturado\nAguilera Diaz Sarai Alejandra,Nutriologo,EASY FIT,Cañadas,Mixta,30.0,30.0,5,Capturado\nLedon Gomez Bernardo,Asesor deportivo,EASY FIT,Cañadas,Diurna,40.0,40.0,6,Capturado\nMartinez Mendoza Alfredo Yael,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nSanchez Becerra Daniela Elizabeth,Fisioterapia,Nuevos Negocios,Nuevos Negocios,Diurna,36.0,36.0,6,Capturado\nRosas Gutierrez Getzamany Monserrat,Fisioterapia,Nuevos Negocios,Nuevos Negocios,Diurna,36.0,36.0,6,Capturado\nEstrada Miramontes Regina Isabel,Fisioterapia,Nuevos Negocios,Nuevos Negocios,Mixta,36.0,36.0,6,Capturado\nCarlos Silva Francisco Zabdiel,Ejecutivo de Membresia,VIVO 47,Gourmeteria,Mixta,48.0,48.0,6,Capturado\nMonroy Cervantes Karen Paulina,Asesor deportivo,EASY FIT,La Estancia,Mixta,40.0,40.0,6,Capturado\nMeza Ramirez Priscila,Auxiliar Contable,Oficina de Soporte,GEBienestar,Diurna,40.0,48.0,5,Capturado\nFranco Remigio Luis Eduardo,Cocinero,Nuevos Negocios,Nuevos Negocios,Diurna,48.0,48.0,6,Capturado\nSoto Rivera Rosa Linda,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mixta,48.0,48.0,6,Capturado\nLucio Espoinoza Ana Beatriz,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,46.0,48.0,6,Capturado\nHuerta Garcia Juan Fernando,Coach Funcional,EASY FIT,La Estancia,Mixta,40.0,40.0,6,Capturado\nVazquez Vazquez Lisset Nayeli,Asesor deportivo,EASY FIT,La Estancia,Mixta,40.0,40.0,6,Capturado\nDiaz Requena Guillermo de Jesus,Coach de Estiramiento,VIVO 47,Gourmeteria,Diurna,26.5,27.0,6,Capturado\nPerez Delgado Brian joshue,Técnico de Orden y Limpieza,VIVO 47,Naciones,Diurna,46.0,48.0,6,Capturado\nJuarez Martinez Christopher Tadeo,Coach de Estiramiento,VIVO 47,Naciones,Diurna,29.5,27.0,6,Capturado\nValerio Villagran Imelda,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mixta,48.0,48.0,6,Capturado\nMacias Rodriguez Carlos Fernando,Coach Mobility,EASY FIT,La Estancia,Mixta,40.0,40.0,6,Capturado\nHernandez Escobedo Hannah Pamela,Recepcion,Nuevos Negocios,Nuevos Negocios,Mixta,41.0,38.0,6,Capturado\nHinojosa Perez Jesus Eduardo,Auxiliar de Sistemas,Oficina de Soporte,GEBienestar,Diurna,40.0,48.0,6,Capturado\nHernandez Rodriguez Yadira Nicole,Reclutador,Oficina de Soporte,GEBienestar,Diurna,20.0,20.0,5,Capturado\nZavala Ortega David,Auxiliar de Sistemas,Oficina de Soporte,GEBienestar,Diurna,40.0,48.0,6,Capturado\nPinedo Nuño Alejandro,Tecnico en Mantenimiento,EASY FIT,Ávila Camacho,Diurna,47.5,48.0,6,Capturado\nCarrion Soto Ulises Santiago,Comunity/ Callcenter,Oficina de Soporte,GEBienestar,Diurna,30.0,30.0,5,Capturado\nBarragan Rivas Maria Jose,Comunity/ Callcenter,Oficina de Soporte,GEBienestar,Diurna,40.0,30.0,5,Capturado\nRobles Toala Hayli Gabriela,Diseñador Gráfico,Oficina de Soporte,GEBienestar,Diurna,40.0,48.0,5,Capturado\nSandoval Velazquez Andrea,Coordinador Capital Humano,Oficina de Soporte,GEBienestar,Diurna,40.0,20.0,5,Capturado\nDe Rosas Marquez Maria Cristina,Reclutador,Oficina de Soporte,GEBienestar,Diurna,40.0,48.0,5,Capturado\nMadrigal Rodriguez Gael Isaac,Auxiliar de Capital Humano,Oficina de Soporte,GEBienestar,Diurna,45.0,48.0,5,Capturado\nGomez Avila Laura Alejandra,Auxiliar de Marketing,Oficina de Soporte,GEBienestar,Diurna,45.0,48.0,5,Capturado\nParra Torres Jose Antonio,Instructor de Clases de Salón,EASY FIT,Aleira,Sin captura,0.0,48.0,0,Pendiente\nVandick Cancino Graciela,Instructor de Clases de Salón,VIVO 47,Naciones,Sin captura,0.0,48.0,0,Pendiente\nBalbuena Caro Amelia,Instructor de Clases de Salón,VIVO 47,Naciones,Sin captura,0.0,48.0,0,Pendiente\nCarvajal Duarte Liliana Marcela,Instructor de Clases de Salón,VIVO 47,Gourmeteria,Sin captura,0.0,48.0,0,Pendiente\nCarvajal Barajas Rogelio,Instructor de Clases de Salón,VIVO 47,Naciones,Sin captura,0.0,48.0,0,Pendiente\nCrisanto Luna Yazmin Esmeralda,Instructor de Clases de Salón,EASY FIT,Iteso,Sin captura,0.0,48.0,0,Pendiente\nMontes Carrasco Jose Roberto,Instructor de Clases de Salón,EASY FIT,La Estancia,Sin captura,0.0,48.0,0,Pendiente\nVentura Montero Maria Teresa,Instructor de Clases de Salón,EASY FIT,Cañadas,Sin captura,0.0,48.0,0,Pendiente\nCadena Luna César Osvaldo,Lider de Hospitalidad y Experiencia,Nuevos Negocios,Nuevos Negocios,Diurna,48.0,,6,Capturado\nOrtiz Ovalle Rubi Isabel,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mixta,46.0,,6,Capturado\nCabrera Flores Otmar Octavio,Coach Deportivo,VIVO 47,Valle Real,Mixta,40.0,,6,Capturado\nRodríguez Espinoza Giovanni,Líder de Estrategía de contenido y marca,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nEscalante Núñez Axel Michel,Mesero,Nuevos Negocios,Nuevos Negocios,Diurna,48.0,,6,Capturado\nCuriel Guerra Carolina,Técnico de Orden y Limpieza,Nuevos Negocios,Nuevos Negocios,Diurna,46.25,,5,Capturado\nLara Hurtado Caroline Noemí,Coach Deportivo,VIVO 47,Naciones,Mixta,40.0,,6,Capturado\nPérez Baltazar Simon,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Diurna,46.0,,6,Capturado\nAlmanzor Olmos Evan Zuleth,Coach de Mobility,VIVO 47,Gourmeteria,Mixta,40.0,,6,Capturado\nGarcía Bernal Mauro Alberto,R.P.,EASY FIT,La Estancia,Mixta,45.0,,6,Capturado\nPuente Ríos Eric Francisco,Auditor Interno,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nMichel Rubio Mariajose,Líder de Proyecto,Oficina de Soporte,GEBienestar,Diurna,10.0,,5,Capturado\nRuvalcaba Palomera Maximus Gabriel,Coach Deportivo,VIVO 47,Gourmeteria,Mixta,40.0,,6,Capturado\nCardenas Castro Bertha Alejandra,Guia Acton Academy,Nuevos Negocios,Nuevos Negocios,Diurna,40.0,,5,Capturado\nUribe Adame Oscar Esteban,Coach de Estiramiento,VIVO 47,Gourmeteria,Mixta,27.0,,6,Capturado\nReyes Ramírez Yajaira Estefania,Coach de Estiramiento,VIVO 47,Gourmeteria,Mixta,27.0,,6,Capturado\nElizondo Olivares Isaac Israel,Coach Deportivo,VIVO 47,Naciones,Mixta,40.0,,6,Capturado\nAguilera Martínez Víctor Jesús,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mixta,48.0,,6,Capturado\nOchoa Pérez Abraham,Coach de Estiramiento,VIVO 47,Naciones,Diurna,27.0,,6,Capturado\nMeza Ramírez Gabriela,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mixta,48.0,,6,Capturado\nEspinoza Rivas María José,Coach Deportivo,VIVO 47,Naciones,Diurna,42.0,,6,Capturado\nMartínez Raitarski Mauricio,Contenido,Oficina de Soporte,Naciones,Diurna,40.0,,5,Capturado\nVillarreal Treviño Gerardo Roberto,Dirección General,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nRodríguez Arroyo Julia Elizabeth,Dirección de Capital Humano,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nVillanueva Aguilar Reyna Cecilia,Coordinador de Nomina,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nGonzalez Palazuelos Jose Hiram,Dirección Comercial,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nGoytia Acevedo Francisco Fernando,Coordinador Mantenimiento,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nPadilla Alvarez Linda Zoraida,Dirección Ejecutiva,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nOlvera Gonzalez Imelda Elizabeth,R.P.,VIVO 47,Gourmeteria,Diurna,44.5,,6,Capturado\nPeregrina Sierra Marco Antonio,Dirección de Estructura y Soporte,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nArmas Gutierrez Karen Anaid,Gerente de Club,VIVO 47,Gourmeteria,Diurna,40.0,,5,Capturado\nGarcia Lomeli Daniel,Headcoach Nutrición,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nMuñoz Gaeta Javier Eduardo,Coordinador de Backoffice,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nHernandez Aguayo Yadira Lizeth,Líder Deportivo,VIVO 47,Gourmeteria,Mixta,48.0,,6,Capturado\nBarba Durán Luis Ernesto,Gerente de Deportes,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nJimenez Rodríguez César Rubén,Coordinador de TG,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nGritti Medina Cristina Geraldine,Líder Deportivo,VIVO 47,Naciones,Mixta,47.0,,6,Capturado\nMora De Alba Hector Manuel,R.P.,VIVO 47,Naciones,Mixta,40.0,,5,Capturado\nAbundis Evangelista Julio Alberto,R.P.,VIVO 47,Naciones,Mixta,40.0,,5,Capturado\nRangel Sotelo Thalia Veronica,Gerente de Ventas Corporativas y Colegios,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nGutierrez Buendia Daniel,Coordinador de Marketing,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nGomez Aceves Gabino Nicolas,R.P.,VIVO 47,Valle Real,Diurna,40.0,,6,Capturado\nCarrasco García Dora Karina,Líder de Clases Grupales,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nDe la Torre Jauregui Oliver Adan,Dirección de Inteligencia de Negocios,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nLopez Garay Yesika Gabriela,R.P.,VIVO 47,Valle Real,Mixta,43.5,,6,Capturado\nSalcedo Castañeda Ángel,Líder Deportivo,VIVO 47,Valle Real,Mixta,46.0,,6,Capturado\nToro Gil Jessica Leonella,Analista de Reclutamiento,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nPadilla Cardenas Iván,Líder Deportivo,VIVO 47,Gourmeteria,Mixta,46.0,,6,Capturado\nQuezada Pedroza Joel Alfonso,Coordinador de Sistemas,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nPalma Gonzalez Elmer Omar Derek,Gerente de Mantenimiento y Rehabilitación,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nCaram Salinas Jóse Alejandro,Coordinador Universidad,Oficina de Soporte,GEBienestar,Diurna,45.0,,5,Capturado\nPeñaloza Vázquez Sergio,Líder Deportivo,VIVO 47,Naciones,Mixta,0.0,,5,Capturado\nDiaz Garcia David Alejandro,Gerente de Club,VIVO 47,Valle Real,Diurna,40.0,,5,Capturado\nAceituno Pinzón Carlos Enrique,Gerente Comercial,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nSanchez Lujano Andrea,Líder de Turno,VIVO 47,Valle Real,Diurna,46.0,,6,Capturado\nRodriguez Guzman Omar Salvador,Líder de Turno,VIVO 47,Gourmeteria,Diurna,46.0,,6,Capturado\nCameros Bobadilla Ilse Alejandra,Coordinador Universidad,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nAmezcua Esparza Abraham,Coordinador Acuática,VIVO 47,Naciones,Diurna,46.0,,6,Capturado\nOlmedo Galvan Lino Agustín,Líder Deportivo,VIVO 47,Valle Real,Mixta,46.0,,6,Capturado\nLamas Castellanos Ana Cecilia,Coordinador Universidad,Oficina de Soporte,GEBienestar,Diurna,40.0,,5,Capturado\nCarrillo Reyes Diana Marcela,R.P.,VIVO 47,Naciones,Diurna,45.0,,6,Capturado\nNavarro Villarreal Jorge Isaac,R.P.,VIVO 47,Gourmeteria,Mixta,48.0,,6,Capturado\nSánchez Arambul Daniel Sigifredo,R.P.,VIVO 47,Valle Real,Mixta,32.0,,4,Capturado\nAguayo Sanchez Julian,Gerente de Club,VIVO 47,Naciones,Diurna,40.0,,5,Capturado\nRichards Chavez Ricardo Ivan,Líder de Turno,VIVO 47,Valle Real,Mixta,46.0,,6,Capturado\nGarcia Rodriguez Francisco Javier,Coach Deportivo,VIVO 47,Naciones,Mixta,40.0,,6,Capturado\nVillaneda Johnston Oswaldo,Coach Deportivo,VIVO 47,Valle Real,Mixta,38.0,,6,Capturado\nArroyo Sanchez Isaac,Instructor de Acuática,VIVO 47,Naciones,Mixta,30.0,,6,Capturado\nAhumada Carmen María,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mixta,45.0,,6,Capturado\n", horarios: "nombre,puesto,ubicacion,tipo_jornada,horas_reales,lun,lun_h,mar,mar_h,mie,mie_h,jue,jue_h,vie,vie_h,sab,sab_h,dom,dom_h\nMejia Romero Michelle,Lider de Acton Academy,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nMantecon Siordia Raul Eduardo,Lider de Seven Nutrition,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nMartinez Infante Hector Alonso,Lider de White mouse,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nMartinez Martinez Berenice,Gerente de Sucursal,La Estancia,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nSantana Hernandez Francisco Joel,Gerente de Sucursal,Iteso,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nRebollar Luna Irma Leticia,Gerente de Sucursal,Aleira,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nOrozco Aceves Erika Mercedes,Gerente de Sucursal,Cañadas,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nOrozco Mora Liliana,Guide Acton Academy,Nuevos Negocios,Diurna,40.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,,0.0,,0.0\nSotelo Delgadillo Alberto Ivan,Gerente de Sucursal,Ávila Camacho,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nVillarreal Damy Patricio,Lider de Nuevos negovios,Nuevos Negocios,Diurna,48.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0\nOrtega Cardenas Marcela Arianeth,R.P.,La Estancia,Diurna,45.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,,0.0,09:00–14:00,5.0\nMantecon Siordia Carlos Fernando,Lider de Seven,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nCalderon Lomeli Eduardo,Guia,La Estancia,Mixta,46.5,05:00–14:00,8.0,05:00–14:00,8.0,05:00–14:00,8.0,05:00–14:00,8.0,05:00–14:00,8.0,10:00–17:00,6.5,,0.0\nPerez Luna Cristina Alejandra,Coordinador de Turno,Aleira,Mixta,47.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,07:30–15:00,7.0,,0.0\nSandoval Garcia Sonia Berenice,Técnico de Orden y Limpieza,Ávila Camacho,Diurna,47.5,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,07:30–15:00,7.5,,0.0\nCerda Gutierrez Barbara Elizabeth,Coordinador de Turno,Cañadas,Mixta,47.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,07:30–15:00,7.0,,0.0\nBedoy Ruiz Andrea Viridiana,Capitan de Limpieza,Gourmeteria,Mixta,48.0,04:30–12:30,8.0,04:30–12:30,8.0,04:30–12:30,8.0,04:30–12:30,8.0,04:30–12:30,8.0,07:00–15:00,8.0,,0.0\nCarrillo Burciaga Olivia,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nCortes Ponce Armando,Técnico de Orden y Limpieza,Naciones,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0\nCruz Acosta Leticia,Técnico de Orden y Limpieza,Gourmeteria,Diurna,48.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,,0.0\nDueñas Jimenez Alicia,Cajero,Naciones,Diurna,48.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,06:00–14:00,8.0,,0.0\nEsparza Velazquez Rosa Elizabeth,Auxiliar Administrativo,Naciones,Diurna,45.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,12:00–17:00,5.0,,0.0\nGarcia Arana Miguel Angel,Concierge,Naciones,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,06:00–14:00,8.0,,0.0\nGarcia Melendez Rangel,Coach Tutorial,Valle Real,Mixta,30.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,,0.0,,0.0\nHernandez Hernandez Manuel,Tecnico en Mantenimiento,Naciones,Nocturna,35.0,23:00–06:00,7.0,23:00–06:00,7.0,23:00–06:00,7.0,23:00–06:00,7.0,,0.0,,0.0,23:00–06:00,7.0\nHurtado Olivares Catalina,Recepcion,Naciones,Mixta,47.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,,0.0,08:00–15:00,7.0\nLuna Guitron Edgar,Ejecutivo de Membresia,Naciones,Diurna,47.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0,08:00–15:00,7.0\nMares Virgen Cristian Paul,Coach Tutorial,Naciones,Diurna,46.0,06:30–18:00,11.5,,0.0,06:30–18:00,11.5,06:30–18:00,11.5,06:30–18:00,11.5,,0.0,,0.0\nPulido Ortiz Mario Alberto,Coach FT 47,Naciones,Diurna,24.0,06:00–10:00,4.0,06:00–12:00,6.0,06:00–10:00,4.0,06:00–12:00,6.0,06:00–10:00,4.0,,0.0,,0.0\nRodriguez Hernandez Nelly,Maestra kids,Naciones,Mixta,37.5,14:30–21:00,6.5,14:30–21:00,6.5,14:30–21:00,6.5,14:30–21:00,6.5,14:30–21:00,6.5,,0.0,09:00–14:00,5.0\nRodriguez Sandoval Francisco Jesús,Tecnico en Mantenimiento,Naciones,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0\nToscano Arce Julieta,Coach de Mobility,Naciones,Mixta,40.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,07:00–12:00,5.0,,0.0\nValencia Gonzalez Jonathan Misael,Coach Tutorial,Valle Real,Diurna,20.0,06:00–10:00,4.0,06:00–10:00,4.0,06:00–10:00,4.0,06:00–10:00,4.0,06:00–10:00,4.0,,0.0,,0.0\nLope Ayala Leticia del Rosario,Técnico de Orden y Limpieza,Aleira,Diurna,47.5,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,07:30–15:00,7.5,,0.0\nRosas Gonzalez Salvador Vidal,Coordinador de Turno,Iteso,Mixta,47.0,05:30–14:30,8.0,05:30–14:30,8.0,05:30–14:30,8.0,05:30–14:30,8.0,05:30–14:30,8.0,07:30–15:00,7.0,,0.0\nBarrios Arteaga Vitalina,Técnico de Orden y Limpieza,Iteso,Mixta,47.5,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,07:30–15:00,7.5,,0.0\nHernandez Rivera Maria Nanci,Capitan de Orden y Limpieza,Valle Real,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,,0.0\nSandoval Monrreal Alfredo,Coach Tutorial,Naciones,Mixta,45.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,07:00–12:00,5.0,,0.0\nDe Anda Lopez Antonio,Técnico de Orden y Limpieza,Ávila Camacho,Mixta,47.5,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,07:30–15:00,7.5,,0.0\nDinero Garcia Jesus Alicia,Capitan de Limpieza,Naciones,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,06:00–14:00,8.0,,0.0\nBañales Tovar Erika Monserrat,Maestra de Ludoteca,Valle Real,Diurna,33.5,14:30–20:00,5.5,14:30–20:00,5.5,14:30–20:00,5.5,14:30–20:00,5.5,14:30–20:00,5.5,09:00–15:00,6.0,,0.0\nLopez Gonzalez Maria Dolores,Instructor de Acuática,Naciones,Mixta,30.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,,0.0,,0.0\nRamos Orozco Candida,Capitan de Limpieza,Gourmeteria,Mixta,46.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,09:00–15:00,6.0\nCruz Montaño Monica,Técnico de Orden y Limpieza,Cañadas,Diurna,48.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,,0.0\nMillan Valdivia Gabriel,Técnico de Orden y Limpieza,Naciones,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0\nCaldera Garcia Gonzalo,Coach Tutorial,Valle Real,Mixta,30.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,05:00–11:00,6.0,,0.0,,0.0\nAguayo Lopez Bianca Araceli,Auxiliar de Nóminas,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nBerlanga Galvez Juan Pablo,Coach Deportivo,Gourmeteria,Diurna,40.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0,07:00–15:00,8.0,,0.0\nLopez Velasco Antonio de Jesus,Técnico de Orden y Limpieza,La Estancia,Diurna,47.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,07:00–14:00,7.0,,0.0\nVillalobos Villela Katia Alejandra,Maestra kids,Naciones,Diurna,30.0,08:00–14:00,6.0,08:00–14:00,6.0,08:00–14:00,6.0,08:00–14:00,6.0,08:00–14:00,6.0,,0.0,,0.0\nBadillo Nuñez Roberto Rodolfo,R.P.,La Estancia,Mixta,46.5,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,13:00–22:00,8.0,07:00–14:00,6.5,,0.0\nAcuña Robledo Andrea,Técnico de Orden y Limpieza,Ávila Camacho,Mixta,47.5,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,07:30–15:00,7.5,,0.0\nTalavera Ortiz Maria Teresa,Técnico de Orden y Limpieza,Ávila Camacho,Mixta,47.5,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,07:30–15:00,7.5,,0.0\nMejia Ruiz Virginia Florencia,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,04:00–12:00,8.0,04:00–12:00,8.0,04:00–12:00,8.0,04:00–12:00,8.0,04:00–12:00,8.0,06:00–14:00,8.0,,0.0\nCalderon Garza Emma Liyana,Maestra de Ludoteca,Gourmeteria,Mixta,37.0,14:30–21:00,6.5,14:30–21:00,6.5,14:30–21:00,6.5,14:30–21:00,6.5,14:30–21:00,6.5,08:00–12:30,4.5,,0.0\nMata Arellano Cesar Gerardo,Coach Tutorial,Valle Real,Mixta,40.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,,0.0,,0.0\nReyes Ornelas Diego Andres,Asesor deportivo,Aleira,Diurna,42.5,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,07:30–15:00,7.5,,0.0\nVera Lopez Julio Cesar,ATP,Iteso,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nFlores Duarte Karla Beatriz,Coordinador de Turno,Aleira,Mixta,47.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,13:15–22:15,8.0,07:30–15:00,7.0,,0.0\nRamos Cardenas Nidia Lizzette,Técnico de Orden y Limpieza,Ávila Camacho,Diurna,47.5,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,07:30–15:00,7.5,,0.0\nHernandez Muños Jose Emmanuel,Coach Deportivo,Valle Real,Diurna,40.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–12:00,5.0,,0.0\nLozano Mendez Juan Antonio,Nutriologo,Valle Real,Mixta,41.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,11:00–17:00,6.0,,0.0\nSalgado Jaramillo Maria Esther,Maestra de Ludoteca,Valle Real,Diurna,32.5,08:00–14:30,6.5,08:00–14:30,6.5,08:00–14:30,6.5,08:00–14:30,6.5,08:00–14:30,6.5,,0.0,,0.0\nAzamar Olivares Luis Arturo,Técnico de Orden y Limpieza,Naciones,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0\nLuna Guitron Miriam Mayeli,Concierge,Naciones,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,06:00–14:00,8.0,,0.0\nPerez Arodys Fernando,ATP,La Estancia,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nGuzman Martinez Claudia Alejandra,Recepcion,Gourmeteria,Mixta,46.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,,0.0,09:00–15:00,6.0\nGoyas Ruano Rosa Maria,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,04:00–12:00,8.0,04:00–12:00,8.0,04:00–12:00,8.0,04:00–12:00,8.0,04:00–12:00,8.0,06:00–14:00,8.0,,0.0\nJimenez Rivera Rosalba,Técnico de Orden y Limpieza,Valle Real,Diurna,48.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,,0.0\nArce Cota Saul Javier,Coach Deportivo,Gourmeteria,Mixta,32.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,,0.0,05:00–13:00,8.0,,0.0,,0.0\nTellez Villalba Ingrid Itzel,Capitan de Orden y Limpieza,Valle Real,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,,0.0,07:00–15:00,8.0\nRodriguez Salcido Alfredo de Jesus,Asesor deportivo,Iteso,Diurna,40.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0,,0.0\nPosadas Gonzalez Viridiana,Maestra de Ludoteca,Valle Real,Diurna,30.0,08:30–13:30,5.0,08:30–13:30,5.0,08:30–13:30,5.0,08:30–13:30,5.0,08:30–13:30,5.0,,0.0,09:00–14:00,5.0\nDe la Cruz Gutierrez Evelin Rubi,Maestra de Ludoteca,Gourmeteria,Diurna,37.0,08:00–14:30,6.5,08:00–14:30,6.5,08:00–14:30,6.5,08:00–14:30,6.5,08:00–14:30,6.5,08:00–12:30,4.5,,0.0\nGrajeda Aguayo Silvia Isabel,Gerente en turno,Naciones,Mixta,45.0,05:00–13:00,8.0,05:00–13:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:30–14:30,8.0,07:00–12:00,5.0,,0.0\nSanchez Salazar Ileana Nereida,Nutriologo,Valle Real,Diurna,40.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,07:00–12:00,5.0,,0.0\nFong Siordia Carlos Emmanuel,Concierge,Valle Real,Mixta,48.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,,0.0,07:00–15:00,8.0\nMontes Calixto Leticia,Nutriologo,Gourmeteria,Diurna,40.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,08:00–13:00,5.0,,0.0\nVillegas Velazquez Paulo,Coach Deportivo,Valle Real,Mixta,48.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,09:00–17:00,8.0,,0.0\nGonzalez Castañeda Francisco Javier,Asesor deportivo,Aleira,Mixta,32.5,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,07:30–15:00,7.5,,0.0\nMelendez Mendoza Alejandra,Técnico de Orden y Limpieza,Cañadas,Mixta,47.5,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,07:30–15:00,7.5,,0.0\nLeal Ruiz Ricardo,Asesor deportivo,La Estancia,Mixta,40.0,05:30–13:30,8.0,05:30–13:30,8.0,05:30–13:30,8.0,05:30–13:30,8.0,05:30–13:30,8.0,,0.0,,0.0\nNovas Piedra Luis Antonio,Coach Deportivo,Valle Real,Mixta,40.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,,0.0,,0.0\nMedina Plascencia Mario,Tecnico en Mantenimiento,Naciones,Nocturna,14.0,23:00–06:00,7.0,,0.0,,0.0,,0.0,,0.0,,0.0,23:00–06:00,7.0\nEcheverria Camacho Janeth Guadalupe,Nutriologo,Naciones,Mixta,41.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,,0.0,08:30–14:30,6.0\nGarcia Lara Priscila Gabriela,Coach Deportivo,Naciones,Mixta,45.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–12:00,5.0,,0.0\nLuna Gutierrez Perla Del Carmen,Técnico de Orden y Limpieza,Naciones,Diurna,42.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,,0.0\nLedezma Politrom Jose Antonio,Coach Deportivo,Gourmeteria,Diurna,30.0,11:00–16:00,5.0,11:00–16:00,5.0,11:00–16:00,5.0,11:00–16:00,5.0,11:00–16:00,5.0,09:00–14:00,5.0,,0.0\nCorona Miranda Jesus Alejandro,Asesor deportivo,Ávila Camacho,Nocturna,56.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:30–21:30,7.0,,0.0,20:30–13:30,17.0\nTorres Campos Veronica,Técnico de Orden y Limpieza,Iteso,Diurna,48.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:00–15:00,8.0,,0.0\nPalacios Lopez Alma Livier,Asesor deportivo,Ávila Camacho,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0\nLara Vaca Luis Armando,Coach Deportivo,Valle Real,Mixta,41.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,,0.0,09:00–15:00,6.0\nRojas Juarez Jessica Marlene,Coach Deportivo,Valle Real,Diurna,35.0,07:30–14:30,7.0,07:30–14:30,7.0,07:30–14:30,7.0,07:30–14:30,7.0,07:30–14:30,7.0,,0.0,,0.0\nArechiga Alvarez Carlos Alberto,Coach Deportivo,Gourmeteria,Diurna,5.0,14:00–19:00,5.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nAldrete Diaz Jeronimo de Jesus,Técnico de Orden y Limpieza,Valle Real,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nGonzalez Franco Sergio Manuel Olimpio,Ejecutivo de Membresia,Valle Real,Diurna,36.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,,0.0\nOlague Flores Ana,Técnico de Orden y Limpieza,La Estancia,Mixta,30.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,,0.0,,0.0\nSolis Cisneros Alan Ismael,Coach Deportivo,Valle Real,Mixta,46.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,,0.0,09:00–15:00,6.0\nHernandez Sauceda Victor,Técnico de Orden y Limpieza,Valle Real,Diurna,42.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,,0.0\nHernandez Medina Jose Alberto,Asesor deportivo,Iteso,Mixta,40.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,,0.0,,0.0\nMedina Hernandez Cesar Abraham,Barista,Nuevos Negocios,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,,0.0\nVillalva Huerta Paola Marisol,Técnico de Orden y Limpieza,Valle Real,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,,0.0,07:00–15:00,8.0\nMurguia Campos Jennifer Vanessa,Coach de Estiramiento,Valle Real,Mixta,40.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,08:00–13:00,5.0,,0.0\nRivera Rodriguez Abel,Guia,La Estancia,Mixta,45.5,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,13:00–22:00,8.0,,0.0,09:00–15:00,5.5\nFigueroa Gutierrez Adan Alejandro,Coach Deportivo,Valle Real,Diurna,41.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,,0.0,09:00–15:00,6.0\nSolis Mejia Alicia Karina,Maestra kids,Naciones,Diurna,30.0,09:00–14:00,5.0,09:00–14:00,5.0,09:00–14:00,5.0,09:00–14:00,5.0,09:00–14:00,5.0,,0.0,09:00–14:00,5.0\nClemente Alvarado Fernando,Instructor de Acuática,Naciones,Diurna,30.0,14:00–20:00,6.0,14:00–20:00,6.0,14:00–20:00,6.0,14:00–20:00,6.0,14:00–20:00,6.0,,0.0,,0.0\nSaucedo Cortes Omar,Tecnico en Mantenimiento,Gourmeteria,Diurna,46.0,08:30–16:30,8.0,08:30–16:30,8.0,08:30–16:30,8.0,08:30–16:30,8.0,08:30–16:30,8.0,,0.0,09:00–15:00,6.0\nLara Medel Guillermo,Asesor deportivo,Iteso,Diurna,30.0,06:00–11:00,5.0,06:00–11:00,5.0,06:00–11:00,5.0,06:00–11:00,5.0,06:00–11:00,5.0,07:30–12:30,5.0,,0.0\nGuzman Rodriguez Raymundo Josue,Asesor deportivo,Ávila Camacho,Mixta,30.0,17:00–23:00,6.0,17:00–23:00,6.0,17:00–23:00,6.0,17:00–23:00,6.0,16:00–22:00,6.0,,0.0,,0.0\nMorales De Lira Lizbeth Anahi,Lider de Servicio,Ávila Camacho,Mixta,47.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,13:15–22:15,8.0,07:30–15:00,7.0,,0.0\nRojas Espinoza Tania Veronica,Nutriologo,Naciones,Diurna,40.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,07:00–12:00,5.0,,0.0\nOrnelas Araiza Sarahi,Instructor de Acuática,Naciones,Diurna,30.0,14:00–19:00,5.0,14:00–19:00,5.0,14:00–19:00,5.0,14:00–19:00,5.0,14:00–19:00,5.0,07:00–12:00,5.0,,0.0\nLio Gonzalez Gloria Yadhira,Recepcion,Naciones,Mixta,40.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,,0.0\nRodriguez Avalos Oscar Sinuhe,Instructor de Acuática,Naciones,Mixta,30.0,17:00–23:00,6.0,17:00–23:00,6.0,17:00–23:00,6.0,17:00–23:00,6.0,16:00–22:00,6.0,,0.0,,0.0\nGonzalez Barrera Delia Catalina,Técnico de Orden y Limpieza,Naciones,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0\nMarban Salcedo Gisela Guadalupe,Ejecutivo de Membresia,Naciones,Mixta,45.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–12:00,5.0,,0.0\nSalazar Delgadillo Jose,Concierge,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nSalazar Garcia Ana Cecilia,Coach de Estiramiento,Gourmeteria,Diurna,40.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,09:00–14:00,5.0,,0.0\nVazquez Lopez Paola Nicole,Recepcion,Valle Real,Mixta,46.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,11:00–17:00,6.0,,0.0\nResendiz Gonzalez Abril,Maestra de Ludoteca,Valle Real,Diurna,31.0,14:30–19:30,5.0,14:30–19:30,5.0,14:30–19:30,5.0,14:30–19:30,5.0,14:30–19:30,5.0,09:00–15:00,6.0,,0.0\nLopez Valdes Luz Kerena,Instructor de Acuática,Naciones,Diurna,30.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,,0.0,,0.0\nHernandez Can Icaro Cuauhtemoc,Tecnico en Mantenimiento,Naciones,Mixta,47.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,08:00–15:00,7.0\nCamarillo Baeza Belen Montserrat,Cajero,Valle Real,Diurna,46.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–13:00,6.0,,0.0\nPeña Sierra Erick Samuel,Coach de Mobility,Naciones,Diurna,40.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,08:00–13:00,5.0,,0.0\nSilva Aguiñaga Edith Guadalupe,Lider de Servicio,Iteso,Mixta,47.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,07:30–15:00,7.0,,0.0\nLomeli Cruz Jose Manuel,Coach Deportivo,Valle Real,Mixta,40.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,,0.0\nSerrano Davalos Axeel Sair,Lider de Servicio,Aleira,Mixta,47.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,07:30–15:00,7.0,,0.0\nSalcedo Perez Israel Atlai,Coach Deportivo,Valle Real,Diurna,42.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,,0.0\nMancilla Hernandez Anali,Maestra kids,Naciones,Mixta,30.0,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,09:00–14:00,5.0,,0.0\nValerio Alvarez Diana Guadalupe,Coordinador de Turno,Iteso,Mixta,47.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,07:30–15:00,7.0,,0.0\nMaldonado Calderon Jennifer Valeria,Coach Deportivo,Naciones,Mixta,40.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,07:00–12:00,5.0,,0.0\nReal Romero Jorge Alberto,Técnico de Orden y Limpieza,Cañadas,Mixta,47.5,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,07:30–15:00,7.5,,0.0\nAltiery Mahel Marc,Técnico de Orden y Limpieza,Naciones,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0\nOrozco Mateo Andrea Lizeth,Maestra kids,Naciones,Diurna,30.0,11:00–16:00,5.0,11:00–16:00,5.0,11:00–16:00,5.0,11:00–16:00,5.0,11:00–16:00,5.0,09:00–14:00,5.0,,0.0\nRios Covarrubias Angel Isaac,Coach de Mobility,Gourmeteria,Diurna,40.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,08:00–13:00,5.0,,0.0\nPerez Gonzalez Karla Sofia,Coach de Estiramiento,Naciones,Mixta,40.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,09:00–14:00,5.0,,0.0\nGarcia Silva Eduardo Samuel,Coach de Estiramiento,Valle Real,Diurna,39.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,10:00–14:00,4.0,,0.0\nCordero Rivera Ana Karla,Lider de Servicio,Cañadas,Mixta,47.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,13:15–22:15,8.0,07:30–15:00,7.0,,0.0\nGuzman Lopez Grecia Cassandra,Auxiliar Administrativo Acuatica,Naciones,Mixta,40.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,,0.0,,0.0\nSantana Sandoval Ana,Técnico de Orden y Limpieza,Valle Real,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,,0.0\nGonzalez Sevilla Israel Avimelec,Coach Deportivo,Gourmeteria,Mixta,40.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,07:00–12:00,5.0,,0.0\nPerez Medina Karen Montserrat,Maestra de Ludoteca,Gourmeteria,Diurna,39.5,09:30–16:30,7.0,09:30–16:30,7.0,09:30–16:30,7.0,09:30–16:30,7.0,09:30–16:30,7.0,,0.0,10:00–14:30,4.5\nSandoval Gutierrez Kevin Eli,Coach Deportivo,Naciones,Diurna,40.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,06:30–13:30,7.0,,0.0,08:00–13:00,5.0\nOrozco Curiel Victor Axel,Asesor deportivo,Cañadas,Mixta,40.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,10:00–15:00,5.0,,0.0\nAlaniz Aguilar Aldo,Instructor de Acuática,Naciones,Diurna,31.0,14:00–19:00,5.0,14:00–19:00,5.0,14:00–19:00,5.0,14:00–19:00,5.0,15:00–19:00,4.0,,0.0,08:00–15:00,7.0\nOrtiz Perez David,Técnico de Orden y Limpieza,Naciones,Diurna,48.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,06:00–14:00,8.0,,0.0\nLopez Gonzalez Jose Alejandro,Coach de Mobility,Naciones,Mixta,39.5,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,,0.0,09:30–14:00,4.5\nGamiño Mata Marco Antonio,Coach Deportivo,Naciones,Mixta,40.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,07:00–12:00,5.0,,0.0\nFlores Palos Paloma Berenice,Lider de Servicio,Cañadas,Mixta,47.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,07:30–15:00,7.0,,0.0\nSalas Peregrina Karen Cecilia,Líder de Comunicación Interna y Endomarketing,GEBienestar,Diurna,25.0,09:00–14:00,5.0,09:00–14:00,5.0,09:00–14:00,5.0,09:00–14:00,5.0,09:00–14:00,5.0,,0.0,,0.0\nDiaz Castellanos Barbara Selene,Coordinador de Turno,Cañadas,Mixta,47.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,13:15–22:15,8.0,07:30–15:00,7.0,,0.0\nZuñiga Cano Oscar Benjamin,Coordinador de Turno,Ávila Camacho,Mixta,47.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,14:15–23:15,8.0,13:15–22:15,8.0,07:30–15:00,7.0,,0.0\nPerea Carrillo America Polette,Cajero,Naciones,Diurna,48.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,,0.0\nMonjaras Sanchez Jonathan Omar,Coach Deportivo,Gourmeteria,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–22:00,6.0,,0.0,09:00–15:00,6.0\nTrillo Godoy Jose de Jesus,Coach de Mobility,Valle Real,Mixta,40.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,08:00–13:00,5.0,,0.0\nEsqueda Gonzalez Gustavo Noe,Ejecutivo de Membresia,Valle Real,Diurna,48.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:00–15:00,8.0,,0.0\nMoreno Llamas Raul Alejandro,Coach de Estiramiento,Gourmeteria,Diurna,27.0,06:00–10:30,4.5,06:00–10:30,4.5,06:00–10:30,4.5,06:00–10:30,4.5,06:00–10:30,4.5,07:30–12:00,4.5,,0.0\nSalamanca Abarca Erick Salvador,Técnico de Orden y Limpieza,Gourmeteria,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nZarate Aceves Gustavo Damian,Tecnico en Mantenimiento,Valle Real,Diurna,45.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–12:00,5.0,,0.0\nJimenez Raya Ramses,Coach de Estiramiento,Valle Real,Diurna,27.0,07:00–11:30,4.5,07:00–11:30,4.5,07:00–11:30,4.5,07:00–11:30,4.5,07:00–11:30,4.5,07:00–11:30,4.5,,0.0\nDe Alba Valencia Blanca Sarahi,Auxiliar de Compras,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nVazquez Hernandez Jesus Alberto,Coach de Estiramiento,Naciones,Diurna,27.0,10:30–15:00,4.5,10:30–15:00,4.5,10:30–15:00,4.5,10:30–15:00,4.5,10:30–15:00,4.5,10:30–15:00,4.5,,0.0\nNavarro Aceves Ana Mayra Elizabeth,Técnico de Orden y Limpieza,Valle Real,Diurna,42.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,07:00–09:00,2.0,,0.0\nGonzalez Soto Jorge Enrique,Concierge,Gourmeteria,Diurna,48.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,,0.0\nLopez Reyes Celis Carolina,Nutriologo,Gourmeteria,Mixta,40.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,08:00–13:00,5.0,,0.0\nCortes Perez Moises Azael,Coach Deportivo,Gourmeteria,Mixta,46.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,,0.0,09:00–15:00,6.0\nAlcala Muro Santiago,Coach de Mobility,Valle Real,Mixta,40.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,,0.0,09:00–14:00,5.0\nSantolaya Guerrero Regina,Coach de Estiramiento,Gourmeteria,Diurna,27.0,15:30–20:00,4.5,15:30–20:00,4.5,15:30–20:00,4.5,15:30–20:00,4.5,15:30–20:00,4.5,,0.0,10:00–14:30,4.5\nContreras Castillo Kimberly,Coach de Estiramiento,Gourmeteria,Diurna,27.0,08:00–12:30,4.5,08:00–12:30,4.5,08:00–12:30,4.5,08:00–12:30,4.5,08:00–12:30,4.5,09:00–13:30,4.5,,0.0\nSalazar Hernandez Maria del Rosario,Recepcion,Valle Real,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,,0.0,07:00–15:00,8.0\nVelazquez Almanza Moises Aaron,Tecnico en Mantenimiento,Naciones,Diurna,48.0,10:00–18:00,8.0,10:00–18:00,8.0,10:00–18:00,8.0,10:00–18:00,8.0,10:00–18:00,8.0,09:00–17:00,8.0,,0.0\nMendoza Vejar Alejandra,Ejecutivo de Membresia,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,07:00–15:00,8.0,,0.0\nMora Silva Gerardo Refugio,Coordinador de Turno,Ávila Camacho,Mixta,47.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,07:30–15:00,7.0,,0.0\nVelazquez Jimenez Maria Fernanda,Coach de Estiramiento,Valle Real,Mixta,27.0,15:30–21:00,5.5,15:30–21:00,5.5,15:30–21:00,5.5,15:30–21:00,5.5,16:00–21:00,5.0,,0.0,,0.0\nMiranda Silva Valeria Dulce Fabiola,Concierge,Valle Real,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–15:00,8.0,,0.0\nGarcia Navarro Luis Alejandro,Técnico de Orden y Limpieza,Iteso,Mixta,47.5,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,07:30–15:00,7.5,,0.0\nSanchez Alamos David Alejandro,Capitan de Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nLeal Plazola Hilda Guadalupe,Técnico de Orden y Limpieza,Valle Real,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nJimenez Magdaleno Alejandra,Ejecutivo de Membresia,Gourmeteria,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–15:00,8.0,,0.0\nCorona Becerra Lizbeth,Técnico de Orden y Limpieza,Gourmeteria,Mixta,46.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,09:00–15:00,6.0\nGomez de Anda Alberto,Coach de Estiramiento,Naciones,Mixta,27.0,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,,0.0,09:30–14:00,4.5\nGarcia Delgado Daniel,Concierge,Gourmeteria,Mixta,46.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,,0.0,09:00–15:00,6.0\nOrozco Sandoval Maria del Carmen,Técnico de Orden y Limpieza,Valle Real,Mixta,48.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,,0.0,07:00–15:00,8.0\nMartinez Arellano Oscar,Técnico de Orden y Limpieza,Ávila Camacho,Diurna,47.5,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,07:30–15:00,7.5,,0.0\nIbarra Hernandez Oscar Eduardo,Coach Funcional,Naciones,Mixta,42.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,15:00–22:00,7.0,07:00–14:00,7.0,,0.0\nHernandez Rosales Samantha,Instructor de Acuática,Naciones,Diurna,25.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,12:00–17:00,5.0,,0.0\nOrozco Andrade Luis Carlos,Instructor de Acuática,Naciones,Diurna,25.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,12:00–17:00,5.0,,0.0\nVizcaino Cortes Mariana Leticia,Instructor de Acuática,Naciones,Diurna,30.0,13:00–19:00,6.0,13:00–19:00,6.0,13:00–19:00,6.0,13:00–19:00,6.0,13:00–19:00,6.0,,0.0,,0.0\nRamirez Devora Diego Alonso,Coach Deportivo,Naciones,Mixta,40.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,07:00–12:00,5.0,,0.0\nNavarro Jimenez Jose Luis,Coach Deportivo,Valle Real,Diurna,40.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,08:00–13:00,5.0,,0.0\nBravo Navarro Citlalith Jeanette,Coach de Estiramiento,Valle Real,Diurna,27.0,07:30–12:00,4.5,07:30–12:00,4.5,07:30–12:00,4.5,07:30–12:00,4.5,07:30–12:00,4.5,,0.0,10:00–14:30,4.5\nBravo Hernandez Christian Brandon,Técnico de Orden y Limpieza,Gourmeteria,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–15:00,8.0,,0.0\nCabrera Siordia Christopher,Mensajero,GEBienestar,Diurna,30.0,09:00–15:00,6.0,09:00–15:00,6.0,09:00–15:00,6.0,09:00–15:00,6.0,09:00–15:00,6.0,,0.0,,0.0\nAlamos Garcia saul Alonso,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nGonzalez Boruel Natalia,Coach de Estiramiento,Valle Real,Diurna,27.0,06:30–11:00,4.5,06:30–11:00,4.5,06:30–11:00,4.5,06:30–11:00,4.5,06:30–11:00,4.5,09:30–14:00,4.5,,0.0\nMontes Rodriguez Luis Gerardo,Coach de Mobility,La Estancia,Mixta,40.0,05:30–12:30,7.0,05:30–12:30,7.0,05:30–12:30,7.0,05:30–12:30,7.0,05:30–12:30,7.0,07:00–12:00,5.0,,0.0\nZamora Ramirez Jose Tonatiuh,Coach Deportivo,Naciones,Mixta,40.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,07:00–12:00,5.0,,0.0\nGuzman Soto Alejandra,Auxiliar de Kids,Cañadas,Diurna,30.0,15:00–20:00,5.0,15:00–20:00,5.0,15:00–20:00,5.0,15:00–20:00,5.0,15:00–20:00,5.0,09:00–14:00,5.0,,0.0\nLopez Dueñas Byron,Técnico de Orden y Limpieza,Naciones,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0\nOrnelas Cerda Erika Osmin,Cajero,Naciones,Mixta,47.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,,0.0,08:00–15:00,7.0\nGallegos Alvarez Carlos Jahir,Coach de Estiramiento,Valle Real,Mixta,22.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,,0.0,,0.0\nOrtiz Vazquez Jaime Alejandro,Barista,Nuevos Negocios,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,,0.0\nMartinez Lopez Edder,Coach Deportivo,Naciones,Diurna,42.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,,0.0,08:00–15:00,7.0\nAguilera Diaz Sarai Alejandra,Nutriologo,Cañadas,Mixta,30.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,,0.0,,0.0\nLedon Gomez Bernardo,Asesor deportivo,Cañadas,Diurna,40.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,,0.0,09:00–14:00,5.0\nMartinez Mendoza Alfredo Yael,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nSanchez Becerra Daniela Elizabeth,Fisioterapia,Nuevos Negocios,Diurna,36.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,,0.0\nRosas Gutierrez Getzamany Monserrat,Fisioterapia,Nuevos Negocios,Diurna,36.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,,0.0\nEstrada Miramontes Regina Isabel,Fisioterapia,Nuevos Negocios,Mixta,36.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,,0.0\nCarlos Silva Francisco Zabdiel,Ejecutivo de Membresia,Gourmeteria,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nMonroy Cervantes Karen Paulina,Asesor deportivo,La Estancia,Mixta,40.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,,0.0,09:00–14:00,5.0\nMeza Ramirez Priscila,Auxiliar Contable,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nFranco Remigio Luis Eduardo,Cocinero,Nuevos Negocios,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,,0.0\nSoto Rivera Rosa Linda,Técnico de Orden y Limpieza,Gourmeteria,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–15:00,8.0,,0.0\nLucio Espoinoza Ana Beatriz,Técnico de Orden y Limpieza,Naciones,Diurna,46.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,08:00–14:00,6.0,,0.0\nHuerta Garcia Juan Fernando,Coach Funcional,La Estancia,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–22:00,6.0,11:00–17:00,6.0,,0.0\nVazquez Vazquez Lisset Nayeli,Asesor deportivo,La Estancia,Mixta,40.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,05:00–12:00,7.0,07:00–12:00,5.0,,0.0\nDiaz Requena Guillermo de Jesus,Coach de Estiramiento,Gourmeteria,Diurna,26.5,06:30–11:00,4.5,06:30–11:00,4.5,06:30–11:00,4.5,06:30–11:00,4.5,06:30–11:00,4.5,,0.0,10:00–14:00,4.0\nPerez Delgado Brian joshue,Técnico de Orden y Limpieza,Naciones,Diurna,46.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,08:00–14:00,6.0,,0.0\nJuarez Martinez Christopher Tadeo,Coach de Estiramiento,Naciones,Diurna,29.5,06:30–11:30,5.0,06:30–11:30,5.0,06:30–11:30,5.0,06:30–11:30,5.0,06:30–11:30,5.0,,0.0,09:00–13:30,4.5\nValerio Villagran Imelda,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nMacias Rodriguez Carlos Fernando,Coach Mobility,La Estancia,Mixta,40.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,,0.0,10:00–15:00,5.0\nHernandez Escobedo Hannah Pamela,Recepcion,Nuevos Negocios,Mixta,41.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,08:00–14:00,6.0,,0.0\nHinojosa Perez Jesus Eduardo,Auxiliar de Sistemas,GEBienestar,Diurna,40.0,09:00–17:00,7.0,09:00–17:00,7.0,09:00–17:00,7.0,09:00–17:00,7.0,09:00–17:00,7.0,09:00–14:00,5.0,,0.0\nHernandez Rodriguez Yadira Nicole,Reclutador,GEBienestar,Diurna,20.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,15:00–19:00,4.0,,0.0,,0.0\nZavala Ortega David,Auxiliar de Sistemas,GEBienestar,Diurna,40.0,07:00–15:00,7.0,07:00–15:00,7.0,07:00–15:00,7.0,07:00–15:00,7.0,07:00–15:00,7.0,09:00–14:00,5.0,,0.0\nPinedo Nuño Alejandro,Tecnico en Mantenimiento,Ávila Camacho,Diurna,47.5,06:30–15:00,8.5,06:30–15:00,8.5,06:30–15:00,8.5,06:30–15:00,8.5,06:30–15:00,8.5,09:00–14:00,5.0,,0.0\nCarrion Soto Ulises Santiago,Comunity/ Callcenter,GEBienestar,Diurna,30.0,08:00–14:00,6.0,08:00–14:00,6.0,08:00–14:00,6.0,08:00–14:00,6.0,08:00–14:00,6.0,,0.0,,0.0\nBarragan Rivas Maria Jose,Comunity/ Callcenter,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nRobles Toala Hayli Gabriela,Diseñador Gráfico,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nSandoval Velazquez Andrea,Coordinador Capital Humano,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nDe Rosas Marquez Maria Cristina,Reclutador,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nMadrigal Rodriguez Gael Isaac,Auxiliar de Capital Humano,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nGomez Avila Laura Alejandra,Auxiliar de Marketing,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nParra Torres Jose Antonio,Instructor de Clases de Salón,Aleira,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nVandick Cancino Graciela,Instructor de Clases de Salón,Naciones,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nBalbuena Caro Amelia,Instructor de Clases de Salón,Naciones,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nCarvajal Duarte Liliana Marcela,Instructor de Clases de Salón,Gourmeteria,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nCarvajal Barajas Rogelio,Instructor de Clases de Salón,Naciones,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nCrisanto Luna Yazmin Esmeralda,Instructor de Clases de Salón,Iteso,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nMontes Carrasco Jose Roberto,Instructor de Clases de Salón,La Estancia,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nVentura Montero Maria Teresa,Instructor de Clases de Salón,Cañadas,Sin captura,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0,,0.0\nCadena Luna César Osvaldo,Lider de Hospitalidad y Experiencia,Nuevos Negocios,Diurna,48.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,,0.0\nOrtiz Ovalle Rubi Isabel,Técnico de Orden y Limpieza,Naciones,Mixta,46.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,,0.0,09:00–15:00,6.0\nCabrera Flores Otmar Octavio,Coach Deportivo,Valle Real,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,15:00–22:00,7.0,,0.0,10:00–15:00,5.0\nRodríguez Espinoza Giovanni,Líder de Estrategía de contenido y marca,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nEscalante Núñez Axel Michel,Mesero,Nuevos Negocios,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,,0.0\nCuriel Guerra Carolina,Técnico de Orden y Limpieza,Nuevos Negocios,Diurna,46.25,07:00–16:15,9.25,07:00–16:15,9.25,07:00–16:15,9.25,07:00–16:15,9.25,07:00–16:15,9.25,,0.0,,0.0\nLara Hurtado Caroline Noemí,Coach Deportivo,Naciones,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,15:00–22:00,7.0,,0.0,08:00–13:00,5.0\nPérez Baltazar Simon,Técnico de Orden y Limpieza,Gourmeteria,Diurna,46.0,12:00–20:00,8.0,12:00–20:00,8.0,12:00–20:00,8.0,12:00–20:00,8.0,12:00–20:00,8.0,,0.0,09:00–15:00,6.0\nAlmanzor Olmos Evan Zuleth,Coach de Mobility,Gourmeteria,Mixta,40.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,,0.0,09:00–14:00,5.0\nGarcía Bernal Mauro Alberto,R.P.,La Estancia,Mixta,45.0,14:30–22:30,8.0,14:30–22:30,8.0,14:30–22:30,8.0,14:30–22:30,8.0,14:30–22:30,8.0,07:00–12:00,5.0,,0.0\nPuente Ríos Eric Francisco,Auditor Interno,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nMichel Rubio Mariajose,Líder de Proyecto,GEBienestar,Diurna,10.0,10:00–12:00,2.0,10:00–12:00,2.0,10:00–12:00,2.0,10:00–12:00,2.0,10:00–12:00,2.0,,0.0,,0.0\nRuvalcaba Palomera Maximus Gabriel,Coach Deportivo,Gourmeteria,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–22:00,6.0,,0.0,09:00–15:00,6.0\nCardenas Castro Bertha Alejandra,Guia Acton Academy,Nuevos Negocios,Diurna,40.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,,0.0,,0.0\nUribe Adame Oscar Esteban,Coach de Estiramiento,Gourmeteria,Mixta,27.0,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,08:00–12:30,4.5,,0.0\nReyes Ramírez Yajaira Estefania,Coach de Estiramiento,Gourmeteria,Mixta,27.0,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,,0.0,10:00–14:30,4.5\nElizondo Olivares Isaac Israel,Coach Deportivo,Naciones,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,15:00–22:00,7.0,,0.0,08:00–13:00,5.0\nAguilera Martínez Víctor Jesús,Técnico de Orden y Limpieza,Gourmeteria,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–15:00,8.0,,0.0\nOchoa Pérez Abraham,Coach de Estiramiento,Naciones,Diurna,27.0,06:00–10:30,4.5,06:00–10:30,4.5,06:00–10:30,4.5,06:00–10:30,4.5,06:00–10:30,4.5,,0.0,10:00–14:30,4.5\nMeza Ramírez Gabriela,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0\nEspinoza Rivas María José,Coach Deportivo,Naciones,Diurna,42.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,,0.0,08:00–15:00,7.0\nMartínez Raitarski Mauricio,Contenido,Naciones,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nVillarreal Treviño Gerardo Roberto,Dirección General,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nRodríguez Arroyo Julia Elizabeth,Dirección de Capital Humano,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nVillanueva Aguilar Reyna Cecilia,Coordinador de Nomina,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nGonzalez Palazuelos Jose Hiram,Dirección Comercial,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nGoytia Acevedo Francisco Fernando,Coordinador Mantenimiento,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nPadilla Alvarez Linda Zoraida,Dirección Ejecutiva,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nOlvera Gonzalez Imelda Elizabeth,R.P.,Gourmeteria,Diurna,44.5,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–11:30,4.5,,0.0\nPeregrina Sierra Marco Antonio,Dirección de Estructura y Soporte,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nArmas Gutierrez Karen Anaid,Gerente de Club,Gourmeteria,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nGarcia Lomeli Daniel,Headcoach Nutrición,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nMuñoz Gaeta Javier Eduardo,Coordinador de Backoffice,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nHernandez Aguayo Yadira Lizeth,Líder Deportivo,Gourmeteria,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–15:00,8.0,,0.0\nBarba Durán Luis Ernesto,Gerente de Deportes,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nJimenez Rodríguez César Rubén,Coordinador de TG,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nGritti Medina Cristina Geraldine,Líder Deportivo,Naciones,Mixta,47.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,,0.0,08:00–15:00,7.0\nMora De Alba Hector Manuel,R.P.,Naciones,Mixta,40.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,,0.0\nAbundis Evangelista Julio Alberto,R.P.,Naciones,Mixta,40.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,,0.0\nRangel Sotelo Thalia Veronica,Gerente de Ventas Corporativas y Colegios,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nGutierrez Buendia Daniel,Coordinador de Marketing,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nGomez Aceves Gabino Nicolas,R.P.,Valle Real,Diurna,40.0,08:00–15:00,7.0,08:00–15:00,7.0,08:00–15:00,7.0,08:00–15:00,7.0,08:00–15:00,7.0,08:00–13:00,5.0,,0.0\nCarrasco García Dora Karina,Líder de Clases Grupales,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nDe la Torre Jauregui Oliver Adan,Dirección de Inteligencia de Negocios,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nLopez Garay Yesika Gabriela,R.P.,Valle Real,Mixta,43.5,14:00–21:30,7.5,14:00–21:30,7.5,14:00–21:30,7.5,14:00–21:30,7.5,14:00–21:30,7.5,,0.0,09:00–15:00,6.0\nSalcedo Castañeda Ángel,Líder Deportivo,Valle Real,Mixta,46.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,,0.0,09:00–15:00,6.0\nToro Gil Jessica Leonella,Analista de Reclutamiento,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nPadilla Cardenas Iván,Líder Deportivo,Gourmeteria,Mixta,46.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,09:00–15:00,6.0\nQuezada Pedroza Joel Alfonso,Coordinador de Sistemas,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nPalma Gonzalez Elmer Omar Derek,Gerente de Mantenimiento y Rehabilitación,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nCaram Salinas Jóse Alejandro,Coordinador Universidad,GEBienestar,Diurna,45.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,09:00–18:00,9.0,,0.0,,0.0\nPeñaloza Vázquez Sergio,Líder Deportivo,Naciones,Mixta,0.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,,0.0\nDiaz Garcia David Alejandro,Gerente de Club,Valle Real,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nAceituno Pinzón Carlos Enrique,Gerente Comercial,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nSanchez Lujano Andrea,Líder de Turno,Valle Real,Diurna,46.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,07:00–13:00,6.0,,0.0\nRodriguez Guzman Omar Salvador,Líder de Turno,Gourmeteria,Diurna,46.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0,09:00–15:00,6.0\nCameros Bobadilla Ilse Alejandra,Coordinador Universidad,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nAmezcua Esparza Abraham,Coordinador Acuática,Naciones,Diurna,46.0,09:00–17:00,8.0,09:00–17:00,8.0,09:00–17:00,8.0,09:00–17:00,8.0,09:00–17:00,8.0,09:00–15:00,6.0,,0.0\nOlmedo Galvan Lino Agustín,Líder Deportivo,Valle Real,Mixta,46.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–13:00,6.0,,0.0\nLamas Castellanos Ana Cecilia,Coordinador Universidad,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nCarrillo Reyes Diana Marcela,R.P.,Naciones,Diurna,45.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–12:00,5.0,,0.0\nNavarro Villarreal Jorge Isaac,R.P.,Gourmeteria,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,07:00–15:00,8.0,,0.0\nSánchez Arambul Daniel Sigifredo,R.P.,Valle Real,Mixta,32.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,14:00–22:00,8.0,,0.0,,0.0,,0.0\nAguayo Sanchez Julian,Gerente de Club,Naciones,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0\nRichards Chavez Ricardo Ivan,Líder de Turno,Valle Real,Mixta,46.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,14:00–22:00,8.0,,0.0,09:00–15:00,6.0\nGarcia Rodriguez Francisco Javier,Coach Deportivo,Naciones,Mixta,40.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,09:00–14:00,5.0,,0.0\nVillaneda Johnston Oswaldo,Coach Deportivo,Valle Real,Mixta,38.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,07:00–15:00,8.0,,0.0\nArroyo Sanchez Isaac,Instructor de Acuática,Naciones,Mixta,30.0,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,16:00–21:00,5.0,09:00–14:00,5.0,,0.0\nAhumada Carmen María,Técnico de Orden y Limpieza,Gourmeteria,Mixta,45.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,09:00–14:00,5.0,,0.0\n" };
+  const store = {};
+  for (const k in raw) store[k] = d3.csvParse(raw[k]).map((r) => { for (const c in r) if (r[c] === '') r[c] = null; return r; });
+  const calcs = {}, draws = {}, cache = {};
+  function get(id) {
+    if (store[id]) return store[id];
+    if (cache[id]) return cache[id];
+    const c = calcs[id]; if (!c) return [];
+    cache[id] = c.fn(...c.inputs.map(get)); return cache[id];
+  }
+  function visible(el) { return !el.closest('[hidden]'); }
+  function run(name) {
+    const fn = draws[name]; if (!fn) return;
+    document.querySelectorAll('[data-draw="' + name + '"]').forEach((el) => { if (visible(el)) { try { fn(el); } catch (e) { console.error(name, e); } } });
+  }
+  function runAll() { Object.keys(draws).forEach(run); }
+  let pend = false;
+  function schedule() { if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; runAll(); }); }
+  window.dash = {
+    data: (id) => { const d = get(id); return { status: 'ok', data: d, rows: d, columns: d.length ? Object.keys(d[0]) : [], refreshing: false, meta: [] }; },
+    calc: (id, def) => { calcs[id] = def; },
+    loader: () => {},
+    draw: (name, fn) => { if (fn) { draws[name] = fn; schedule(); } else run(name); },
+    onData: (fn) => { setTimeout(fn, 0); },
+    setLink: (n) => { try { history.replaceState(null, '', '#' + n); } catch (e) {} },
+    params: () => ({}), setParams: () => {}, resetParams: () => {}, refresh: () => {},
+    colors: ['#0f8b8d']
+  };
+  window.addEventListener('resize', schedule);
+  document.addEventListener('DOMContentLoaded', () => {
+    new MutationObserver(schedule).observe(document.body, { attributes: true, attributeFilter: ['hidden'], subtree: true });
+    runAll();
+  });
+})();
+</script>
+<div id="dash-root">
+<style>
+.gx { --gx-accent: #0f8b8d; --gx-accent-soft: color-mix(in srgb, #0f8b8d 18%, transparent); --gx-accent-mid: color-mix(in srgb, #0f8b8d 50%, transparent); font-family: var(--font-anthropic-sans); display: flex; flex-direction: column; gap: var(--cds-gap-xl); }
+.gx-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0 0 var(--cds-gap-xs); text-wrap: balance; }
+.gx-head p { margin: 0; max-width: 70ch; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); line-height: 1.5; }
+.gx .gx-head p b { color: var(--color-fg); font-weight: 600; }
+.gx-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr)); gap: var(--cds-gap-md); }
+.gx-kpi { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
+.gx-kpi.is-key { background: var(--gx-accent-soft); border-color: transparent; }
+.gx-kpi .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .02em; }
+.gx-kpi .val { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; min-height: 1.1em; }
+.gx-kpi.is-key .val { color: var(--gx-accent); }
+.gx-kpi .sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.gx .gx-kpi .sub b { font-weight: 600; color: var(--color-fg); }
+.gx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); align-items: start; }
+.gx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+.gx-card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+.gx-card .note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; line-height: 1.45; }
+.gx-chart { position: relative; min-height: 220px; }
+.gx-chart svg { display: block; }
+.gx-chart .bar { cursor: pointer; }
+.gx-chart .bar:hover rect.fg, .gx-chart .bar.is-on rect.fg { opacity: .8; }
+.gx-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+.gx-tip .t { color: var(--cds-text-secondary); }
+.gx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-legend i { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; vertical-align: -1px; margin-right: .35rem; }
+.gx-btn { font: inherit; font-size: var(--cds-font-size-caption); background: none; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: .3rem .7rem; color: var(--color-fg); cursor: pointer; align-self: flex-start; }
+.gx-btn:hover { background: var(--color-bg); }
+.gx-btn:focus-visible, .gx-table th button:focus-visible, .gx-search:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+.gx-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.gx-search { font: inherit; font-size: var(--cds-font-size-body); padding: .4rem .6rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); flex: 1 1 14rem; min-width: 0; }
+.gx-filtro { display: inline-flex; gap: .4rem; align-items: center; font-size: var(--cds-font-size-caption); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 999px; padding: .2rem .3rem .2rem .7rem; }
+.gx-filtro button { font: inherit; border: none; background: none; cursor: pointer; color: var(--color-fg-muted); padding: 0 .3rem; }
+.gx-tablebox { max-height: 34rem; overflow: auto; border-top: 1px solid var(--color-border-line); }
+.gx-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.gx-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; }
+.gx-table th button { font: inherit; background: none; border: none; color: var(--color-fg-muted); padding: .5rem .5rem; cursor: pointer; width: 100%; text-align: inherit; white-space: nowrap; }
+.gx-table th.num, .gx-table td.num { text-align: right; }
+.gx-table td { padding: .45rem .5rem; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+.gx-table td:first-child { font-weight: 500; }
+.gx-pill { display: inline-block; padding: .05rem .45rem; border-radius: 999px; font-size: .72rem; border: 1px solid var(--color-border-line); white-space: nowrap; }
+.gx-pill.mixta { color: var(--gx-accent); border-color: currentColor; }
+.gx-pill.nocturna { color: var(--color-fg); border-color: currentColor; font-weight: 600; }
+.gx-exc { color: var(--gx-accent); font-weight: 600; }
+.gx-count { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-crit { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.55; margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+@media (max-width: 640px) { .gx-table .hide-sm { display: none; } }
+.gx-legend i.sw-a { background: var(--gx-accent); }
+.gx-legend i.sw-m { background: var(--gx-accent-soft); }
+.gx-legend i.sw-b { background: var(--gx-accent-mid); }
+.gx-pill.g48 { background: var(--gx-accent); color: var(--color-bg); border-color: transparent; }
+.gx-pill.g46 { background: var(--gx-accent-soft); color: var(--color-fg); border-color: transparent; }
+.gx-seg { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+.gx-seg button { font: inherit; font-size: var(--cds-font-size-caption); background: none; border: none; padding: .35rem .7rem; color: var(--color-fg-muted); cursor: pointer; }
+.gx-seg button + button { border-left: 1px solid var(--color-border-line); }
+.gx-seg button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.gx-seg button[aria-pressed=true] { background: var(--gx-accent); color: var(--color-bg); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .gx { --gx-accent: #3cc7c4; --gx-accent-soft: color-mix(in srgb, #3cc7c4 22%, transparent); --gx-accent-mid: color-mix(in srgb, #3cc7c4 55%, transparent); } }
+:root[data-theme="dark"] .gx { --gx-accent: #3cc7c4; --gx-accent-soft: color-mix(in srgb, #3cc7c4 22%, transparent); --gx-accent-mid: color-mix(in srgb, #3cc7c4 55%, transparent); }
+.gx-rol-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: end; }
+.gx-rol-tools label { display: flex; flex-direction: column; gap: .25rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); flex: 1 1 14rem; min-width: 0; }
+.gx-select { font: inherit; font-size: var(--cds-font-size-body); padding: .4rem .6rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); width: 100%; }
+.gx-select:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+.gx-rol-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: var(--cds-gap-sm); }
+.gx-rol-stats div { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; }
+.gx-rol-stats .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-rol-stats .val { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; min-height: 1.2em; }
+.gx-rol-stats .is-a .val { color: var(--gx-accent); }
+.gx-sem td.d { white-space: nowrap; text-align: center; }
+.gx-sem th.d { text-align: center; }
+.gx-sem td.d .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
+.gx-sem td.d.libre { color: var(--color-fg-muted); }
+.gx-sem td.d.full { background: var(--gx-accent-soft); }
+.gx-sem td.d.cambio { background: var(--gx-accent-soft); }
+.gx-sem td.d.cambio .h, .gx-sem td.num .h { color: var(--gx-accent); font-weight: 600; }
+.gx-sem td.num .h { display: block; font-size: .7rem; font-weight: 400; color: var(--color-fg-muted); }
+.gx-sem td.vacio { text-align: center; color: var(--color-fg-muted); padding: 1.5rem .5rem; font-weight: 400; }
+.gx-rol-tools .gx-ver { display: flex; flex-direction: column; gap: .25rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-years { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: var(--cds-gap-sm); }
+.gx-year { font: inherit; text-align: left; background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; cursor: pointer; color: var(--color-fg); }
+.gx-year:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+.gx-year[aria-pressed=true] { border-color: var(--gx-accent); background: var(--gx-accent-soft); }
+.gx-year .y { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-year .n { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; min-height: 1.1em; }
+.gx-year[aria-pressed=true] .n { color: var(--gx-accent); }
+.gx-year .s { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.gx-pill.nuevo { background: var(--gx-accent); color: var(--color-bg); border-color: transparent; }
+.gx-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-lg); align-items: start; }
+.gx-split > * { min-width: 0; }
+.gx-split h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.gx-tabs { display: flex; flex-wrap: wrap; gap: .25rem; border-bottom: 1px solid var(--color-border-line); margin-top: calc(-1 * var(--cds-gap-md)); }
+.gx-tabs button { font: inherit; font-size: var(--cds-font-size-body); background: none; border: none; border-bottom: 2px solid transparent; padding: .5rem .8rem; color: var(--color-fg-muted); cursor: pointer; margin-bottom: -1px; }
+.gx-tabs button[aria-selected=true] { color: var(--color-fg); border-bottom-color: var(--gx-accent); font-weight: 500; }
+.gx-tabs button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.gx-tab { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+.gx-details { gap: 0; }
+.gx-details summary { cursor: pointer; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-details[open] summary { margin-bottom: var(--cds-gap-sm); }
+.gx-tl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
+.gx-tl-col { display: flex; flex-direction: column; gap: var(--cds-gap-sm); padding: var(--cds-pad-md); background: var(--color-bg); border-radius: var(--cds-radius); border-top: 3px solid var(--gx-accent-mid); min-width: 0; }
+.gx-tl-col.is-peak { border-top-color: var(--gx-accent); background: var(--gx-accent-soft); }
+.gx-tl-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-sm); }
+.gx-tl-head .yr { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); }
+.gx-tl-head .lim { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-tl-num { display: flex; align-items: baseline; gap: .4rem; }
+.gx-tl-num .n { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); color: var(--gx-accent); font-variant-numeric: tabular-nums; line-height: 1; min-width: 1ch; }
+.gx-tl-num .u { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-tl-new { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding-bottom: var(--cds-pad-xs); border-bottom: 1px solid var(--color-border-line); }
+.gx .gx-tl-new b { color: var(--color-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+.gx-tl-roles { display: flex; flex-direction: column; gap: .15rem; flex: 1; min-height: 3rem; }
+.gx-tl-roles details { font-size: var(--cds-font-size-caption); }
+.gx-tl-roles summary { cursor: pointer; display: flex; justify-content: space-between; gap: .5rem; padding: .2rem 0; list-style: none; }
+.gx-tl-roles summary::-webkit-details-marker { display: none; }
+.gx-tl-roles summary::before { content: "›"; color: var(--color-fg-muted); transition: transform var(--cds-dur-slow); display: inline-block; width: .6rem; flex: none; }
+.gx-tl-roles details[open] summary::before { transform: rotate(90deg); }
+.gx-tl-roles summary .p { flex: 1; min-width: 0; }
+.gx-tl-roles summary .c { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--gx-accent); }
+.gx-tl-roles ul { list-style: none; margin: 0 0 .3rem .6rem; padding: 0 0 0 .5rem; border-left: 2px solid var(--gx-accent-soft); display: grid; gap: .15rem; }
+.gx-tl-roles li { display: flex; justify-content: space-between; gap: .5rem; color: var(--color-fg); }
+.gx-tl-roles li .h { color: var(--color-fg-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.gx-tl-roles .mas { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding-top: .2rem; }
+.gx-tl-col .gx-btn { align-self: stretch; text-align: center; }
+.gx-tipo-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-sm); }
+.gx-link { font-size: var(--cds-font-size-caption); color: var(--gx-accent); font-weight: 600; text-decoration: none; }
+.gx-link:hover { text-decoration: underline; }
+.gx-tipos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-sm); }
+.gx-tipo { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .2rem; }
+.gx-tipo .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-tipo .val { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.gx-tipo .val small { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gx-tipo .rule { font-size: var(--cds-font-size-caption); font-weight: 600; color: var(--gx-accent); }
+.gx-tipo .rule.pend { color: var(--color-warn); }
+.gx-sel { font: inherit; font-size: var(--cds-font-size-caption); padding: .4rem .5rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); max-width: 100%; }
+.gx-sel:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 </style>
 
-<div class="wrap">
-  <header>
-    <h1>Nuevas jornadas por rol</h1>
-    <p class="lead">Seguimiento de las personas con jornada de 48 hrs que deben ajustarse antes de que termine noviembre. Captura el líder, el nuevo horario y marca cuando el nuevo contrato esté firmado. Todo se guarda solo y lo ve todo el equipo.</p>
+<div class="gx">
+  <header class="gx-head" id="resumen">
+    <h1>Reducción de jornada 48 → 46 hrs (2027)</h1>
+    <p><b data-draw="kpi" data-source="kpis" data-field="sobre46" data-row="0">—</b> personas trabajan más de 46 hrs y deben cambiar su jornada en 2027: <b data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</b> hacen 48 hrs y <b data-draw="kpi" data-source="kpis" data-field="entre" data-row="0">—</b> entre 46 y 48. El puesto más expuesto es <b data-draw="kpi" data-source="kpis" data-field="top_puesto" data-row="0">—</b>.</p>
   </header>
+  <nav class="gx-tabs" role="tablist" aria-label="Secciones">
+    <button type="button" role="tab" data-tab="t-resumen" aria-selected="true">Resumen</button>
+    <button type="button" role="tab" data-tab="t-personas" aria-selected="false">Personas</button>
+    <button type="button" role="tab" data-tab="t-rol" aria-selected="false">Jornadas por rol</button>
+    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">2027–2030</button>
+    <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>
+  </nav>
 
-  <div class="top">
-    <section class="card prog" aria-label="Avance">
-      <div class="lbl">Nuevo contrato realizado</div>
-      <div class="big"><span id="p-done">—</span> <span>de <span id="p-total">—</span></span></div>
-      <div class="bar" aria-hidden="true"><i id="p-bar"></i></div>
-      <div class="sub"><b id="p-pct">—</b> de avance · <span id="p-hor">—</span> con nuevo horario capturado · <span id="p-lid">—</span> con líder asignado</div>
-    </section>
-    <section class="tipos" aria-label="Por tipo de jornada">
-      <button type="button" class="tipo" data-tipo="Diurna" aria-pressed="false">
-        <span class="lbl">Diurna</span><span class="n"><span data-k="Diurna-n">—</span><small data-k="Diurna-pct">—</small></span>
-        <span class="rule">Bajar 2 hrs → 46 hrs</span><span class="av"><span data-k="Diurna-done">—</span> con contrato nuevo</span>
-      </button>
-      <button type="button" class="tipo" data-tipo="Mixta" aria-pressed="false">
-        <span class="lbl">Mixta</span><span class="n"><span data-k="Mixta-n">—</span><small data-k="Mixta-pct">—</small></span>
-        <span class="rule">Bajar 3 hrs → 45 hrs (máximo actual)</span><span class="av"><span data-k="Mixta-done">—</span> con contrato nuevo</span>
-      </button>
-      <button type="button" class="tipo" data-tipo="Nocturna" aria-pressed="false">
-        <span class="lbl">Nocturna</span><span class="n"><span data-k="Nocturna-n">—</span><small data-k="Nocturna-pct">—</small></span>
-        <span class="rule pend">Ajuste por confirmar</span><span class="av"><span data-k="Nocturna-done">—</span> con contrato nuevo</span>
-      </button>
-    </section>
-  </div>
-
-  <section aria-label="Por sucursal">
-    <h2 class="h2">Propuesta por sucursal</h2>
-    <div class="sucs" id="sucs"><span class="status">Cargando sucursales…</span></div>
-  </section>
-
-  <section class="card" aria-label="Personas">
-    <div class="filters">
-      <label for="f-tipo">Tipo de jornada<select id="f-tipo"><option value="">Todas</option><option>Diurna</option><option>Mixta</option><option>Nocturna</option></select></label>
-      <label for="f-suc">Sucursal<select id="f-suc"><option value="">Todas</option></select></label>
-      <label for="f-puesto">Puesto<select id="f-puesto"><option value="">Todos</option></select></label>
-      <label for="f-est">Estado<select id="f-est"><option value="">Todos</option><option value="pend">Pendiente</option><option value="done">Contrato realizado</option></select></label>
-      <label for="f-q" class="grow">Buscar<input id="f-q" type="search" placeholder="Nombre, puesto o líder"></label>
-      <button type="button" class="btn" id="f-clear">Limpiar filtros</button>
-      <span class="count"><b id="f-count">—</b> personas</span>
+  <section class="gx-tab" id="t-resumen">
+  <article class="gx-card" id="avance-contratos">
+    <div class="seg-avance">
+      <div>
+        <h2>Avance del cambio de contrato</h2>
+        <div class="big"><span data-seg="done">—</span> <small>de <span data-seg="total">—</span> personas con 48 hrs</small></div>
+        <div class="seg-bar" aria-hidden="true"><i data-seg-bar></i></div>
+        <div class="sub"><b data-seg="pct">—</b> con contrato nuevo · <b data-seg="hor">—</b> con nuevo horario · <b data-seg="lid">—</b> con líder asignado</div>
+      </div>
+      <button type="button" class="gx-btn-acc" data-tab-go="t-seg">Ir al seguimiento</button>
+    </div>
+  </article>
+  <section class="gx-kpis" aria-label="Indicadores clave">
+    <div class="gx-kpi is-key">
+      <span class="lbl">Personas con jornada de 48 hrs</span>
+      <span class="val" data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</span>
+      <span class="sub"><b data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="pct" data-row="0">—</b> de la plantilla capturada</span>
+    </div>
+    <div class="gx-kpi">
+      <span class="lbl">Entre 46 y 48 hrs</span>
+      <span class="val" data-draw="kpi" data-source="kpis" data-field="entre" data-row="0">—</span>
+      <span class="sub">también se pasan de 46 · total <b data-draw="kpi" data-source="kpis" data-field="sobre46" data-row="0">—</b></span>
+    </div>
+    <div class="gx-kpi">
+      <span class="lbl">Horas por semana a reacomodar</span>
+      <span class="val" data-draw="kpi" data-fmt="dec" data-source="kpis" data-field="horas_exceso" data-row="0">—</span>
+      <span class="sub">para bajar a todos a 46 · ≈ <b data-draw="kpi" data-fmt="dec" data-source="kpis" data-field="plazas_eq" data-row="0">—</b> plazas de 46 hrs</span>
+    </div>
+    <div class="gx-kpi">
+      <span class="lbl">Contratos firmados a 48 hrs</span>
+      <span class="val" data-draw="kpi" data-source="kpis" data-field="contrato48" data-row="0">—</span>
+      <span class="sub"><b data-draw="kpi" data-source="kpis" data-field="contrato48_ok" data-row="0">—</b> ya trabajan 46 hrs o menos</span>
     </div>
   </section>
-
-  <div class="tablebox">
-    <table>
-      <thead><tr>
-        <th>Colaborador</th><th>Sucursal</th><th>Tipo</th><th class="num">Hrs hoy</th><th class="num">Meta</th><th>Horario actual</th>
-        <th>Líder</th><th>Nuevo horario</th><th class="num">Nuevas hrs</th><th>Nuevo contrato</th><th>Comentario</th>
-      </tr></thead>
-      <tbody id="rows"><tr><td colspan="11" class="empty">Cargando la lista de personas…</td></tr></tbody>
-    </table>
+  <article class="gx-card" id="por-tipo">
+    <div class="gx-tipo-head"><h2>Ajuste por tipo de jornada · <span data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</span> personas con 48 hrs</h2><button type="button" class="gx-link" data-tab-go="t-seg">Ver avance de contratos →</button></div>
+    <div class="gx-tipos">
+      <div class="gx-tipo"><span class="lbl">Diurna</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="d48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="d48_pct" data-row="0">—</small></span><span class="rule">Bajar 2 hrs → 46 hrs</span></div>
+      <div class="gx-tipo"><span class="lbl">Mixta</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="m48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="m48_pct" data-row="0">—</small></span><span class="rule">Bajar 3 hrs → 45 hrs (su máximo no cambia)</span></div>
+      <div class="gx-tipo"><span class="lbl">Nocturna</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="n48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="n48_pct" data-row="0">—</small></span><span class="rule pend">Ajuste por confirmar</span></div>
+    </div>
+  </article>
+  <div class="gx-grid">
+    <article class="gx-card" id="por-puesto">
+      <h2>¿Qué puestos se pasan de 46 hrs?</h2>
+      <p class="note">Personas por puesto que se pasan de 46 hrs, sobre el total del puesto. Clic en una barra para ver los nombres.</p>
+      <div class="gx-legend"><span><i class="sw-a"></i>48 hrs</span><span><i class="sw-b"></i>Entre 46 y 48 hrs</span><span><i class="sw-m"></i>Total del puesto</span></div>
+      <div class="gx-chart" data-draw="puestos" data-source="por_puesto"></div>
+      <button type="button" class="gx-btn" id="gx-toggle-puestos" aria-expanded="false"><span class="t-more">Mostrar todos los puestos</span><span class="t-less" hidden>Mostrar solo los 8 principales</span></button>
+    </article>
   </div>
-  <p class="status" id="status"></p>
-
-  <section class="card">
-    <h2 class="h2">Criterios</h2>
-    <ul class="notes">
-      <li>Lista: colaboradores activos con jornada reconocida de 48 hrs o más (base del 5 nov 2026).</li>
-      <li>Diurna baja a 46 hrs en 2027. Mixta se queda en su máximo actual de 45 hrs, que no cambia con la reforma. Nocturna: pendiente de confirmar.</li>
-      <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
-      <li>«Nuevas hrs» se marca en naranja si sigue arriba de la meta del tipo de jornada.</li>
-    </ul>
+  <article class="gx-card" id="lo-que-viene">
+    <h2>Lo que viene: quién se va sumando cada año</h2>
+    <p class="note">Con los horarios de hoy, cada año se suman personas que quedan arriba del nuevo límite. Debajo de cada año están los puestos que entran en esa etapa; abre un puesto para ver los nombres.</p>
+    <div class="gx-tl">
+      <div class="gx-tl-col">
+        <div class="gx-tl-head"><span class="yr">2027</span><span class="lim">Límite 46 hrs</span></div>
+        <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2027">—</span><span class="u">personas a ajustar</span></div>
+        <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2027">—</b> personas arrancan el ajuste</div>
+        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2027" data-source="etapas_personas"></div>
+        <button type="button" class="gx-btn" data-go="2027">Ver personas de 2027</button>
+      </div>
+      <div class="gx-tl-col is-peak">
+        <div class="gx-tl-head"><span class="yr">2028</span><span class="lim">Límite 44 hrs</span></div>
+        <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2028">—</span><span class="u">personas a ajustar</span></div>
+        <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2028">—</b> se suman en esta etapa</div>
+        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2028" data-source="etapas_personas"></div>
+        <button type="button" class="gx-btn" data-go="2028">Ver personas de 2028</button>
+      </div>
+      <div class="gx-tl-col">
+        <div class="gx-tl-head"><span class="yr">2029</span><span class="lim">Límite 42 hrs</span></div>
+        <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2029">—</span><span class="u">personas a ajustar</span></div>
+        <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2029">—</b> se suman en esta etapa</div>
+        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2029" data-source="etapas_personas"></div>
+        <button type="button" class="gx-btn" data-go="2029">Ver personas de 2029</button>
+      </div>
+      <div class="gx-tl-col">
+        <div class="gx-tl-head"><span class="yr">2030</span><span class="lim">Límite 40 hrs</span></div>
+        <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2030">—</span><span class="u">personas a ajustar</span></div>
+        <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2030">—</b> se suman en esta etapa</div>
+        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2030" data-source="etapas_personas"></div>
+        <button type="button" class="gx-btn" data-go="2030">Ver personas de 2030</button>
+      </div>
+    </div>
+  </article>
   </section>
+
+  <section class="gx-tab" id="t-personas" hidden>
+  <div class="gx-grid">
+      <article class="gx-card" id="por-ubicacion">
+        <h2>¿En qué sucursales?</h2>
+        <p class="note">Personas que se pasan de 46 hrs, sobre el total de la sucursal.</p>
+        <div class="gx-chart" data-draw="ubicaciones" data-source="por_ubicacion"></div>
+      </article>
+  </div>
+  <article class="gx-card" id="personas">
+    <h2>Personas que se pasan de 46 hrs</h2>
+    <p class="note">Ordenadas por horas reconocidas. «Ajuste» son las horas a bajar según el tipo de jornada: diurna a 46, mixta a 45 (su máximo no cambia) y nocturna por confirmar.</p>
+    <div class="gx-tools">
+      <span class="gx-seg" role="group" aria-label="Grupo"><button type="button" data-grupo="" aria-pressed="true">Todos</button><button type="button" data-grupo="48 hrs" aria-pressed="false">48 hrs</button><button type="button" data-grupo="46–48 hrs" aria-pressed="false">46–48 hrs</button></span>
+      <select class="gx-sel" id="gx-f-tipo" aria-label="Tipo de jornada"><option value="">Todos los tipos</option><option>Diurna</option><option>Mixta</option><option>Nocturna</option></select>
+      <select class="gx-sel" id="gx-f-suc" aria-label="Sucursal" data-draw="opt-suc" data-source="afectados"></select>
+      <select class="gx-sel" id="gx-f-puesto" aria-label="Puesto" data-draw="opt-puesto" data-source="afectados"></select>
+      <input class="gx-search" id="gx-search" type="search" placeholder="Buscar nombre, puesto o sucursal" aria-label="Buscar en la tabla">
+      <span class="gx-filtro" id="gx-filtro" hidden>Puesto: <span data-draw="filtro">—</span><button type="button" id="gx-filtro-x" aria-label="Quitar filtro de puesto">✕</button></span>
+      <span class="gx-count"><span data-draw="conteo">—</span> personas</span>
+    </div>
+    <div class="gx-tablebox">
+      <table class="gx-table" data-source="afectados" data-row-key="nombre">
+        <thead><tr>
+          <th data-field="nombre"><button type="button" data-sort="nombre">Nombre</button></th>
+          <th data-field="puesto"><button type="button" data-sort="puesto">Puesto</button></th>
+          <th data-field="grupo"><button type="button" data-sort="grupo">Grupo</button></th>
+          <th data-field="ubicacion" class="hide-sm"><button type="button" data-sort="ubicacion">Sucursal</button></th>
+          <th data-field="tipo_jornada" class="hide-sm"><button type="button" data-sort="tipo_jornada">Jornada</button></th>
+          <th data-field="horas_reales" class="num"><button type="button" data-sort="horas_reales">Hrs reales</button></th>
+          <th data-field="ajuste" class="num"><button type="button" data-sort="ajuste">Ajuste</button></th>
+          <th data-field="horas_contrato" class="num hide-sm"><button type="button" data-sort="horas_contrato">Contrato</button></th>
+        </tr></thead>
+        <tbody data-draw="tabla"></tbody>
+      </table>
+    </div>
+  </article>
+  </section>
+
+  <section class="gx-tab" id="t-rol" hidden>
+  <article class="gx-card" id="jornadas-por-rol">
+    <h2>Jornadas por rol</h2>
+    <p class="note" data-modo="actual">Elige un puesto, o deja «Todos los puestos», para ver el horario de cada persona, día por día. Los días de 8 hrs o más van sombreados. Incluye a todas las personas del puesto, se pasen o no de 46 hrs.</p>
+    <p class="note" data-modo="propuesta" hidden>Propuesta para las personas que se pasan de 46 hrs, según el acuerdo del 5 nov 2026: las diurnas bajan a 46 hrs y las mixtas a 45. El recorte se toma primero de los días más largos, en bloques de 5 min; si todos los días son iguales, queda parejo (−20 min diarios de 48 a 46, −30 min de 48 a 45). La hora de entrada no cambia y salen antes. Los días sombreados son los que cambian. Es un punto de partida para validar con cada gerente.</p>
+    <div class="gx-rol-tools">
+      <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-modo-btn="actual" aria-pressed="true">Horario actual</button><button type="button" data-modo-btn="propuesta" aria-pressed="false">Propuesta 2027</button></span></div>
+      <label for="gx-rol">Puesto<select class="gx-select" id="gx-rol" data-draw="rol-opciones" data-source="horarios"></select></label>
+      <label for="gx-suc">Sucursal<select class="gx-select" id="gx-suc" data-draw="suc-opciones" data-source="horarios"></select></label>
+    </div>
+    <div class="gx-rol-stats" data-source="horarios" data-modo="propuesta" hidden>
+      <div><span class="lbl">Personas arriba de 46 hrs</span><span class="val" data-draw="prop-stat" data-k="n">—</span></div>
+      <div class="is-a"><span class="lbl">Diurnas: a 46 hrs</span><span class="val" data-draw="prop-stat" data-k="d">—</span></div>
+      <div class="is-a"><span class="lbl">Mixtas: a 45 hrs</span><span class="val" data-draw="prop-stat" data-k="m">—</span></div>
+      <div><span class="lbl">Por confirmar</span><span class="val" data-draw="prop-stat" data-k="pc">—</span></div>
+      <div><span class="lbl">Horas por semana a reacomodar</span><span class="val" data-draw="prop-stat" data-k="hrs">—</span></div>
+    </div>
+    <div class="gx-rol-stats" data-source="horarios" data-modo="actual">
+      <div><span class="lbl">Personas</span><span class="val" data-draw="rol-stat" data-k="n">—</span></div>
+      <div class="is-a"><span class="lbl">Con 48 hrs</span><span class="val" data-draw="rol-stat" data-k="g48">—</span></div>
+      <div><span class="lbl">Entre 46 y 48 hrs</span><span class="val" data-draw="rol-stat" data-k="g46">—</span></div>
+      <div><span class="lbl">Dentro de 46 hrs</span><span class="val" data-draw="rol-stat" data-k="ok">—</span></div>
+      <div><span class="lbl">Promedio semanal</span><span class="val" data-draw="rol-stat" data-k="prom">—</span></div>
+    </div>
+    <div class="gx-tablebox">
+      <table class="gx-table gx-sem" data-source="horarios" data-row-key="nombre">
+        <thead><tr>
+          <th data-field="nombre"><button type="button" data-rsort="nombre">Nombre</button></th>
+          <th data-field="puesto"><button type="button" data-rsort="puesto">Puesto</button></th>
+          <th data-field="ubicacion" class="hide-sm"><button type="button" data-rsort="ubicacion">Sucursal</button></th>
+          <th data-field="lun" class="d">Lun</th>
+          <th data-field="mar" class="d">Mar</th>
+          <th data-field="mie" class="d">Mié</th>
+          <th data-field="jue" class="d">Jue</th>
+          <th data-field="vie" class="d">Vie</th>
+          <th data-field="sab" class="d">Sáb</th>
+          <th data-field="dom" class="d">Dom</th>
+          <th data-field="horas_reales" class="num"><button type="button" data-rsort="horas_reales">Total</button></th>
+        </tr></thead>
+        <tbody data-draw="rol-tabla"></tbody>
+      </table>
+    </div>
+  </article>
+  </section>
+
+  <section class="gx-tab" id="t-etapas" hidden>
+  <article class="gx-card" id="calendario-2030">
+    <h2>Quién debe cambiar de jornada en cada etapa (2027–2030)</h2>
+    <p class="note">Con los horarios de hoy, las personas que quedan arriba del máximo semanal de cada año. Elige un año para ver a las personas y los puestos que tendrán que ajustar su jornada en esa etapa. «Nuevas» son las que no tenían que cambiar en la etapa anterior.</p>
+    <div class="gx-years" role="group" aria-label="Año de la reforma">
+      <button type="button" class="gx-year" data-anio="2027" aria-pressed="false"><span class="y">2027 · límite 46 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2027">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2027">—</span> nuevas en esta etapa</span></button>
+      <button type="button" class="gx-year" data-anio="2028" aria-pressed="true"><span class="y">2028 · límite 44 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2028">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2028">—</span> nuevas en esta etapa</span></button>
+      <button type="button" class="gx-year" data-anio="2029" aria-pressed="false"><span class="y">2029 · límite 42 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2029">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2029">—</span> nuevas en esta etapa</span></button>
+      <button type="button" class="gx-year" data-anio="2030" aria-pressed="false"><span class="y">2030 · límite 40 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2030">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2030">—</span> nuevas en esta etapa</span></button>
+    </div>
+    <div class="gx-split">
+      <div>
+        <h3>Puestos que deben ajustar</h3>
+        <div class="gx-legend"><span><i class="sw-a"></i>Nuevas en esta etapa</span><span><i class="sw-b"></i>Ya venían de la etapa anterior</span></div>
+        <div class="gx-chart" data-draw="etapa-puestos" data-source="etapas_personas"></div>
+      </div>
+      <div>
+        <h3>Personas</h3>
+        <div class="gx-tools">
+          <span class="gx-seg" role="group" aria-label="Mostrar"><button type="button" data-solo="" aria-pressed="true">Todas</button><button type="button" data-solo="nuevas" aria-pressed="false">Solo nuevas</button></span>
+          <input class="gx-search" id="gx-search-etapa" type="search" placeholder="Buscar nombre, puesto o sucursal" aria-label="Buscar personas de la etapa">
+          <span class="gx-count"><span data-draw="etapa-conteo">—</span> personas</span>
+        </div>
+        <div class="gx-tablebox">
+          <table class="gx-table" data-source="etapas_personas" data-row-key="nombre">
+            <thead><tr>
+              <th data-field="nombre">Nombre</th>
+              <th data-field="puesto">Puesto</th>
+              <th data-field="ubicacion" class="hide-sm">Sucursal</th>
+              <th data-field="horas_reales" class="num">Hrs hoy</th>
+              <th class="num">Recorte</th>
+              <th data-field="desde" class="num">Desde</th>
+            </tr></thead>
+            <tbody data-draw="etapa-tabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+  </section>
+
+  <section class="gx-tab" id="t-seg" hidden>
+  <p class="seg-intro">Captura el líder, el nuevo horario y marca cuando el nuevo contrato esté firmado. Todo se guarda solo y lo ve todo el equipo. El nuevo horario viene precargado con la propuesta 2027; valídalo o corrígelo con cada gerente.</p>
+    <div class="top">
+      <section class="card prog" aria-label="Avance">
+        <div class="lbl">Nuevo contrato realizado</div>
+        <div class="big"><span id="p-done">—</span> <span>de <span id="p-total">—</span></span></div>
+        <div class="bar" aria-hidden="true"><i id="p-bar"></i></div>
+        <div class="sub"><b id="p-pct">—</b> de avance · <span id="p-hor">—</span> con nuevo horario capturado · <span id="p-lid">—</span> con líder asignado</div>
+      </section>
+      <section class="tipos" aria-label="Por tipo de jornada">
+        <button type="button" class="tipo" data-tipo="Diurna" aria-pressed="false">
+          <span class="lbl">Diurna</span><span class="n"><span data-k="Diurna-n">—</span><small data-k="Diurna-pct">—</small></span>
+          <span class="rule">Bajar 2 hrs → 46 hrs</span><span class="av"><span data-k="Diurna-done">—</span> con contrato nuevo</span>
+        </button>
+        <button type="button" class="tipo" data-tipo="Mixta" aria-pressed="false">
+          <span class="lbl">Mixta</span><span class="n"><span data-k="Mixta-n">—</span><small data-k="Mixta-pct">—</small></span>
+          <span class="rule">Bajar 3 hrs → 45 hrs (máximo actual)</span><span class="av"><span data-k="Mixta-done">—</span> con contrato nuevo</span>
+        </button>
+        <button type="button" class="tipo" data-tipo="Nocturna" aria-pressed="false">
+          <span class="lbl">Nocturna</span><span class="n"><span data-k="Nocturna-n">—</span><small data-k="Nocturna-pct">—</small></span>
+          <span class="rule pend">Ajuste por confirmar</span><span class="av"><span data-k="Nocturna-done">—</span> con contrato nuevo</span>
+        </button>
+      </section>
+    </div>
+
+    <section aria-label="Por sucursal">
+      <h2 class="h2">Propuesta por sucursal</h2>
+      <div class="sucs" id="sucs"><span class="status">Cargando sucursales…</span></div>
+    </section>
+
+    <section class="card" aria-label="Personas">
+      <div class="filters">
+        <label for="f-tipo">Tipo de jornada<select id="f-tipo"><option value="">Todas</option><option>Diurna</option><option>Mixta</option><option>Nocturna</option></select></label>
+        <label for="f-suc">Sucursal<select id="f-suc"><option value="">Todas</option></select></label>
+        <label for="f-puesto">Puesto<select id="f-puesto"><option value="">Todos</option></select></label>
+        <label for="f-est">Estado<select id="f-est"><option value="">Todos</option><option value="pend">Pendiente</option><option value="done">Contrato realizado</option></select></label>
+        <label for="f-q" class="grow">Buscar<input id="f-q" type="search" placeholder="Nombre, puesto o líder"></label>
+        <button type="button" class="btn" id="f-clear">Limpiar filtros</button>
+        <span class="count"><b id="f-count">—</b> personas</span>
+      </div>
+    </section>
+
+    <div class="tablebox">
+      <table>
+        <thead><tr>
+          <th>Colaborador</th><th>Sucursal</th><th>Tipo</th><th class="num">Hrs hoy</th><th class="num">Meta</th><th>Horario actual</th>
+          <th>Líder</th><th>Nuevo horario</th><th class="num">Nuevas hrs</th><th>Nuevo contrato</th><th>Comentario</th>
+        </tr></thead>
+        <tbody id="rows"><tr><td colspan="11" class="empty">Cargando la lista de personas…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="status" id="status"></p>
+
+    <section class="card">
+      <h2 class="h2">Criterios</h2>
+      <ul class="notes">
+        <li>Lista: colaboradores activos con jornada reconocida de 48 hrs o más (base del 5 nov 2026).</li>
+        <li>Diurna baja a 46 hrs en 2027. Mixta se queda en su máximo actual de 45 hrs, que no cambia con la reforma. Nocturna: pendiente de confirmar.</li>
+        <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
+        <li>«Nuevas hrs» se marca en naranja si sigue arriba de la meta del tipo de jornada.</li>
+      </ul>
+    </section>
+  </section>
+
+  <details class="gx-card gx-details" id="criterios">
+    <summary>Criterios del análisis</summary>
+    <ul class="gx-crit">
+      <li>Fuente: revisión de jornadas 48 hrs (hoja Base de Datos, corte 5 nov 2026). Solo colaboradores activos en TabBD; quienes no tienen horario capturado quedan fuera del cálculo.</li>
+      <li>Horas reales = jornada reconocida semanal, ya descontada la comida según el criterio de cada persona. Grupo «48 hrs» = 48 hrs reconocidas o más; grupo «46–48 hrs» = más de 46 y menos de 48.</li>
+      <li>Calendario de la reforma (DOF 3 mar 2026): 46 hrs en 2027, 44 en 2028, 42 en 2029 y 40 en 2030, sin reducir salario ni prestaciones. Las etapas usan los horarios de hoy; «Recorte» son las horas a bajar para quedar en el límite de ese año.</li>
+      <li>Ajuste por tipo (acuerdo de la junta del 5 nov): diurna baja a 46 hrs, mixta a 45 hrs (su máximo legal no cambia con la reforma), nocturna por confirmar. Pendiente con el abogado: si con 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
+      <li>Plazas equivalentes = horas a reacomodar ÷ 46. Es una referencia de capacidad, no una propuesta de contratación.</li>
+      <li>Contratos a 48 hrs: hay que actualizarlos aunque la persona ya trabaje menos, para que el documento refleje la nueva jornada.</li>
+    </ul>
+  </details>
 </div>
+
+<script>
+const LIMITE = 46;
+window.GX = { todos: false, puesto: null, grupo: '', tipo: '', suc: '', q: '', sort: 'horas_reales', dir: -1 };
+
+dash.calc('afectados', {
+  title: 'Personas que se pasan de 46 hrs',
+  description: 'Colaboradores con horario capturado y más de 46 hrs reconocidas, en dos grupos (48 hrs o más, y entre 46 y 48), con las horas que exceden el nuevo límite.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => plantilla
+    .filter((r) => r.captura === 'Capturado' && Number(r.horas_reales) > 46)
+    .map((r) => ({ nombre: r.nombre, grupo: Number(r.horas_reales) >= 48 ? '48 hrs' : '46–48 hrs', puesto: r.puesto, ubicacion: r.ubicacion, division: r.division, tipo_jornada: r.tipo_jornada, horas_reales: Number(r.horas_reales), exceso: Number(r.horas_reales) - 46, ajuste: r.tipo_jornada === 'Mixta' ? Number(r.horas_reales) - 45 : r.tipo_jornada === 'Nocturna' ? null : Number(r.horas_reales) - 46, horas_contrato: (r.horas_contrato == null || r.horas_contrato === '') ? null : Number(r.horas_contrato) }))
+});
+
+dash.calc('kpis', {
+  title: 'Indicadores de jornada',
+  description: 'Conteos de la plantilla capturada con 48 hrs y con más de 46 hrs, frente al nuevo límite de 46.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => {
+    const cap = plantilla.filter((r) => r.captura === 'Capturado');
+    const af = cap.filter((r) => Number(r.horas_reales) >= 48);
+    const s46 = cap.filter((r) => Number(r.horas_reales) > 46);
+    const cuenta = {};
+    af.forEach((r) => { cuenta[r.puesto] = (cuenta[r.puesto] || 0) + 1; });
+    const top = Object.entries(cuenta).sort((a, b) => b[1] - a[1])[0] || ['', 0];
+    const exceso = s46.reduce((s, r) => s + Number(r.horas_reales) - 46, 0);
+    const c48 = plantilla.filter((r) => Number(r.horas_contrato) === 48);
+    return [{
+      activos: plantilla.length,
+      capturados: cap.length,
+      afectados: af.length,
+      pct: Math.round(af.length / cap.length * 1000) / 10,
+      entre: s46.length - af.length,
+      sobre46: s46.length,
+      puestos: new Set(s46.map((r) => r.puesto)).size,
+      puestos_total: new Set(plantilla.map((r) => r.puesto)).size,
+      horas_exceso: Math.round(exceso * 10) / 10,
+      plazas_eq: Math.round(exceso / 46 * 10) / 10,
+      contrato48: c48.length,
+      contrato48_ok: c48.filter((r) => r.captura === 'Capturado' && Number(r.horas_reales) <= 46).length,
+      mixtas: s46.filter((r) => r.tipo_jornada === 'Mixta').length,
+      d48: af.filter((r) => r.tipo_jornada === 'Diurna').length,
+      m48: af.filter((r) => r.tipo_jornada === 'Mixta').length,
+      n48: af.filter((r) => r.tipo_jornada === 'Nocturna').length,
+      d48_pct: af.length ? Math.round(af.filter((r) => r.tipo_jornada === 'Diurna').length / af.length * 1000) / 10 : 0,
+      m48_pct: af.length ? Math.round(af.filter((r) => r.tipo_jornada === 'Mixta').length / af.length * 1000) / 10 : 0,
+      n48_pct: af.length ? Math.round(af.filter((r) => r.tipo_jornada === 'Nocturna').length / af.length * 1000) / 10 : 0,
+      top_puesto: top[0],
+      top_puesto_n: top[1]
+    }];
+  }
+});
+
+dash.calc('por_puesto', {
+  title: 'Más de 46 hrs por puesto',
+  description: 'Por puesto: personas con 48 hrs, personas entre 46 y 48 hrs, y total capturado.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => {
+    const m = {};
+    plantilla.filter((r) => r.captura === 'Capturado').forEach((r) => {
+      m[r.puesto] = m[r.puesto] || { puesto: r.puesto, afectados: 0, entre: 0, total: 0 };
+      m[r.puesto].total += 1;
+      if (Number(r.horas_reales) >= 48) m[r.puesto].afectados += 1; else if (Number(r.horas_reales) > 46) m[r.puesto].entre += 1;
+    });
+    return Object.values(m).filter((d) => d.afectados + d.entre > 0).sort((a, b) => (b.afectados + b.entre) - (a.afectados + a.entre) || b.afectados - a.afectados);
+  }
+});
+
+dash.calc('por_ubicacion', {
+  title: 'Más de 46 hrs por sucursal',
+  description: 'Por sucursal: personas con 48 hrs, personas entre 46 y 48 hrs, y total capturado.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => {
+    const m = {};
+    plantilla.filter((r) => r.captura === 'Capturado').forEach((r) => {
+      m[r.ubicacion] = m[r.ubicacion] || { ubicacion: r.ubicacion, afectados: 0, entre: 0, total: 0 };
+      m[r.ubicacion].total += 1;
+      if (Number(r.horas_reales) >= 48) m[r.ubicacion].afectados += 1; else if (Number(r.horas_reales) > 46) m[r.ubicacion].entre += 1;
+    });
+    return Object.values(m).sort((a, b) => (b.afectados + b.entre) - (a.afectados + a.entre));
+  }
+});
+
+
+const fmtN = d3.format(',');
+const fmtD = (v) => (Math.round(v * 10) / 10).toLocaleString('es-MX', { maximumFractionDigits: 1 });
+
+dash.draw('kpi', (el) => {
+  const k = dash.data('kpis');
+  if (k.status !== 'ok' || !k.data.length) { el.textContent = '—'; return; }
+  const v = k.data[0][el.dataset.field];
+  const f = el.dataset.fmt;
+  el.textContent = f === 'pct' ? fmtD(v) + '%' : f === 'dec' ? fmtD(v) : typeof v === 'number' ? fmtN(v) : String(v);
+});
+
+function tipFor(box) {
+  let tip = box.querySelector('.gx-tip');
+  if (!tip) { tip = document.createElement('div'); tip.className = 'gx-tip'; tip.hidden = true; box.appendChild(tip); }
+  return tip;
+}
+function showTip(box, tip, ev, title, line) {
+  tip.replaceChildren();
+  const t = document.createElement('div'); t.className = 't'; t.textContent = title;
+  const l = document.createElement('div'); l.textContent = line;
+  tip.append(t, l); tip.hidden = false;
+  const r = box.getBoundingClientRect();
+  let x = ev.clientX - r.left + 12, y = ev.clientY - r.top + 12;
+  const w = tip.offsetWidth;
+  if (x + w > r.width) x = Math.max(0, ev.clientX - r.left - w - 12);
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+
+function hbars(el, rows, key, onClick, selected, tipTxt) {
+  el.replaceChildren();
+  const W = el.clientWidth || 400;
+  const rowH = 24, gap = 6;
+  const svg = d3.select(el).append('svg').attr('width', '100%');
+  const meas = svg.append('text').attr('font-size', 12).style('font-family', 'var(--font-anthropic-sans)');
+  let maxL = 0;
+  rows.forEach((d) => { meas.text(d[key]); maxL = Math.max(maxL, meas.node().getComputedTextLength()); });
+  meas.text('999 / 999'); const valW = meas.node().getComputedTextLength() + 8;
+  meas.remove();
+  const labW = Math.min(maxL + 10, W * 0.46);
+  const H = rows.length * (rowH + gap);
+  svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+  const x = d3.scaleLinear([0, d3.max(rows, (d) => d.total) || 1], [0, Math.max(10, W - labW - valW)]);
+  const tip = tipFor(el);
+  const g = svg.selectAll('g.bar').data(rows).join('g').attr('class', 'bar').attr('transform', (d, i) => `translate(0, ${i * (rowH + gap)})`);
+  g.classed('is-on', (d) => selected && d[key] === selected);
+  g.append('text').attr('x', labW - 8).attr('y', rowH / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 12)
+    .style('fill', 'var(--color-fg)').style('font-family', 'var(--font-anthropic-sans)')
+    .each(function (d) { const t = d3.select(this); let s = String(d[key] ?? 'Sin puesto'); t.text(s); while (this.getComputedTextLength() > labW - 10 && s.length > 4) { s = s.slice(0, -1); t.text(s + '…'); } });
+  g.append('rect').attr('x', labW).attr('y', 3).attr('height', rowH - 6).attr('width', (d) => x(d.total)).attr('rx', 3).style('fill', 'var(--gx-accent-soft)');
+  g.append('rect').attr('class', 'fg').attr('x', labW).attr('y', 3).attr('height', rowH - 6).attr('width', (d) => x(d.afectados)).attr('rx', 3).style('fill', 'var(--gx-accent)');
+  g.append('rect').attr('class', 'fg').attr('x', (d) => labW + x(d.afectados)).attr('y', 3).attr('height', rowH - 6).attr('width', (d) => x(d.entre)).style('fill', 'var(--gx-accent-mid)');
+  g.append('text').attr('x', (d) => labW + x(d.total) + 6).attr('y', rowH / 2).attr('dy', '0.35em').attr('font-size', 12)
+    .style('fill', 'var(--color-fg-muted)').style('font-variant-numeric', 'tabular-nums').style('font-family', 'var(--font-anthropic-sans)')
+    .text((d) => `${d.afectados + d.entre} / ${d.total}`);
+  g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', rowH).style('fill', 'transparent')
+    .on('mousemove', (ev, d) => showTip(el, tip, ev, d[key], tipTxt ? tipTxt(d) : `${d.afectados} con 48 hrs · ${d.entre} entre 46 y 48 · de ${d.total}`))
+    .on('mouseleave', () => { tip.hidden = true; })
+    .on('click', (ev, d) => onClick && onClick(d[key]));
+}
+
+function filtrarPuesto(p) {
+  GX.puesto = GX.puesto === p ? null : p;
+  document.querySelectorAll('#gx-filtro').forEach((n) => { n.hidden = !GX.puesto; });
+  dash.draw('tabla'); dash.draw('filtro'); dash.draw('conteo'); dash.draw('puestos'); dash.draw('opt-puesto');
+  if (GX.puesto) abrirTab('t-personas');
+}
+
+dash.draw('puestos', (el) => {
+  const p = dash.data('por_puesto');
+  if (p.status !== 'ok') { el.replaceChildren(); return; }
+  const rows = GX.todos ? p.data : p.data.slice(0, 8);
+  hbars(el, rows, 'puesto', filtrarPuesto, GX.puesto);
+});
+
+dash.draw('ubicaciones', (el) => {
+  const p = dash.data('por_ubicacion');
+  if (p.status !== 'ok') { el.replaceChildren(); return; }
+  hbars(el, p.data, 'ubicacion', null, null);
+});
+
+
+function filas() {
+  const a = dash.data('afectados');
+  if (a.status !== 'ok') return null;
+  const q = GX.q.trim().toLowerCase();
+  let rows = a.data.filter((r) => (!GX.puesto || r.puesto === GX.puesto) && (!GX.grupo || r.grupo === GX.grupo) && (!GX.tipo || r.tipo_jornada === GX.tipo) && (!GX.suc || r.ubicacion === GX.suc) && (!q || `${r.nombre} ${r.puesto} ${r.ubicacion}`.toLowerCase().includes(q)));
+  const k = GX.sort, dir = GX.dir;
+  rows = rows.slice().sort((x, y) => {
+    const a1 = x[k], b1 = y[k];
+    if (typeof a1 === 'number' || typeof b1 === 'number') return ((a1 ?? -1) - (b1 ?? -1)) * dir || String(x.nombre ?? '').localeCompare(String(y.nombre ?? ''));
+    return String(a1).localeCompare(String(b1), 'es') * dir;
+  });
+  return rows;
+}
+
+dash.draw('tabla', (tb) => {
+  const rows = filas();
+  tb.replaceChildren();
+  if (!rows) return;
+  rows.forEach((r) => {
+    const tr = document.createElement('tr');
+    const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+    td(r.nombre); td(r.puesto);
+    const tg = td(''); const pg = document.createElement('span'); pg.className = 'gx-pill ' + (r.grupo === '48 hrs' ? 'g48' : 'g46'); pg.textContent = r.grupo; tg.appendChild(pg);
+    td(r.ubicacion, 'hide-sm');
+    const tj = td('', 'hide-sm'); const pill = document.createElement('span'); pill.className = 'gx-pill ' + String(r.tipo_jornada).toLowerCase(); pill.textContent = r.tipo_jornada; tj.appendChild(pill);
+    td(fmtD(r.horas_reales), 'num'); td(r.ajuste == null ? 'Por confirmar' : '−' + fmtD(r.ajuste), 'num gx-exc'); td(r.horas_contrato == null ? '—' : fmtD(r.horas_contrato), 'num hide-sm');
+    tb.appendChild(tr);
+  });
+});
+
+dash.draw('conteo', (el) => { const rows = filas(); el.textContent = rows ? fmtN(rows.length) : '—'; });
+dash.draw('filtro', (el) => { el.textContent = GX.puesto || '—'; });
+
+document.querySelectorAll('#gx-toggle-puestos').forEach((b) => b.addEventListener('click', () => {
+  GX.todos = !GX.todos;
+  b.setAttribute('aria-expanded', String(GX.todos));
+  b.querySelectorAll('.t-more').forEach((n) => { n.hidden = GX.todos; });
+  b.querySelectorAll('.t-less').forEach((n) => { n.hidden = !GX.todos; });
+  dash.draw('puestos');
+}));
+document.querySelectorAll('.gx-seg button[data-grupo]').forEach((b) => b.addEventListener('click', () => {
+  GX.grupo = b.dataset.grupo;
+  document.querySelectorAll('.gx-seg button[data-grupo]').forEach((n) => n.setAttribute('aria-pressed', String(n.dataset.grupo === GX.grupo)));
+  dash.draw('tabla'); dash.draw('conteo');
+}));
+document.querySelectorAll('#gx-search').forEach((i) => i.addEventListener('input', () => { GX.q = i.value; dash.draw('tabla'); dash.draw('conteo'); }));
+document.querySelectorAll('#gx-filtro-x').forEach((b) => b.addEventListener('click', () => filtrarPuesto(GX.puesto)));
+document.querySelectorAll('.gx-table th button[data-sort]').forEach((b) => b.addEventListener('click', () => {
+  const k = b.dataset.sort;
+  if (GX.sort === k) GX.dir = -GX.dir; else { GX.sort = k; GX.dir = ['horas_reales', 'ajuste', 'horas_contrato'].includes(k) ? -1 : 1; }
+  document.querySelectorAll('.gx-table th').forEach((th) => th.removeAttribute('aria-sort'));
+  b.parentElement.setAttribute('aria-sort', GX.dir === 1 ? 'ascending' : 'descending');
+  dash.draw('tabla');
+}));
+
+window.GXR = { rol: '', suc: '', sort: 'horas_reales', dir: -1, modo: 'actual' };
+const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+const PU = (r) => (r.puesto == null || r.puesto === '' || r.puesto === 'nan') ? 'Sin puesto' : String(r.puesto);
+const TX = (v) => v == null ? '' : String(v);
+function rolFilas() {
+  const h = dash.data('horarios');
+  if (h.status !== 'ok') return null;
+  const k = GXR.sort, dir = GXR.dir;
+  return h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && (!GXR.suc || TX(r.ubicacion) === GXR.suc) && r.tipo_jornada !== 'Sin captura'
+      && (GXR.modo !== 'propuesta' || Number(r.horas_reales) > UMBRAL_PROP))
+    .sort((a, b) => k === 'horas_reales' ? ((Number(a.horas_reales) - Number(b.horas_reales)) * dir || TX(a.nombre).localeCompare(TX(b.nombre))) : TX(a[k]).localeCompare(TX(b[k]), 'es') * dir);
+}
+function redrawRol() { ['suc-opciones', 'rol-stat', 'prop-stat', 'rol-tabla'].forEach((n) => dash.draw(n)); }
+
+// Propuesta 2027 (acuerdo 5 nov 2026): diurna a 46 hrs, mixta a 45; nocturna por confirmar.
+// El recorte se toma en bloques de 5 min del día más largo en ese momento (empates: el primero de la semana);
+// con días iguales queda parejo. Se conserva la entrada y se adelanta la salida. Entran quienes pasan de 46 hrs.
+const META = { Diurna: 46, Mixta: 45 };
+const UMBRAL_PROP = 46;
+const aMin = (t) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + m; };
+const aHora = (m) => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const fmtHM = (min) => { const h = Math.floor(min / 60), m = Math.round(min % 60); return m ? (h ? `${h} h ${m} min` : `${m} min`) : `${h} h`; };
+function propuesta(r) {
+  const tot = Number(r.horas_reales);
+  const dias = DIAS.filter((d) => r[d] && Number(r[d + '_h']) > 0);
+  if (dias.some((d) => Number(r[d + '_h']) > 12)) return { estado: 'revisar' };
+  const meta = META[r.tipo_jornada];
+  if (meta == null) return { estado: 'pendiente' };
+  const total = Math.round((tot - meta) * 60);
+  if (total <= 0 || !dias.length) return { estado: 'sin' };
+  const cortes = Object.fromEntries(dias.map((d) => [d, 0]));
+  const largo = (d) => Number(r[d + '_h']) * 60 - cortes[d];
+  let resto = total;
+  while (resto > 0) {
+    const x = Math.min(5, resto);
+    const d = dias.reduce((a, b) => (largo(b) > largo(a) ? b : a));
+    cortes[d] += x; resto -= x;
+  }
+  const dia = {};
+  dias.filter((d) => cortes[d] > 0).forEach((d) => {
+    const [ent, sal] = String(r[d]).split('–');
+    dia[d] = { txt: `${ent}–${aHora(aMin(sal) - cortes[d])}`, corte: cortes[d] };
+  });
+  return { estado: 'ok', meta, corte: total, nuevas: tot - total / 60, dia };
+}
+dash.draw('prop-stat', (el) => {
+  const rows = rolFilas();
+  if (!rows) { el.textContent = '—'; return; }
+  const ps = rows.map((r) => [r, propuesta(r)]);
+  const ok = ps.filter(([, p]) => p.estado === 'ok');
+  const v = {
+    n: rows.length,
+    d: ok.filter(([r]) => r.tipo_jornada === 'Diurna').length,
+    m: ok.filter(([r]) => r.tipo_jornada === 'Mixta').length,
+    pc: ps.length - ok.length,
+    hrs: fmtD(d3.sum(ok, ([, p]) => p.corte) / 60) + ' hrs'
+  }[el.dataset.k];
+  el.textContent = typeof v === 'number' ? fmtN(v) : v;
+});
+function verModo(m) {
+  GXR.modo = m;
+  document.querySelectorAll('[data-modo-btn]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modoBtn === m)));
+  document.querySelectorAll('#jornadas-por-rol [data-modo]').forEach((el) => { el.hidden = el.dataset.modo !== m; });
+  dash.draw('rol-opciones');
+  redrawRol();
+}
+document.querySelectorAll('[data-modo-btn]').forEach((b) => b.addEventListener('click', () => verModo(b.dataset.modoBtn)));
+dash.draw('rol-opciones', (sel) => {
+  const h = dash.data('horarios');
+  const rows = h.status === 'ok' ? h.data.filter((r) => r.tipo_jornada !== 'Sin captura' && (GXR.modo !== 'propuesta' || Number(r.horas_reales) > UMBRAL_PROP)) : [];
+  const cnt = d3.rollup(rows, (v) => v.length, PU);
+  const lista = [...cnt.keys()].sort((a, b) => TX(a).localeCompare(TX(b), 'es'));
+  sel.replaceChildren(new Option(`Todos los puestos (${rows.length})`, ''), ...lista.map((p) => new Option(`${p} (${cnt.get(p)})`, p)));
+  if (GXR.rol && !lista.includes(GXR.rol)) GXR.rol = '';
+  sel.value = GXR.rol;
+  sel.onchange = () => { GXR.rol = sel.value; GXR.suc = ''; redrawRol(); };
+});
+dash.draw('suc-opciones', (sel) => {
+  const h = dash.data('horarios');
+  const rows = h.status === 'ok' ? h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && r.tipo_jornada !== 'Sin captura' && (GXR.modo !== 'propuesta' || Number(r.horas_reales) > UMBRAL_PROP)) : [];
+  const lista = [...new Set(rows.map((r) => TX(r.ubicacion)))].sort((a, b) => a.localeCompare(b, 'es'));
+  sel.replaceChildren(new Option('Todas las sucursales', ''), ...lista.map((u) => new Option(u, u)));
+  if (GXR.suc && !lista.includes(GXR.suc)) GXR.suc = '';
+  sel.value = GXR.suc;
+  sel.onchange = () => { GXR.suc = sel.value; ['rol-stat', 'prop-stat', 'rol-tabla'].forEach((n) => dash.draw(n)); };
+});
+dash.draw('rol-stat', (el) => {
+  const rows = rolFilas();
+  if (!rows) { el.textContent = '—'; return; }
+  const h = rows.map((r) => Number(r.horas_reales));
+  const v = { n: rows.length, g48: h.filter((x) => x >= 48).length, g46: h.filter((x) => x > 46 && x < 48).length, ok: h.filter((x) => x <= 46).length, prom: h.length ? fmtD(d3.mean(h)) + ' hrs' : '—' }[el.dataset.k];
+  el.textContent = typeof v === 'number' ? fmtN(v) : v;
+});
+dash.draw('rol-tabla', (tb) => {
+  const rows = rolFilas();
+  tb.replaceChildren();
+  if (!rows) return;
+  const prop = GXR.modo === 'propuesta';
+  if (prop && !rows.length) {
+    const tr = document.createElement('tr'), c = document.createElement('td');
+    c.colSpan = 11; c.className = 'vacio'; c.textContent = 'Nadie de este puesto o sucursal se pasa de 46 hrs.';
+    tr.appendChild(c); tb.appendChild(tr); return;
+  }
+  rows.forEach((r) => {
+    const tr = document.createElement('tr');
+    const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+    const sub = (c, txt) => { const sp = document.createElement('span'); sp.className = 'h'; sp.textContent = txt; c.appendChild(sp); };
+    const p = prop ? propuesta(r) : null;
+    td(TX(r.nombre)); td(PU(r)); td(TX(r.ubicacion), 'hide-sm');
+    DIAS.forEach((d) => {
+      const hrs = Number(r[d + '_h']) || 0;
+      if (p && p.estado === 'ok' && p.dia[d]) {
+        const c = td(p.dia[d].txt, 'd cambio');
+        sub(c, '−' + fmtHM(p.dia[d].corte));
+        return;
+      }
+      const c = td(r[d] ? r[d] : 'Descanso', 'd' + (r[d] ? (!p && hrs >= 8 ? ' full' : '') : ' libre'));
+      if (r[d]) sub(c, fmtD(hrs) + ' h');
+    });
+    const tot = Number(r.horas_reales);
+    if (!p) { td(fmtD(tot), 'num' + (tot > 46 ? ' gx-exc' : '')); }
+    else if (p.estado === 'ok') { const c = td(fmtD(p.nuevas), 'num gx-exc'); sub(c, 'antes ' + fmtD(tot)); }
+    else { const c = td(p.estado === 'revisar' ? 'Revisar captura' : 'Por confirmar', 'num'); sub(c, `${TX(r.tipo_jornada)} · ${fmtD(tot)} hrs`); }
+    tb.appendChild(tr);
+  });
+});
+document.querySelectorAll('.gx-sem th button[data-rsort]').forEach((b) => b.addEventListener('click', () => {
+  const k = b.dataset.rsort;
+  if (GXR.sort === k) GXR.dir = -GXR.dir; else { GXR.sort = k; GXR.dir = k === 'horas_reales' ? -1 : 1; }
+  document.querySelectorAll('.gx-sem th').forEach((th) => th.removeAttribute('aria-sort'));
+  b.parentElement.setAttribute('aria-sort', GXR.dir === 1 ? 'ascending' : 'descending');
+  dash.draw('rol-tabla');
+}));
+
+window.GXE = { anio: 2028, solo: '', q: '' };
+const LIMITES = { 2027: 46, 2028: 44, 2029: 42, 2030: 40 };
+dash.calc('etapas_personas', {
+  title: 'Personas por encima del límite 2027–2030',
+  description: 'Colaboradores con horario capturado y más de 40 hrs reconocidas, con el primer año en que su jornada queda arriba del límite (46, 44, 42 o 40 hrs).',
+  inputs: ['plantilla'],
+  fn: (plantilla) => plantilla
+    .filter((r) => r.captura === 'Capturado' && Number(r.horas_reales) > 40)
+    .map((r) => { const h = Number(r.horas_reales); return { nombre: r.nombre, puesto: r.puesto == null || r.puesto === '' ? 'Sin puesto' : r.puesto, ubicacion: r.ubicacion, horas_reales: h, desde: h > 46 ? 2027 : h > 44 ? 2028 : h > 42 ? 2029 : 2030 }; })
+});
+dash.calc('etapas', {
+  title: 'Personas sobre el límite por año',
+  description: 'Por año de la reforma: personas arriba del máximo semanal y cuántas son nuevas respecto a la etapa anterior.',
+  inputs: ['plantilla'],
+  fn: (plantilla) => {
+    const h = plantilla.filter((r) => r.captura === 'Capturado').map((r) => Number(r.horas_reales));
+    return [[2027, 46, Infinity], [2028, 44, 46], [2029, 42, 44], [2030, 40, 42]].map(([anio, lim, prev]) => ({ anio, limite: lim, personas: h.filter((x) => x > lim).length, nuevos: h.filter((x) => x > lim && x <= prev).length }));
+  }
+});
+dash.draw('etapa-n', (el) => {
+  const e = dash.data('etapas');
+  const row = e.status === 'ok' ? e.data.find((r) => String(r.anio) === el.dataset.where.split('=')[1]) : null;
+  el.textContent = row ? fmtN(row.personas) : '—';
+});
+dash.draw('etapa-nuevos', (el) => {
+  const e = dash.data('etapas');
+  const row = e.status === 'ok' ? e.data.find((r) => String(r.anio) === el.dataset.where.split('=')[1]) : null;
+  el.textContent = row ? fmtN(row.nuevos) : '—';
+});
+function etapaFilas() {
+  const p = dash.data('etapas_personas');
+  if (p.status !== 'ok') return null;
+  const lim = LIMITES[GXE.anio], q = GXE.q.trim().toLowerCase();
+  return p.data.filter((r) => r.horas_reales > lim && (!GXE.solo || r.desde === GXE.anio) && (!q || `${r.nombre} ${r.puesto} ${r.ubicacion}`.toLowerCase().includes(q)))
+    .sort((a, b) => b.horas_reales - a.horas_reales || String(a.nombre).localeCompare(String(b.nombre)));
+}
+dash.draw('etapa-puestos', (el) => {
+  const p = dash.data('etapas_personas');
+  if (p.status !== 'ok') { el.replaceChildren(); return; }
+  const lim = LIMITES[GXE.anio];
+  const m = new Map();
+  p.data.filter((r) => r.horas_reales > lim).forEach((r) => {
+    const d = m.get(r.puesto) || { puesto: r.puesto, afectados: 0, entre: 0, total: 0 };
+    if (r.desde === GXE.anio) d.afectados += 1; else d.entre += 1;
+    d.total = d.afectados + d.entre; m.set(r.puesto, d);
+  });
+  const rows = [...m.values()].sort((a, b) => b.total - a.total || b.afectados - a.afectados);
+  hbars(el, rows, 'puesto', null, null, (d) => `${d.total} deben ajustar · ${d.afectados} nuevas · ${d.entre} ya venían`);
+});
+dash.draw('etapa-tabla', (tb) => {
+  const rows = etapaFilas();
+  tb.replaceChildren();
+  if (!rows) return;
+  const lim = LIMITES[GXE.anio];
+  rows.forEach((r) => {
+    const tr = document.createElement('tr');
+    const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+    td(String(r.nombre)); td(String(r.puesto)); td(String(r.ubicacion), 'hide-sm');
+    td(fmtD(r.horas_reales), 'num'); td('−' + fmtD(r.horas_reales - lim), 'num gx-exc');
+    const c = td('', 'num'); const pl = document.createElement('span'); pl.className = 'gx-pill' + (r.desde === GXE.anio ? ' nuevo' : ''); pl.textContent = String(r.desde); c.appendChild(pl);
+    tb.appendChild(tr);
+  });
+});
+dash.draw('etapa-conteo', (el) => { const rows = etapaFilas(); el.textContent = rows ? fmtN(rows.length) : '—'; });
+function redrawEtapa() { ['etapa-puestos', 'etapa-tabla', 'etapa-conteo'].forEach((n) => dash.draw(n)); }
+document.querySelectorAll('.gx-year[data-anio]').forEach((b) => b.addEventListener('click', () => {
+  GXE.anio = Number(b.dataset.anio);
+  document.querySelectorAll('.gx-year[data-anio]').forEach((n) => n.setAttribute('aria-pressed', String(Number(n.dataset.anio) === GXE.anio)));
+  redrawEtapa();
+}));
+document.querySelectorAll('button[data-solo]').forEach((b) => b.addEventListener('click', () => {
+  GXE.solo = b.dataset.solo;
+  document.querySelectorAll('button[data-solo]').forEach((n) => n.setAttribute('aria-pressed', String(n.dataset.solo === GXE.solo)));
+  redrawEtapa();
+}));
+document.querySelectorAll('#gx-search-etapa').forEach((i) => i.addEventListener('input', () => { GXE.q = i.value; dash.draw('etapa-tabla'); dash.draw('etapa-conteo'); }));
+
+function abrirTab(id) {
+  document.querySelectorAll('.gx-tab').forEach((t) => { t.hidden = t.id !== id; });
+  document.querySelectorAll('.gx-tabs button[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+  dash.setLink(id);
+}
+document.querySelectorAll('.gx-tabs button[data-tab]').forEach((b) => b.addEventListener('click', () => abrirTab(b.dataset.tab)));
+document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => {
+  GXE.anio = Number(b.dataset.go);
+  document.querySelectorAll('.gx-year[data-anio]').forEach((n) => n.setAttribute('aria-pressed', String(Number(n.dataset.anio) === GXE.anio)));
+  abrirTab('t-etapas');
+  redrawEtapa();
+}));
+const linkTab = location.hash.slice(1);
+if (document.getElementById(linkTab) && document.getElementById(linkTab).classList.contains('gx-tab')) abrirTab(linkTab);
+
+
+dash.draw('etapa-roles', (el) => {
+  const p = dash.data('etapas_personas');
+  el.replaceChildren();
+  if (p.status !== 'ok') return;
+  const anio = Number(el.dataset.anio);
+  const nuevos = p.data.filter((r) => r.desde === anio);
+  const grupos = d3.groups(nuevos, (r) => String(r.puesto ?? 'Sin puesto')).sort((x, y) => y[1].length - x[1].length || x[0].localeCompare(y[0], 'es'));
+  const TOPE = 6;
+  grupos.slice(0, TOPE).forEach(([puesto, rows]) => {
+    const det = document.createElement('details');
+    const sum = document.createElement('summary');
+    const pp = document.createElement('span'); pp.className = 'p'; pp.textContent = puesto;
+    const cc = document.createElement('span'); cc.className = 'c'; cc.textContent = fmtN(rows.length);
+    sum.append(pp, cc);
+    const ul = document.createElement('ul');
+    rows.slice().sort((x, y) => y.horas_reales - x.horas_reales || String(x.nombre).localeCompare(String(y.nombre))).forEach((r) => {
+      const li = document.createElement('li');
+      const n = document.createElement('span'); n.textContent = String(r.nombre);
+      const h = document.createElement('span'); h.className = 'h'; h.textContent = `${fmtD(r.horas_reales)} h`;
+      li.append(n, h); ul.appendChild(li);
+    });
+    det.append(sum, ul); el.appendChild(det);
+  });
+  if (grupos.length > TOPE) {
+    const m = document.createElement('div'); m.className = 'mas';
+    const resto = grupos.slice(TOPE).reduce((s, g) => s + g[1].length, 0);
+    m.textContent = `+ ${grupos.length - TOPE} puestos más (${resto} personas)`;
+    el.appendChild(m);
+  }
+});
+
+dash.draw('opt-suc', (sel) => {
+  const a = dash.data('afectados');
+  const vals = a.status === 'ok' ? [...new Set(a.data.map((r) => String(r.ubicacion)))].sort((x, y) => x.localeCompare(y, 'es')) : [];
+  sel.replaceChildren(new Option('Todas las sucursales', ''), ...vals.map((v) => new Option(v, v)));
+  sel.value = GX.suc;
+  sel.onchange = () => { GX.suc = sel.value; dash.draw('tabla'); dash.draw('conteo'); };
+});
+dash.draw('opt-puesto', (sel) => {
+  const a = dash.data('afectados');
+  const vals = a.status === 'ok' ? [...new Set(a.data.map((r) => String(r.puesto)))].sort((x, y) => x.localeCompare(y, 'es')) : [];
+  sel.replaceChildren(new Option('Todos los puestos', ''), ...vals.map((v) => new Option(v, v)));
+  sel.value = GX.puesto || '';
+  sel.onchange = () => { GX.puesto = sel.value || null; document.querySelectorAll('#gx-filtro').forEach((n) => { n.hidden = !GX.puesto; }); ['tabla', 'conteo', 'filtro', 'puestos'].forEach((n) => dash.draw(n)); };
+});
+document.querySelectorAll('#gx-f-tipo').forEach((sel) => sel.addEventListener('change', () => { GX.tipo = sel.value; dash.draw('tabla'); dash.draw('conteo'); }));
+</script>
+<script>
+document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('click', () => { abrirTab(b.dataset.tabGo); window.scrollTo({ top: 0 }); }));
+</script>
 
 <script>
 (() => {
@@ -218,7 +1156,7 @@ td input[type=number] { width: 5.2rem; text-align: right; }
   function textInput(r, field, ph, cls) {
     const i = el('input', cls || ''); i.type = 'text'; i.value = r[field] || ''; i.placeholder = ph; i.id = `${field}-${r.id}`; i.disabled = !canWrite;
     i.setAttribute('aria-label', `${ph} de ${r.nombre}`);
-    i.addEventListener('change', () => { const v = i.value.trim(); if (v !== (r[field] || '')) { r[field] = v; save(r.id, { [field]: v }, i); renderSummary(); } });
+    i.addEventListener('change', () => { const v = i.value.trim(); if (v !== (r[field] || '')) { r[field] = v; save(r.id, { [field]: v }, i); renderSummary(); renderResumen(); } });
     return i;
   }
 
@@ -256,7 +1194,15 @@ td input[type=number] { width: 5.2rem; text-align: right; }
     });
   }
 
-  function render() { renderSummary(); renderRows(); }
+  function renderResumen() {
+    const total = rows.length, done = rows.filter((r) => r.contrato).length;
+    const v = { done, total, pct: pct(done, total), hor: rows.filter((r) => (r.nuevo_horario || '').trim()).length,
+      lid: rows.filter((r) => (r.lider || '').trim()).length };
+    document.querySelectorAll('[data-seg]').forEach((n) => { n.textContent = v[n.dataset.seg]; });
+    document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
+  }
+
+  function render() { renderSummary(); renderRows(); renderResumen(); }
 
   [['f-tipo', 'tipo'], ['f-suc', 'suc'], ['f-puesto', 'puesto'], ['f-est', 'est']].forEach(([id, k]) => $(id).addEventListener('change', (e) => { F[k] = e.target.value; render(); }));
   $('f-q').addEventListener('input', (e) => { F.q = e.target.value; renderRows(); });
@@ -266,7 +1212,7 @@ td input[type=number] { width: 5.2rem; text-align: right; }
 
   (async () => {
     const claude = window.claude;
-    if (!claude || !claude.use) { $('rows').replaceChildren(); $('status').textContent = 'Abre esta página desde Claude para ver y editar la lista.'; return; }
+    if (!claude || !claude.use) { $('rows').replaceChildren(); $('status').textContent = 'Abre esta página desde Claude para ver y editar el seguimiento.'; document.querySelectorAll('[data-seg]').forEach((n) => { n.textContent = '—'; }); return; }
     db = await claude.use('db');
     if (!db) { $('status').textContent = 'No se pudo conectar con la lista. Inicia sesión en Claude y vuelve a abrir la página.'; return; }
     const user = await claude.use('user');
@@ -279,3 +1225,5 @@ td input[type=number] { width: 5.2rem; text-align: right; }
   })();
 })();
 </script>
+
+</div>
