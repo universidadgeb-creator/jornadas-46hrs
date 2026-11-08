@@ -44,12 +44,25 @@
       <table>
         <thead><tr>
           <th>Colaborador</th><th>Sucursal</th><th>Tipo</th><th class="num">Hrs hoy</th><th class="num">Meta</th><th>Horario actual</th>
-          <th>Líder</th><th>Nuevo horario</th><th class="num">Nuevas hrs <span class="th-sub">(calculadas)</span></th><th>Nuevo contrato</th><th>Comentario</th>
+          <th>Líder</th><th>Nuevo horario</th><th class="num">Nuevas hrs <span class="th-sub">(calculadas)</span></th><th>Nuevo contrato</th><th>Comentario</th><th>Adendum</th>
         </tr></thead>
-        <tbody id="rows"><tr><td colspan="11" class="empty">Cargando la lista de personas…</td></tr></tbody>
+        <tbody id="rows"><tr><td colspan="12" class="empty">Cargando la lista de personas…</td></tr></tbody>
       </table>
     </div>
     <p class="status" id="status"></p>
+
+    <section class="card adn" aria-labelledby="adn-tit">
+      <h2 class="h2" id="adn-tit">Adendum de contrato</h2>
+      <p class="adn-intro">Cada adendum se llena solo con los datos de la persona: puesto, jornada de contrato, horario actual, nuevo horario y horas. Está listo cuando el nuevo horario está guardado, cumple la meta y su sucursal tiene gerente y lugar de firma.</p>
+      <div class="adn-top">
+        <label for="adn-fecha">Fecha de firma<input id="adn-fecha" type="date"></label>
+        <div class="adn-cuenta"><b id="adn-listos">—</b> de <span id="adn-total">—</span> adendums listos</div>
+        <button type="button" class="btn btn-acc" id="adn-todos">Descargar los listos (.zip)</button>
+      </div>
+      <h3 class="h3">Gerente que firma y lugar, por sucursal</h3>
+      <div class="adn-unis" id="adn-unis"><span class="status">Cargando sucursales…</span></div>
+      <p class="status" id="adn-status"></p>
+    </section>
 
     <section class="card">
       <h2 class="h2">Criterios</h2>
@@ -59,6 +72,7 @@
         <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
         <li>«Nuevas hrs» las calcula la página: suma de la entrada a la salida de cada día y descuenta la comida igual que en el horario actual de la persona. Se marca en naranja si sigue arriba de la meta.</li>
         <li>El nuevo horario se captura con «Editar», día por día. No hace falta escribirlo ni sumar las horas a mano.</li>
+        <li>Adendum: patrón GIMNASIOS AMERICANOS SAPI DE CV. El antecedente I usa la jornada de contrato del Excel y el horario actual; la cláusula PRIMERA, las horas y el horario nuevos (46 diurna, 45 mixta).</li>
       </ul>
     </section>
   </section>
@@ -220,7 +234,7 @@
 
   function editorRow(r, meta) {
     const b = borrador(r);
-    const tr = el('tr', 'editor'); const td = el('td'); td.colSpan = 11; tr.appendChild(td);
+    const tr = el('tr', 'editor'); const td = el('td'); td.colSpan = 12; tr.appendChild(td);
     const head = el('div', 'ed-head');
     head.append(el('b', '', `Nuevo horario de ${r.nombre}`), el('span', 'ed-hint', 'Pon la entrada y la salida de cada día, o marca «Descanso». La página suma las horas de la semana.'));
     td.appendChild(head);
@@ -274,13 +288,136 @@
     return tr;
   }
 
+  // ── Adendum de contrato ──
+  const DLARGO = { lun: 'lunes', mar: 'martes', mie: 'miércoles', jue: 'jueves', vie: 'viernes', sab: 'sábado', dom: 'domingo' };
+  const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  let unidades = {};
+  const slug = (t) => String(t || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const xmlEsc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const horasTxt = (h) => { const min = Math.round(h * 60), hh = Math.floor(min / 60), mm = min % 60; return mm ? `${hh} horas con ${mm} minutos` : `${hh} horas`; };
+  function fechaTxt(iso) { const [y, m, d] = String(iso).split('-').map(Number); return y && m && d ? `${d} de ${MESES[m - 1]} de ${y}` : ''; }
+  function hoyISO() { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; }
+  function contratoDe(r) {
+    const d = window.dash && window.dash.data ? window.dash.data('plantilla') : null;
+    const f = d && d.status === 'ok' ? d.data.find((x) => x.nombre === r.nombre) : null;
+    const v = f ? Number(f.horas_contrato) : NaN;
+    return Number.isFinite(v) && v > 0 ? v : null;
+  }
+  // {lun: '07:00–15:00' | null, ...} -> «lunes a viernes de las 07:00 a las 15:00, sábado de las …, con descanso el día domingo»
+  function horarioLargo(dias) {
+    const grupos = [];
+    DIAS.forEach((d) => { const v = dias[d] || null; const g = grupos[grupos.length - 1]; if (g && g.v === v) g.ds.push(d); else grupos.push({ ds: [d], v }); });
+    const rango = (ds) => ds.length === 1 ? DLARGO[ds[0]] : `${DLARGO[ds[0]]} a ${DLARGO[ds[ds.length - 1]]}`;
+    const partes = grupos.filter((g) => g.v).map((g) => { const [e, sa] = g.v.split('–'); return `${rango(g.ds)} de las ${e} a las ${sa}`; });
+    const desc = DIAS.filter((d) => !dias[d]).map((d) => DLARGO[d]);
+    let t = partes.join(', ');
+    if (desc.length === 1) t += `, con descanso el día ${desc[0]}`;
+    else if (desc.length > 1) t += `, con descanso los días ${desc.slice(0, -1).join(', ')} y ${desc[desc.length - 1]}`;
+    return t;
+  }
+  function estadoAdendum(r) {
+    const meta = META[r.tipo];
+    if (meta == null) return { listo: false, motivo: 'Jornada por confirmar' };
+    const g = diasGuardados(r);
+    if (!g) return { listo: false, motivo: (r.nuevo_horario || '').trim() ? 'Corrige el nuevo horario' : 'Falta el nuevo horario' };
+    const dias = Object.fromEntries(DIAS.map((d) => { const v = g[d]; if (!v) return [d, null]; const [e, sa] = String(v).split('–'); return [d, { e, s: sa }]; }));
+    const c = calcular(r, dias);
+    if (c.errores.length) return { listo: false, motivo: 'Corrige el nuevo horario' };
+    if (c.avisos.length) return { listo: false, motivo: 'Un día pasa de 12 h' };
+    const nuevas = Math.round(c.total / 60 * 100) / 100;
+    if (nuevas > meta) return { listo: false, motivo: `Pasa de ${meta} hrs` };
+    const f = filaActual(r);
+    if (!f) return { listo: false, motivo: 'Sin horario actual en el Excel' };
+    const contrato = contratoDe(r);
+    if (contrato == null) return { listo: false, motivo: 'Falta la jornada de contrato en el Excel' };
+    const u = unidades[slug(r.sucursal)] || {};
+    if (!(u.firmante || '').trim()) return { listo: false, motivo: 'Falta el gerente de la sucursal' };
+    if (!(u.lugar || '').trim()) return { listo: false, motivo: 'Falta el lugar de firma' };
+    const actual = Object.fromEntries(DIAS.map((d) => [d, f[d] || null]));
+    const nuevo = Object.fromEntries(DIAS.map((d) => [d, g[d] || null]));
+    const aviso = Math.abs(contrato - Number(r.horas_actuales)) > 0.01 ? `El contrato dice ${fmt(contrato)} h y su horario actual suma ${fmt(r.horas_actuales)} h.` : '';
+    return { listo: true, aviso, datos: {
+      NOMBRE: r.nombre, PUESTO: r.puesto, HORAS_ACTUALES: horasTxt(contrato), HORARIO_ACTUAL: horarioLargo(actual),
+      HORAS_NUEVAS: horasTxt(nuevas), HORARIO_NUEVO: (() => { const t = horarioLargo(nuevo); return t.charAt(0).toUpperCase() + t.slice(1) + '.'; })(),
+      FECHA_LUGAR: `${fechaTxt(fechaFirma())}, en ${u.lugar.trim()}`, FIRMA_PATRON: u.firmante.trim(), FIRMA_TRABAJADOR: r.nombre } };
+  }
+  function fechaFirma() { const i = $('adn-fecha'); return (i && i.value) || hoyISO(); }
+  let plantillaZip = null;
+  async function docxDe(datos) {
+    if (!window.JSZip || !window.ADENDUM_DOCX_B64) throw new Error('sin_plantilla');
+    if (!plantillaZip) plantillaZip = await JSZip.loadAsync(window.ADENDUM_DOCX_B64, { base64: true });
+    const xml = await plantillaZip.file('word/document.xml').async('string');
+    const lleno = xml.replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => (k in datos ? xmlEsc(datos[k]) : m));
+    const z = await JSZip.loadAsync(window.ADENDUM_DOCX_B64, { base64: true });
+    z.file('word/document.xml', lleno);
+    return z.generateAsync({ type: 'blob', compression: 'DEFLATE', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  }
+  const archivo = (r) => `Adendum jornada 2027 - ${r.nombre}.docx`;
+  async function descargar(nombreArchivo, blob, nodo) {
+    const st = $('adn-status');
+    const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+    if (!dl) { st.textContent = 'Esta vista no permite descargar archivos. Abre la página en claude.ai.'; return false; }
+    try { nodo && nodo.classList.add('saving'); await dl.save({ filename: nombreArchivo, data: blob }); st.textContent = `Descargado: ${nombreArchivo}`; return true; }
+    catch (e) { st.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : 'No se pudo descargar el archivo. Inténtalo de nuevo.'; return false; }
+    finally { nodo && nodo.classList.remove('saving'); }
+  }
+  async function marcarGenerado(lista) {
+    const hoy = hoyISO();
+    for (const r of lista) { if (r.adendum_generado !== hoy && canWrite) { r.adendum_generado = hoy; await save(r.id, { adendum_generado: hoy }); } }
+  }
+  async function descargarUno(r, btn) {
+    const e = estadoAdendum(r); if (!e.listo) return;
+    try { const blob = await docxDe(e.datos); if (await descargar(archivo(r), blob, btn)) { await marcarGenerado([r]); renderRows(); } }
+    catch (err) { $('adn-status').textContent = 'No se pudo armar el adendum. Recarga la página e inténtalo de nuevo.'; }
+  }
+  async function descargarTodos() {
+    const listos = rows.map((r) => [r, estadoAdendum(r)]).filter(([, e]) => e.listo);
+    if (!listos.length) { $('adn-status').textContent = 'Todavía no hay adendums listos.'; return; }
+    try {
+      const zip = new JSZip();
+      for (const [r, e] of listos) zip.file(archivo(r), await docxDe(e.datos));
+      const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+      if (await descargar(`Adendums jornada 2027 - ${fechaFirma()}.zip`, blob, $('adn-todos'))) { await marcarGenerado(listos.map(([r]) => r)); renderRows(); }
+    } catch (err) { $('adn-status').textContent = 'No se pudieron armar los adendums. Recarga la página e inténtalo de nuevo.'; }
+  }
+  function renderUnidades() {
+    const box = $('adn-unis'); if (!box) return;
+    const act = document.activeElement; if (act && box.contains(act) && act.tagName === 'INPUT') return;
+    const sucs = [...new Set(rows.map((r) => r.sucursal))].sort((a, b) => a.localeCompare(b, 'es'));
+    box.replaceChildren();
+    sucs.forEach((suc) => {
+      const id = slug(suc); const u = unidades[id] || {};
+      const fila = el('div', 'adn-uni');
+      fila.appendChild(el('span', 'adn-suc', suc));
+      const mk = (campo, ph, etiqueta) => {
+        const lab = el('label', 'adn-campo'); const i = el('input'); i.type = 'text'; i.id = `un-${id}-${campo}`; i.placeholder = ph; i.value = u[campo] || ''; i.disabled = !canWrite;
+        i.addEventListener('change', async () => {
+          const v = i.value.trim(); const cur = unidades[id] || { sucursal: suc, firmante: '', lugar: '' };
+          if (v === (cur[campo] || '')) return;
+          const doc = { sucursal: suc, firmante: cur.firmante || '', lugar: cur.lugar || '', [campo]: v };
+          unidades[id] = doc;
+          if (db) { try { i.classList.add('saving'); await db.doc('unidades/' + id).set(doc); $('adn-status').textContent = 'Guardado.'; } catch (e) { $('adn-status').textContent = 'No se pudo guardar. Revisa que tengas permiso de edición.'; } finally { i.classList.remove('saving'); } }
+          renderRows(); renderAdnCuenta();
+        });
+        lab.append(el('span', '', etiqueta), i); return lab;
+      };
+      fila.append(mk('firmante', 'Nombre completo', 'Gerente que firma'), mk('lugar', 'Ej. Av. … , Zapopan, Jalisco', 'Lugar de firma'));
+      box.appendChild(fila);
+    });
+    if (!sucs.length) box.replaceChildren(el('span', 'status', 'Sin sucursales todavía.'));
+  }
+  function renderAdnCuenta() {
+    const n = rows.filter((r) => estadoAdendum(r).listo).length;
+    if ($('adn-listos')) { $('adn-listos').textContent = n; $('adn-total').textContent = rows.length; $('adn-todos').disabled = !n; }
+  }
+
   function renderRows() {
     const list = filtered().sort((a, b) => Number(a.contrato) - Number(b.contrato) || a.sucursal.localeCompare(b.sucursal, 'es') || a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
     $('f-count').textContent = list.length;
     const tb = $('rows');
     if (document.activeElement && tb.contains(document.activeElement) && document.activeElement.tagName === 'INPUT' && document.activeElement.type !== 'checkbox') return;
     tb.replaceChildren();
-    if (!list.length) { const tr = el('tr'); const td = el('td', 'empty', rows.length ? 'Nadie coincide con estos filtros.' : 'Aún no hay personas en la lista.'); td.colSpan = 11; tr.appendChild(td); tb.appendChild(tr); return; }
+    if (!list.length) { const tr = el('tr'); const td = el('td', 'empty', rows.length ? 'Nadie coincide con estos filtros.' : 'Aún no hay personas en la lista.'); td.colSpan = 12; tr.appendChild(td); tb.appendChild(tr); return; }
     list.forEach((r) => {
       const tr = el('tr', r.contrato ? 'done' : '');
       const meta = META[r.tipo];
@@ -312,6 +449,14 @@
       cb.addEventListener('change', () => { r.contrato = cb.checked; save(r.id, { contrato: cb.checked }, lab); render(); });
       lab.append(cb, el('span', '', r.contrato ? 'Realizado' : 'Pendiente')); cc.appendChild(lab); tr.appendChild(cc);
       const co = el('td'); co.appendChild(textInput(r, 'comentario', 'Comentario')); tr.appendChild(co);
+      const ca = el('td', 'adn-cel'); const ea = estadoAdendum(r);
+      if (ea.listo) {
+        ca.appendChild(el('span', 'okflag', r.adendum_generado ? `Descargado el ${fechaTxt(r.adendum_generado)}` : 'Listo'));
+        const bd = el('button', 'btn btn-sm', 'Descargar'); bd.type = 'button'; bd.id = `adn-${r.id}`; bd.setAttribute('aria-label', `Descargar el adendum de ${r.nombre}`);
+        bd.addEventListener('click', () => descargarUno(r, bd)); ca.appendChild(bd);
+        if (ea.aviso) ca.appendChild(el('span', 'flag', ea.aviso));
+      } else ca.appendChild(el('span', 'adn-pend', ea.motivo));
+      tr.appendChild(ca);
       tb.appendChild(tr);
       if (editing === r.id && canWrite) tb.appendChild(editorRow(r, meta));
     });
@@ -325,13 +470,16 @@
     document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
   }
 
-  function render() { renderSummary(); renderRows(); renderResumen(); }
+  function render() { renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); }
 
   [['f-tipo', 'tipo'], ['f-suc', 'suc'], ['f-puesto', 'puesto'], ['f-est', 'est']].forEach(([id, k]) => $(id).addEventListener('change', (e) => { F[k] = e.target.value; render(); }));
   $('f-q').addEventListener('input', (e) => { F.q = e.target.value; renderRows(); });
   $('f-clear').addEventListener('click', () => { Object.keys(F).forEach((k) => { F[k] = ''; }); ['f-tipo', 'f-suc', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); render(); });
   document.querySelectorAll('.tipo').forEach((b) => b.addEventListener('click', () => { F.tipo = F.tipo === b.dataset.tipo ? '' : b.dataset.tipo; $('f-tipo').value = F.tipo; render(); }));
   document.addEventListener('focusout', () => setTimeout(() => { if (editing) return; if (!document.activeElement || document.activeElement.tagName !== 'INPUT') renderRows(); }, 0));
+
+  if ($('adn-fecha')) { $('adn-fecha').value = hoyISO(); $('adn-fecha').addEventListener('change', () => renderRows()); }
+  if ($('adn-todos')) $('adn-todos').addEventListener('click', descargarTodos);
 
   (async () => {
     const claude = window.claude;
@@ -345,6 +493,11 @@
       rows = docs.map((d) => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
       render();
     }, () => { $('status').textContent = 'No se pudo cargar la lista. Recarga la página.'; });
+    db.collection('unidades').onSnapshot((snap) => {
+      const docs = snap.docs || snap;
+      unidades = Object.fromEntries(docs.map((d) => [d.id, typeof d.data === 'function' ? d.data() : d.data]));
+      render();
+    }, () => { $('adn-status').textContent = 'No se pudieron cargar los gerentes por sucursal. Recarga la página.'; });
   })();
 })();
 </script>

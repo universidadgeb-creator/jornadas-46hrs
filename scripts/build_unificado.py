@@ -9,8 +9,10 @@ https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k):
     de datos/ incrustados, igual que la versión para proyectar;
   - la pestaña «Seguimiento» (seguimiento/captura.html + captura_estilos.css), que
     guarda lo que captura el equipo en la base de datos del artifact;
-  - una tarjeta de avance en el Resumen.
+  - una tarjeta de avance en el Resumen;
+  - la plantilla del adendum (seguimiento/adendum_plantilla.docx) y JSZip para llenarla.
 """
+import base64
 import json
 import re
 from pathlib import Path
@@ -18,6 +20,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 SALIDA = RAIZ / 'seguimiento' / 'nuevas_jornadas.html'
 D3 = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js'
+JSZIP = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'
 
 # Colores y tipografía de la página. Los nombres --color-* / --cds-* son los que usa
 # el tablero; los cortos (--bg, --fg, ...) los usa la pestaña de seguimiento.
@@ -113,6 +116,8 @@ def main():
         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">',
         '<style>' + BASE_CSS + '\n' + estilos_seg + '</style>',
         f'<script src="{D3}"></script>',
+        f'<script src="{JSZIP}"></script>',
+        '<script>window.ADENDUM_DOCX_B64 = "' + base64.b64encode((RAIZ / 'seguimiento' / 'adendum_plantilla.docx').read_bytes()).decode() + '";</script>',
         shim,
         '<div id="dash-root">',
         tab,

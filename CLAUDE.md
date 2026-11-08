@@ -90,6 +90,13 @@ Detalles técnicos:
 - Para que los gerentes editen, hay que compartir la página única con permiso de edición (desde Compartir en claude.ai).
 - 8 nov 2026: se precargaron `nuevo_horario` y `nuevas_horas` de 57 personas con la propuesta automática (`scripts/propuesta.py`), solo donde estaban vacíos. Corona Miranda quedó sin propuesta hasta corregir su captura. Los gerentes validan o corrigen; `contrato` sigue en falso. El `comentario` de esos 57 dice «Propuesta inicial, por validar»; el de Corona Miranda, «Sin propuesta: revisar captura del domingo (20:30–13:30)». Si un gerente cambia el horario, conviene que borre o cambie esa nota.
 
+## Adendum de contrato (desde 8 nov 2026)
+
+- Plantilla original de Patty: `seguimiento/ADENDUM_Contrato_trabajo_NUEVA_JORNADA.doc`. `scripts/build_plantilla_adendum.py` la convierte a `seguimiento/adendum_plantilla.docx` con marcas {{NOMBRE}}, {{PUESTO}}, {{HORAS_ACTUALES}}, {{HORARIO_ACTUAL}}, {{HORAS_NUEVAS}}, {{HORARIO_NUEVO}}, {{FECHA_LUGAR}}, {{FIRMA_PATRON}}, {{FIRMA_TRABAJADOR}}. `build_unificado.py` la incrusta en base64 junto con JSZip 3.10.1 (cdnjs).
+- Acuerdos con Patty: razón social **GIMNASIOS AMERICANOS SAPI DE CV** para todas las divisiones; mixtas con 45 h en la cláusula PRIMERA (diurnas 46); antecedente I = jornada de contrato del Excel («Jornada laboral») + horario actual (está bien que diga 48: el adendum es para bajarla); firma por la empresa el gerente de cada sucursal; lugar = dirección por unidad de negocio (Patty las manda).
+- En la página (pestaña Seguimiento): tarjeta «Adendum de contrato» con fecha de firma, «Descargar los listos (.zip)» y, por sucursal, gerente que firma y lugar (colección `unidades`, id = slug de la sucursal: {sucursal, firmante, lugar}). Cada fila tiene la columna «Adendum»: Listo + Descargar, o el motivo (falta nuevo horario, pasa de la meta, falta gerente/lugar, falta jornada de contrato, jornada por confirmar). Al descargar guarda `adendum_generado` (fecha) en la persona. La página declara `downloads` además de `db` y `user`.
+- Faltan jornada de contrato en el Excel (8 nov): Cadena Luna, Escalante Núñez, Aguilera Martínez, Meza Ramírez, Hernández Aguayo, Navarro Villarreal. Contrato distinto al horario: Villegas Velázquez y Palacios López (40 vs 48), Corona Miranda (30 vs 56).
+
 ## Pendientes
 
 1. Validar con los gerentes los horarios que ya avanzaron y capturar el **líder** de cada colaborador (lo trabajan Patty y Andy).
