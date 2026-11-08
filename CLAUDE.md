@@ -14,7 +14,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 | Versión para proyectar | El mismo tablero en un HTML autónomo y sin internet, con d3 y los datos incrustados | `dashboard/Jornada_46hrs_2027_proyectar.html` |
 | «Nuevas jornadas por rol» | Documento vivo de seguimiento con las 58 personas de 48 hrs (artifact con base de datos compartida) | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · código en `seguimiento/nuevas_jornadas.html` |
 | Datos | Excel fuente y los dos CSV que lee el tablero | `datos/` |
-| Scripts | Regeneran los CSV desde el Excel y la versión para proyectar | `scripts/build_csv.py` · `scripts/build_proyectar.py` |
+| Scripts | Regeneran los CSV, la versión para proyectar y la propuesta de horarios | `scripts/build_csv.py` · `scripts/build_proyectar.py` · `scripts/propuesta.py` |
 
 ## Fuente de datos
 
@@ -49,7 +49,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 Pestañas:
 - **Resumen**: una frase de resumen, 4 indicadores, ajuste por tipo de jornada (con link al seguimiento), gráfica de puestos y «Lo que viene» (columnas 2027 a 2030 con los puestos y nombres que se suman cada año).
 - **Personas**: gráfica por sucursal y tabla con filtros de grupo, tipo, sucursal, puesto y búsqueda.
-- **Jornadas por rol**: horario día por día; filtro de puesto (incluye «Todos») y de sucursal. Botón «Ver»: *Horario actual* o *Propuesta 2027*. La propuesta muestra solo a las 58 de 48 hrs con su nuevo horario: diurna a 46 (−20 min diarios) y mixta a 45 (−30 min diarios, 7.5 h por día). El recorte se reparte igual entre los días trabajados en bloques de 5 min, se conserva la entrada y se adelanta la salida. Si un día pasa de 12 h, marca «Revisar captura»; si el tipo no tiene regla, «Por confirmar». Suma 147 hrs/semana a reacomodar (24×2 + 33×3).
+- **Jornadas por rol**: horario día por día; filtro de puesto (incluye «Todos») y de sucursal. Botón «Ver»: *Horario actual* o *Propuesta 2027*. La propuesta muestra a las 92 personas que pasan de 46 hrs con su nuevo horario: diurna a 46 y mixta a 45. El recorte se toma en bloques de 5 min del día más largo (empates: el primero de la semana); con días iguales queda parejo (−20 min diarios de 48 a 46, −30 de 48 a 45). Se conserva la entrada y se adelanta la salida. Si un día pasa de 12 h, marca «Revisar captura»; si el tipo no tiene regla, «Por confirmar». Resultado: 32 diurnas a 46, 59 mixtas a 45, 1 por revisar (Corona Miranda) y ~211 hrs/semana a reacomodar. La misma regla está en `scripts/propuesta.py` (debe dar lo mismo que el tablero).
 - **2027–2030**: detalle por etapa.
 
 Detalles técnicos:
@@ -69,6 +69,7 @@ Detalles técnicos:
 - Campos editables: `lider`, `nuevo_horario`, `nuevas_horas`, `contrato` (bool), `comentario`.
 - Muestra el avance (X de 58 con contrato nuevo), totales por tipo con número y %, avance por sucursal y filtros por tipo, sucursal, puesto y estado.
 - Para que los gerentes editen, hay que compartirlo con permiso de edición.
+- 8 nov 2026: se precargaron `nuevo_horario` y `nuevas_horas` de 57 personas con la propuesta automática (`scripts/propuesta.py`), solo donde estaban vacíos. Corona Miranda quedó sin propuesta hasta corregir su captura. Los gerentes validan o corrigen; `contrato` sigue en falso.
 
 ## Pendientes
 
@@ -78,3 +79,4 @@ Detalles técnicos:
 4. Juntas: gerentes de Easy Fit (propuesta por sucursal), Vivo (después del 9 nov, cuando regrese Isma) y Center (Antonio y líderes) la siguiente semana. Center será piloto del reloj checador (~15 días) y después habrá capacitación con Vivo (200+ colaboradores).
 5. Calendario de jornada de 44 hrs: presentarlo y agendarlo con Operaciones en junio de 2027.
 6. Posible mejora: que el tablero lea el avance del documento vivo. Hoy viven separados.
+7. Hallazgo: 13 mixtas tienen entre 45 y 46 hrs. No entran en el corte de 2027 (>46), pero ya pasan del máximo legal de la mixta (45). Por decidir si se ajustan también.

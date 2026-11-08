@@ -327,14 +327,14 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   <article class="gx-card" id="jornadas-por-rol">
     <h2>Jornadas por rol</h2>
     <p class="note" data-modo="actual">Elige un puesto, o deja «Todos los puestos», para ver el horario de cada persona, día por día. Los días de 8 hrs o más van sombreados. Incluye a todas las personas del puesto, se pasen o no de 46 hrs.</p>
-    <p class="note" data-modo="propuesta" hidden>Propuesta para las personas con 48 hrs, según el acuerdo del 5 nov 2026: las diurnas bajan 2 hrs (a 46) y las mixtas 3 hrs (a 45). El recorte se reparte igual entre los días que trabajan: la hora de entrada no cambia y salen antes. Los días sombreados son los que cambian. Es un punto de partida para validar con cada gerente.</p>
+    <p class="note" data-modo="propuesta" hidden>Propuesta para las personas que se pasan de 46 hrs, según el acuerdo del 5 nov 2026: las diurnas bajan a 46 hrs y las mixtas a 45. El recorte se toma primero de los días más largos, en bloques de 5 min; si todos los días son iguales, queda parejo (−20 min diarios de 48 a 46, −30 min de 48 a 45). La hora de entrada no cambia y salen antes. Los días sombreados son los que cambian. Es un punto de partida para validar con cada gerente.</p>
     <div class="gx-rol-tools">
       <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-modo-btn="actual" aria-pressed="true">Horario actual</button><button type="button" data-modo-btn="propuesta" aria-pressed="false">Propuesta 2027</button></span></div>
       <label for="gx-rol">Puesto<select class="gx-select" id="gx-rol" data-draw="rol-opciones" data-source="horarios"></select></label>
       <label for="gx-suc">Sucursal<select class="gx-select" id="gx-suc" data-draw="suc-opciones" data-source="horarios"></select></label>
     </div>
     <div class="gx-rol-stats" data-source="horarios" data-modo="propuesta" hidden>
-      <div><span class="lbl">Personas con 48 hrs</span><span class="val" data-draw="prop-stat" data-k="n">—</span></div>
+      <div><span class="lbl">Personas arriba de 46 hrs</span><span class="val" data-draw="prop-stat" data-k="n">—</span></div>
       <div class="is-a"><span class="lbl">Diurnas: a 46 hrs</span><span class="val" data-draw="prop-stat" data-k="d">—</span></div>
       <div class="is-a"><span class="lbl">Mixtas: a 45 hrs</span><span class="val" data-draw="prop-stat" data-k="m">—</span></div>
       <div><span class="lbl">Por confirmar</span><span class="val" data-draw="prop-stat" data-k="pc">—</span></div>
@@ -650,14 +650,16 @@ function rolFilas() {
   if (h.status !== 'ok') return null;
   const k = GXR.sort, dir = GXR.dir;
   return h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && (!GXR.suc || TX(r.ubicacion) === GXR.suc) && r.tipo_jornada !== 'Sin captura'
-      && (GXR.modo !== 'propuesta' || Number(r.horas_reales) >= 48))
+      && (GXR.modo !== 'propuesta' || Number(r.horas_reales) > UMBRAL_PROP))
     .sort((a, b) => k === 'horas_reales' ? ((Number(a.horas_reales) - Number(b.horas_reales)) * dir || TX(a.nombre).localeCompare(TX(b.nombre))) : TX(a[k]).localeCompare(TX(b[k]), 'es') * dir);
 }
 function redrawRol() { ['suc-opciones', 'rol-stat', 'prop-stat', 'rol-tabla'].forEach((n) => dash.draw(n)); }
 
 // Propuesta 2027 (acuerdo 5 nov 2026): diurna a 46 hrs, mixta a 45; nocturna por confirmar.
-// El recorte se reparte igual entre los días trabajados, en bloques de 5 min; se conserva la entrada y se adelanta la salida.
+// El recorte se toma en bloques de 5 min del día más largo en ese momento (empates: el primero de la semana);
+// con días iguales queda parejo. Se conserva la entrada y se adelanta la salida. Entran quienes pasan de 46 hrs.
 const META = { Diurna: 46, Mixta: 45 };
+const UMBRAL_PROP = 46;
 const aMin = (t) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + m; };
 const aHora = (m) => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
 const fmtHM = (min) => { const h = Math.floor(min / 60), m = Math.round(min % 60); return m ? (h ? `${h} h ${m} min` : `${m} min`) : `${h} h`; };
@@ -670,10 +672,15 @@ function propuesta(r) {
   const total = Math.round((tot - meta) * 60);
   if (total <= 0 || !dias.length) return { estado: 'sin' };
   const cortes = Object.fromEntries(dias.map((d) => [d, 0]));
-  let resto = total, i = 0;
-  while (resto > 0) { const x = Math.min(5, resto); cortes[dias[i % dias.length]] += x; resto -= x; i++; }
+  const largo = (d) => Number(r[d + '_h']) * 60 - cortes[d];
+  let resto = total;
+  while (resto > 0) {
+    const x = Math.min(5, resto);
+    const d = dias.reduce((a, b) => (largo(b) > largo(a) ? b : a));
+    cortes[d] += x; resto -= x;
+  }
   const dia = {};
-  dias.forEach((d) => {
+  dias.filter((d) => cortes[d] > 0).forEach((d) => {
     const [ent, sal] = String(r[d]).split('–');
     dia[d] = { txt: `${ent}–${aHora(aMin(sal) - cortes[d])}`, corte: cortes[d] };
   });
@@ -703,7 +710,7 @@ function verModo(m) {
 document.querySelectorAll('[data-modo-btn]').forEach((b) => b.addEventListener('click', () => verModo(b.dataset.modoBtn)));
 dash.draw('rol-opciones', (sel) => {
   const h = dash.data('horarios');
-  const rows = h.status === 'ok' ? h.data.filter((r) => r.tipo_jornada !== 'Sin captura' && (GXR.modo !== 'propuesta' || Number(r.horas_reales) >= 48)) : [];
+  const rows = h.status === 'ok' ? h.data.filter((r) => r.tipo_jornada !== 'Sin captura' && (GXR.modo !== 'propuesta' || Number(r.horas_reales) > UMBRAL_PROP)) : [];
   const cnt = d3.rollup(rows, (v) => v.length, PU);
   const lista = [...cnt.keys()].sort((a, b) => TX(a).localeCompare(TX(b), 'es'));
   sel.replaceChildren(new Option(`Todos los puestos (${rows.length})`, ''), ...lista.map((p) => new Option(`${p} (${cnt.get(p)})`, p)));
@@ -713,7 +720,7 @@ dash.draw('rol-opciones', (sel) => {
 });
 dash.draw('suc-opciones', (sel) => {
   const h = dash.data('horarios');
-  const rows = h.status === 'ok' ? h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && r.tipo_jornada !== 'Sin captura' && (GXR.modo !== 'propuesta' || Number(r.horas_reales) >= 48)) : [];
+  const rows = h.status === 'ok' ? h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && r.tipo_jornada !== 'Sin captura' && (GXR.modo !== 'propuesta' || Number(r.horas_reales) > UMBRAL_PROP)) : [];
   const lista = [...new Set(rows.map((r) => TX(r.ubicacion)))].sort((a, b) => a.localeCompare(b, 'es'));
   sel.replaceChildren(new Option('Todas las sucursales', ''), ...lista.map((u) => new Option(u, u)));
   if (GXR.suc && !lista.includes(GXR.suc)) GXR.suc = '';
@@ -734,7 +741,7 @@ dash.draw('rol-tabla', (tb) => {
   const prop = GXR.modo === 'propuesta';
   if (prop && !rows.length) {
     const tr = document.createElement('tr'), c = document.createElement('td');
-    c.colSpan = 11; c.className = 'vacio'; c.textContent = 'Nadie de este puesto o sucursal tiene 48 hrs.';
+    c.colSpan = 11; c.className = 'vacio'; c.textContent = 'Nadie de este puesto o sucursal se pasa de 46 hrs.';
     tr.appendChild(c); tb.appendChild(tr); return;
   }
   rows.forEach((r) => {
