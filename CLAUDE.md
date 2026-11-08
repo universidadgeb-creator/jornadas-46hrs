@@ -14,7 +14,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 | Versión para proyectar | El mismo tablero en un HTML autónomo y sin internet, con d3 y los datos incrustados | `dashboard/Jornada_46hrs_2027_proyectar.html` |
 | «Nuevas jornadas por rol» | Documento vivo de seguimiento con las 58 personas de 48 hrs (artifact con base de datos compartida) | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · código en `seguimiento/nuevas_jornadas.html` |
 | Datos | Excel fuente y los dos CSV que lee el tablero | `datos/` |
-| Script | Regenera los CSV desde el Excel | `scripts/build_csv.py` |
+| Scripts | Regeneran los CSV desde el Excel y la versión para proyectar | `scripts/build_csv.py` · `scripts/build_proyectar.py` |
 
 ## Fuente de datos
 
@@ -49,7 +49,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 Pestañas:
 - **Resumen**: una frase de resumen, 4 indicadores, ajuste por tipo de jornada (con link al seguimiento), gráfica de puestos y «Lo que viene» (columnas 2027 a 2030 con los puestos y nombres que se suman cada año).
 - **Personas**: gráfica por sucursal y tabla con filtros de grupo, tipo, sucursal, puesto y búsqueda.
-- **Jornadas por rol**: horario día por día; filtro de puesto (incluye «Todos») y de sucursal.
+- **Jornadas por rol**: horario día por día; filtro de puesto (incluye «Todos») y de sucursal. Botón «Ver»: *Horario actual* o *Propuesta 2027*. La propuesta muestra solo a las 58 de 48 hrs con su nuevo horario: diurna a 46 (−20 min diarios) y mixta a 45 (−30 min diarios, 7.5 h por día). El recorte se reparte igual entre los días trabajados en bloques de 5 min, se conserva la entrada y se adelanta la salida. Si un día pasa de 12 h, marca «Revisar captura»; si el tipo no tiene regla, «Por confirmar». Suma 147 hrs/semana a reacomodar (24×2 + 33×3).
 - **2027–2030**: detalle por etapa.
 
 Detalles técnicos:
@@ -58,7 +58,9 @@ Detalles técnicos:
 - El HTML usa la regla «one-writer»: el texto fijo va en el HTML y lo que depende de los datos va en elementos `data-draw`.
 - Colores: acento verde azulado `#0f8b8d` (`#3cc7c4` en modo oscuro). Patty pidió no usar rojos.
 - Para actualizar datos en el artifact: subir cada CSV como asset y actualizar el `source.url` de `datasets/plantilla` y `datasets/horarios`.
-- La versión para proyectar usa un «shim» local de `dash` (en `<head>`) con los CSV incrustados. Si cambias `dashboard/index.html` o los datos, hay que regenerarla.
+- La versión para proyectar usa un «shim» local de `dash` (en `<head>`) con los CSV incrustados. Si cambias `dashboard/index.html` o los datos, regenérala con `python scripts/build_proyectar.py`.
+- La página del tablero en claude.ai vive en su base de datos: documento `files/index.html` (campo `text`). Para publicar un cambio: leerlo, confirmar que es igual a `dashboard/index.html` del último commit y hacer `update` con el texto nuevo y `edit: {via, at}`.
+- GitHub: https://github.com/universidadgeb-creator/jornadas-46hrs (público, por decisión de Patty). GitHub Pages publica `main` en https://universidadgeb-creator.github.io/jornadas-46hrs/ (el `index.html` de la raíz lleva a la versión para proyectar).
 
 ## Documento vivo «Nuevas jornadas por rol»
 

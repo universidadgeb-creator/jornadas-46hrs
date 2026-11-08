@@ -71,6 +71,11 @@
 .gx-sem td.d .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
 .gx-sem td.d.libre { color: var(--color-fg-muted); }
 .gx-sem td.d.full { background: var(--gx-accent-soft); }
+.gx-sem td.d.cambio { background: var(--gx-accent-soft); }
+.gx-sem td.d.cambio .h, .gx-sem td.num .h { color: var(--gx-accent); font-weight: 600; }
+.gx-sem td.num .h { display: block; font-size: .7rem; font-weight: 400; color: var(--color-fg-muted); }
+.gx-sem td.vacio { text-align: center; color: var(--color-fg-muted); padding: 1.5rem .5rem; font-weight: 400; }
+.gx-rol-tools .gx-ver { display: flex; flex-direction: column; gap: .25rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
 .gx-years { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: var(--cds-gap-sm); }
 .gx-year { font: inherit; text-align: left; background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; cursor: pointer; color: var(--color-fg); }
 .gx-year:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 1px; }
@@ -260,12 +265,21 @@
   <section class="gx-tab" id="t-rol" hidden>
   <article class="gx-card" id="jornadas-por-rol">
     <h2>Jornadas por rol</h2>
-    <p class="note">Elige un puesto, o deja «Todos los puestos», para ver el horario de cada persona, día por día. Los días de 8 hrs o más van sombreados. Incluye a todas las personas del puesto, se pasen o no de 46 hrs.</p>
+    <p class="note" data-modo="actual">Elige un puesto, o deja «Todos los puestos», para ver el horario de cada persona, día por día. Los días de 8 hrs o más van sombreados. Incluye a todas las personas del puesto, se pasen o no de 46 hrs.</p>
+    <p class="note" data-modo="propuesta" hidden>Propuesta para las personas con 48 hrs, según el acuerdo del 5 nov 2026: las diurnas bajan 2 hrs (a 46) y las mixtas 3 hrs (a 45). El recorte se reparte igual entre los días que trabajan: la hora de entrada no cambia y salen antes. Los días sombreados son los que cambian. Es un punto de partida para validar con cada gerente.</p>
     <div class="gx-rol-tools">
+      <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-modo-btn="actual" aria-pressed="true">Horario actual</button><button type="button" data-modo-btn="propuesta" aria-pressed="false">Propuesta 2027</button></span></div>
       <label for="gx-rol">Puesto<select class="gx-select" id="gx-rol" data-draw="rol-opciones" data-source="horarios"></select></label>
       <label for="gx-suc">Sucursal<select class="gx-select" id="gx-suc" data-draw="suc-opciones" data-source="horarios"></select></label>
     </div>
-    <div class="gx-rol-stats" data-source="horarios">
+    <div class="gx-rol-stats" data-source="horarios" data-modo="propuesta" hidden>
+      <div><span class="lbl">Personas con 48 hrs</span><span class="val" data-draw="prop-stat" data-k="n">—</span></div>
+      <div class="is-a"><span class="lbl">Diurnas: a 46 hrs</span><span class="val" data-draw="prop-stat" data-k="d">—</span></div>
+      <div class="is-a"><span class="lbl">Mixtas: a 45 hrs</span><span class="val" data-draw="prop-stat" data-k="m">—</span></div>
+      <div><span class="lbl">Por confirmar</span><span class="val" data-draw="prop-stat" data-k="pc">—</span></div>
+      <div><span class="lbl">Horas por semana a reacomodar</span><span class="val" data-draw="prop-stat" data-k="hrs">—</span></div>
+    </div>
+    <div class="gx-rol-stats" data-source="horarios" data-modo="actual">
       <div><span class="lbl">Personas</span><span class="val" data-draw="rol-stat" data-k="n">—</span></div>
       <div class="is-a"><span class="lbl">Con 48 hrs</span><span class="val" data-draw="rol-stat" data-k="g48">—</span></div>
       <div><span class="lbl">Entre 46 y 48 hrs</span><span class="val" data-draw="rol-stat" data-k="g46">—</span></div>
@@ -566,7 +580,7 @@ document.querySelectorAll('.gx-table th button[data-sort]').forEach((b) => b.add
   dash.draw('tabla');
 }));
 
-window.GXR = { rol: '', suc: '', sort: 'horas_reales', dir: -1 };
+window.GXR = { rol: '', suc: '', sort: 'horas_reales', dir: -1, modo: 'actual' };
 const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
 const PU = (r) => (r.puesto == null || r.puesto === '' || r.puesto === 'nan') ? 'Sin puesto' : String(r.puesto);
 const TX = (v) => v == null ? '' : String(v);
@@ -574,13 +588,61 @@ function rolFilas() {
   const h = dash.data('horarios');
   if (h.status !== 'ok') return null;
   const k = GXR.sort, dir = GXR.dir;
-  return h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && (!GXR.suc || TX(r.ubicacion) === GXR.suc) && r.tipo_jornada !== 'Sin captura')
+  return h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && (!GXR.suc || TX(r.ubicacion) === GXR.suc) && r.tipo_jornada !== 'Sin captura'
+      && (GXR.modo !== 'propuesta' || Number(r.horas_reales) >= 48))
     .sort((a, b) => k === 'horas_reales' ? ((Number(a.horas_reales) - Number(b.horas_reales)) * dir || TX(a.nombre).localeCompare(TX(b.nombre))) : TX(a[k]).localeCompare(TX(b[k]), 'es') * dir);
 }
-function redrawRol() { ['suc-opciones', 'rol-stat', 'rol-tabla'].forEach((n) => dash.draw(n)); }
+function redrawRol() { ['suc-opciones', 'rol-stat', 'prop-stat', 'rol-tabla'].forEach((n) => dash.draw(n)); }
+
+// Propuesta 2027 (acuerdo 5 nov 2026): diurna a 46 hrs, mixta a 45; nocturna por confirmar.
+// El recorte se reparte igual entre los días trabajados, en bloques de 5 min; se conserva la entrada y se adelanta la salida.
+const META = { Diurna: 46, Mixta: 45 };
+const aMin = (t) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + m; };
+const aHora = (m) => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const fmtHM = (min) => { const h = Math.floor(min / 60), m = Math.round(min % 60); return m ? (h ? `${h} h ${m} min` : `${m} min`) : `${h} h`; };
+function propuesta(r) {
+  const tot = Number(r.horas_reales);
+  const dias = DIAS.filter((d) => r[d] && Number(r[d + '_h']) > 0);
+  if (dias.some((d) => Number(r[d + '_h']) > 12)) return { estado: 'revisar' };
+  const meta = META[r.tipo_jornada];
+  if (meta == null) return { estado: 'pendiente' };
+  const total = Math.round((tot - meta) * 60);
+  if (total <= 0 || !dias.length) return { estado: 'sin' };
+  const cortes = Object.fromEntries(dias.map((d) => [d, 0]));
+  let resto = total, i = 0;
+  while (resto > 0) { const x = Math.min(5, resto); cortes[dias[i % dias.length]] += x; resto -= x; i++; }
+  const dia = {};
+  dias.forEach((d) => {
+    const [ent, sal] = String(r[d]).split('–');
+    dia[d] = { txt: `${ent}–${aHora(aMin(sal) - cortes[d])}`, corte: cortes[d] };
+  });
+  return { estado: 'ok', meta, corte: total, nuevas: tot - total / 60, dia };
+}
+dash.draw('prop-stat', (el) => {
+  const rows = rolFilas();
+  if (!rows) { el.textContent = '—'; return; }
+  const ps = rows.map((r) => [r, propuesta(r)]);
+  const ok = ps.filter(([, p]) => p.estado === 'ok');
+  const v = {
+    n: rows.length,
+    d: ok.filter(([r]) => r.tipo_jornada === 'Diurna').length,
+    m: ok.filter(([r]) => r.tipo_jornada === 'Mixta').length,
+    pc: ps.length - ok.length,
+    hrs: fmtD(d3.sum(ok, ([, p]) => p.corte) / 60) + ' hrs'
+  }[el.dataset.k];
+  el.textContent = typeof v === 'number' ? fmtN(v) : v;
+});
+function verModo(m) {
+  GXR.modo = m;
+  document.querySelectorAll('[data-modo-btn]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modoBtn === m)));
+  document.querySelectorAll('#jornadas-por-rol [data-modo]').forEach((el) => { el.hidden = el.dataset.modo !== m; });
+  dash.draw('rol-opciones');
+  redrawRol();
+}
+document.querySelectorAll('[data-modo-btn]').forEach((b) => b.addEventListener('click', () => verModo(b.dataset.modoBtn)));
 dash.draw('rol-opciones', (sel) => {
   const h = dash.data('horarios');
-  const rows = h.status === 'ok' ? h.data.filter((r) => r.tipo_jornada !== 'Sin captura') : [];
+  const rows = h.status === 'ok' ? h.data.filter((r) => r.tipo_jornada !== 'Sin captura' && (GXR.modo !== 'propuesta' || Number(r.horas_reales) >= 48)) : [];
   const cnt = d3.rollup(rows, (v) => v.length, PU);
   const lista = [...cnt.keys()].sort((a, b) => TX(a).localeCompare(TX(b), 'es'));
   sel.replaceChildren(new Option(`Todos los puestos (${rows.length})`, ''), ...lista.map((p) => new Option(`${p} (${cnt.get(p)})`, p)));
@@ -590,12 +652,12 @@ dash.draw('rol-opciones', (sel) => {
 });
 dash.draw('suc-opciones', (sel) => {
   const h = dash.data('horarios');
-  const rows = h.status === 'ok' ? h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && r.tipo_jornada !== 'Sin captura') : [];
+  const rows = h.status === 'ok' ? h.data.filter((r) => (!GXR.rol || PU(r) === GXR.rol) && r.tipo_jornada !== 'Sin captura' && (GXR.modo !== 'propuesta' || Number(r.horas_reales) >= 48)) : [];
   const lista = [...new Set(rows.map((r) => TX(r.ubicacion)))].sort((a, b) => a.localeCompare(b, 'es'));
   sel.replaceChildren(new Option('Todas las sucursales', ''), ...lista.map((u) => new Option(u, u)));
   if (GXR.suc && !lista.includes(GXR.suc)) GXR.suc = '';
   sel.value = GXR.suc;
-  sel.onchange = () => { GXR.suc = sel.value; dash.draw('rol-stat'); dash.draw('rol-tabla'); };
+  sel.onchange = () => { GXR.suc = sel.value; ['rol-stat', 'prop-stat', 'rol-tabla'].forEach((n) => dash.draw(n)); };
 });
 dash.draw('rol-stat', (el) => {
   const rows = rolFilas();
@@ -608,17 +670,32 @@ dash.draw('rol-tabla', (tb) => {
   const rows = rolFilas();
   tb.replaceChildren();
   if (!rows) return;
+  const prop = GXR.modo === 'propuesta';
+  if (prop && !rows.length) {
+    const tr = document.createElement('tr'), c = document.createElement('td');
+    c.colSpan = 11; c.className = 'vacio'; c.textContent = 'Nadie de este puesto o sucursal tiene 48 hrs.';
+    tr.appendChild(c); tb.appendChild(tr); return;
+  }
   rows.forEach((r) => {
     const tr = document.createElement('tr');
     const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+    const sub = (c, txt) => { const sp = document.createElement('span'); sp.className = 'h'; sp.textContent = txt; c.appendChild(sp); };
+    const p = prop ? propuesta(r) : null;
     td(TX(r.nombre)); td(PU(r)); td(TX(r.ubicacion), 'hide-sm');
     DIAS.forEach((d) => {
       const hrs = Number(r[d + '_h']) || 0;
-      const c = td(r[d] ? r[d] : 'Descanso', 'd' + (r[d] ? (hrs >= 8 ? ' full' : '') : ' libre'));
-      if (r[d]) { const sp = document.createElement('span'); sp.className = 'h'; sp.textContent = fmtD(hrs) + ' h'; c.appendChild(sp); }
+      if (p && p.estado === 'ok' && p.dia[d]) {
+        const c = td(p.dia[d].txt, 'd cambio');
+        sub(c, '−' + fmtHM(p.dia[d].corte));
+        return;
+      }
+      const c = td(r[d] ? r[d] : 'Descanso', 'd' + (r[d] ? (!p && hrs >= 8 ? ' full' : '') : ' libre'));
+      if (r[d]) sub(c, fmtD(hrs) + ' h');
     });
     const tot = Number(r.horas_reales);
-    td(fmtD(tot), 'num' + (tot > 46 ? ' gx-exc' : ''));
+    if (!p) { td(fmtD(tot), 'num' + (tot > 46 ? ' gx-exc' : '')); }
+    else if (p.estado === 'ok') { const c = td(fmtD(p.nuevas), 'num gx-exc'); sub(c, 'antes ' + fmtD(tot)); }
+    else { const c = td(p.estado === 'revisar' ? 'Revisar captura' : 'Por confirmar', 'num'); sub(c, `${TX(r.tipo_jornada)} · ${fmtD(tot)} hrs`); }
     tb.appendChild(tr);
   });
 });
