@@ -7,6 +7,7 @@ Lee la hoja «Base de Datos» (encabezados en la fila 3) y escribe:
   - plantilla_jornadas.csv  -> una fila por colaborador activo (TabBD = «Sí»)
   - horarios_por_rol.csv    -> lo mismo + entrada/salida y horas por día (lun..dom)
 """
+import re
 import sys
 import datetime
 import pandas as pd
@@ -23,7 +24,11 @@ def hhmm(v):
     if isinstance(v, (int, float)):  # fracción de día de Excel
         m = round(v * 24 * 60)
         return f'{m // 60:02d}:{m % 60:02d}'
-    return str(v)
+    t = str(v).strip()
+    if re.fullmatch(r'\d{1,2}:\d{2}(:\d{2})?', t):  # «9:00», «09:00:00» -> «09:00»
+        h, m = t.split(':')[:2]
+        return f'{int(h):02d}:{m}'
+    return t
 
 
 def main(xlsx, out):
