@@ -25,6 +25,16 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 - Normalizaciones: puesto vacío → «Sin puesto»; «R.P» → «R.P.»; «Vivo 47» → «VIVO 47»; «La estancia» → «La Estancia».
 - Para regenerar los CSV: `python scripts/build_csv.py datos/Revision_Jornadas_48hrs_GEB.xlsx datos/`.
 
+## Cómo se actualizan los datos (acordado 8 nov 2026)
+
+- **El Excel es la fuente única** del horario actual, altas, bajas y sustituciones. Patty lo manda y Claude regenera todo. En la página solo se captura lo acordado: nuevo horario, líder, contrato y comentario.
+- **Alta:** fila nueva con fecha de ingreso y horario. Sugerencia: contratar a la gente nueva ya en 46 (diurna) o 45 (mixta).
+- **Baja:** no se borra la fila; se llena «Fecha de baja» y «Activo en TabBD» = «No».
+- **Sustitución** (se va Pedro, entra Juanito con el mismo horario): baja de Pedro + alta de Juanito en fila nueva; en «Observaciones», «Sustituye a Pedro». No se renombra la fila.
+- **Identificación por nombre completo** (Patty no quiere usar número de empleado). Al recibir un Excel nuevo, revisar nombres parecidos (acentos, orden, espacios) y preguntar antes de tratar a alguien como baja + alta.
+- Con cada Excel nuevo: regenerar CSV, propuesta, versión para proyectar y página única; dar un resumen corto (altas, bajas, cambios de horario, quién entra o sale de 48 hrs); agregar al Seguimiento a quien llegue a 48 hrs y marcar como baja (sin borrar) a quien salga.
+- **Datos sensibles:** el Excel trae CURP, RFC, NSS, fechas de nacimiento y salarios. No debe ir en un repositorio público.
+
 ## Reglas de negocio
 
 - **Grupo «48 hrs»**: horas reales ≥ 48. Es el universo principal acordado en la junta: **58 personas**.
