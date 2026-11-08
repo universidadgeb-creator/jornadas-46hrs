@@ -33,7 +33,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 - **Sustitución** (se va Pedro, entra Juanito con el mismo horario): baja de Pedro + alta de Juanito en fila nueva; en «Observaciones», «Sustituye a Pedro». No se renombra la fila.
 - **Identificación por nombre completo** (Patty no quiere usar número de empleado). Al recibir un Excel nuevo, revisar nombres parecidos (acentos, orden, espacios) y preguntar antes de tratar a alguien como baja + alta.
 - Con cada Excel nuevo: regenerar CSV, propuesta, versión para proyectar y página única; dar un resumen corto (altas, bajas, cambios de horario, quién entra o sale de 48 hrs); agregar al Seguimiento a quien llegue a 48 hrs y marcar como baja (sin borrar) a quien salga.
-- **Datos confidenciales:** Patty decidió que el proyecto no los necesita. El Excel completo de RH trae CURP, RFC, NSS, fecha de nacimiento, número de empleado y salarios; **nunca se sube tal cual**. Primero se limpia con `python scripts/limpiar_excel.py <excel_recibido.xlsx> datos/Revision_Jornadas_48hrs_GEB.xlsx` (deja solo la hoja «Base de Datos» sin esas columnas) y después se corre `build_csv.py`.
+- **Datos confidenciales:** Patty decidió que el proyecto no los necesita. El Excel completo de RH trae CURP, RFC, NSS, fecha de nacimiento, número de empleado y salarios; **nunca se sube tal cual**. Primero se limpia con `python scripts/limpiar_excel.py <excel_recibido.xlsx> datos/Revision_Jornadas_48hrs_GEB.xlsx` (deja solo la hoja «Base de Datos» sin esas columnas) y después se corre `build_csv.py`. El 8 nov 2026 se borró el Excel original de todo el historial de GitHub (con autorización de Patty) y se dejó el Excel limpio.
 
 ## Reglas de negocio
 
