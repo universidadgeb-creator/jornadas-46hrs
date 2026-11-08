@@ -281,6 +281,7 @@
       const c = calcular(r, b.dias); if (c.errores.length) return;
       const dias = Object.fromEntries(DIAS.map((d) => [d, b.dias[d] ? `${b.dias[d].e}–${b.dias[d].s}` : null]));
       const patch = { nuevo_horario: textoSemana(dias), nuevo_horario_dias: dias, nuevas_horas: Math.round(c.total / 60 * 100) / 100 };
+      if (r.adendum_generado) patch.adendum_generado = null;  // el Word descargado ya no corresponde: hay que volver a descargarlo
       Object.assign(r, patch); delete drafts[r.id]; editing = null;
       await save(r.id, patch, bG); render();
     });
