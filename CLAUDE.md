@@ -23,7 +23,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 - Columnas usadas: `Nombre`, `Puesto`, `División`, `Ubicación`, `Activo en TabBD`, `Jornada laboral` (horas de contrato), `Total jornada reconocida` (horas reales semanales, ya sin comida), `TIPO DE JORNADA (LFT)`, y `<Día> entrada / salida / jornada reconocida` de lunes a domingo.
 - Universo: activos con `Activo en TabBD = «Sí»` (312). Los que tienen tipo «Sin horario capturado» (10) quedan fuera de los cálculos, así que la base de cálculo es de **302**.
 - Normalizaciones: puesto vacío → «Sin puesto»; «R.P» → «R.P.»; «Vivo 47» → «VIVO 47»; «La estancia» → «La Estancia».
-- Para regenerar los CSV: `python scripts/build_csv.py datos/Revision_Jornadas_48hrs_GEB.xlsx datos/`.
+- Para regenerar los CSV: `python scripts/build_csv.py datos/Revision_Jornadas_48hrs_GEB.xlsx datos/` (antes, limpiar el Excel recibido con `scripts/limpiar_excel.py`).
 
 ## Cómo se actualizan los datos (acordado 8 nov 2026)
 
@@ -33,7 +33,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 - **Sustitución** (se va Pedro, entra Juanito con el mismo horario): baja de Pedro + alta de Juanito en fila nueva; en «Observaciones», «Sustituye a Pedro». No se renombra la fila.
 - **Identificación por nombre completo** (Patty no quiere usar número de empleado). Al recibir un Excel nuevo, revisar nombres parecidos (acentos, orden, espacios) y preguntar antes de tratar a alguien como baja + alta.
 - Con cada Excel nuevo: regenerar CSV, propuesta, versión para proyectar y página única; dar un resumen corto (altas, bajas, cambios de horario, quién entra o sale de 48 hrs); agregar al Seguimiento a quien llegue a 48 hrs y marcar como baja (sin borrar) a quien salga.
-- **Datos sensibles:** el Excel trae CURP, RFC, NSS, fechas de nacimiento y salarios. No debe ir en un repositorio público.
+- **Datos confidenciales:** Patty decidió que el proyecto no los necesita. El Excel completo de RH trae CURP, RFC, NSS, fecha de nacimiento, número de empleado y salarios; **nunca se sube tal cual**. Primero se limpia con `python scripts/limpiar_excel.py <excel_recibido.xlsx> datos/Revision_Jornadas_48hrs_GEB.xlsx` (deja solo la hoja «Base de Datos» sin esas columnas) y después se corre `build_csv.py`.
 
 ## Reglas de negocio
 
