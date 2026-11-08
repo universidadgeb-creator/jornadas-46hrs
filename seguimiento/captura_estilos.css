@@ -72,3 +72,35 @@
 .gx-btn-acc { font: inherit; font-size: var(--cds-font-size-caption); font-weight: 600; background: var(--gx-accent); color: var(--color-bg); border: none; border-radius: var(--cds-radius); padding: .5rem .9rem; cursor: pointer; white-space: nowrap; }
 .gx-btn-acc:focus-visible, button.gx-link:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
 button.gx-link { background: none; border: none; padding: 0; font-family: inherit; cursor: pointer; }
+
+/* Editor del nuevo horario, día por día */
+#t-seg .th-sub { font-weight: 400; }
+#t-seg td.nh { min-width: 14rem; }
+#t-seg .nh-txt { display: block; font-size: 12px; line-height: 1.45; }
+#t-seg .nh-txt.vacio { color: var(--muted); }
+#t-seg .nh-num { font-weight: 600; font-size: 14px; }
+#t-seg .btn-sm { font-size: 12px; padding: 4px 10px; margin-top: 6px; }
+#t-seg .btn-acc { background: var(--accent); border-color: var(--accent); color: var(--panel); font-weight: 600; }
+#t-seg .btn:disabled { opacity: .5; cursor: default; }
+#t-seg tr.editor td { background: var(--bg); padding: 14px 16px 16px; }
+#t-seg .ed-head { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin-bottom: 10px; }
+#t-seg .ed-hint, #t-seg .ed-com { font-size: 12px; color: var(--muted); }
+#t-seg .ed-com { margin: 10px 0 0; }
+#t-seg .ed-aviso { font-size: 12px; color: var(--warn); margin: 0 0 10px; }
+#t-seg .ed-dias { display: grid; grid-template-columns: repeat(7, minmax(7.5rem, 1fr)); gap: 8px; }
+@media (max-width: 1100px) { #t-seg .ed-dias { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); } }
+#t-seg .ed-dia { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+#t-seg .ed-dia.off { background: transparent; border-style: dashed; }
+#t-seg .ed-d { font-weight: 600; font-size: 13px; }
+#t-seg .ed-t { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--muted); }
+#t-seg .ed-t input { font: inherit; font-size: 13px; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; width: 100%; box-sizing: border-box; font-variant-numeric: tabular-nums; }
+#t-seg .ed-t input:disabled { opacity: .4; }
+#t-seg .ed-desc { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; }
+#t-seg .ed-desc input { width: 16px; height: 16px; accent-color: var(--accent); }
+#t-seg .ed-h { font-size: 12px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; min-height: 1.2em; }
+#t-seg .ed-pie { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; }
+#t-seg .ed-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+#t-seg .ed-total .flag, #t-seg .ed-total .okflag { display: inline; margin: 0; font-size: 12px; }
+#t-seg .ed-num { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; font-variant-numeric: tabular-nums; }
+#t-seg .ed-acc { display: flex; gap: 8px; }
+#t-seg .ed-msg { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--warn); margin-top: 6px; }

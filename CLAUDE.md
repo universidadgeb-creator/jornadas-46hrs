@@ -84,7 +84,8 @@ Detalles técnicos:
 
 - Colección `personas`: un documento por persona, con id = slug del nombre.
 - Campos fijos: `nombre`, `puesto`, `sucursal`, `division`, `tipo`, `horas_actuales`, `horario_actual`.
-- Campos editables: `lider`, `nuevo_horario`, `nuevas_horas`, `contrato` (bool), `comentario`.
+- Campos editables: `lider`, `nuevo_horario`, `nuevas_horas`, `contrato` (bool), `comentario`, y `nuevo_horario_dias` ({lun..dom: "HH:MM–HH:MM" o null}).
+- **Conteo automático (8 nov 2026):** el nuevo horario ya no se escribe a mano. Con «Editar» se abre un editor día por día (entrada, salida, descanso) y la página calcula las horas: suma de entrada a salida de cada día (si la salida es menor, cruza medianoche) y descuenta la comida igual que en el horario actual de la persona (por día; de las 58, 52 no descuentan y 6 descuentan 1 h). Al guardar escribe `nuevo_horario` (texto «L–V 07:00–14:40 · S … · D descanso»), `nuevo_horario_dias` y `nuevas_horas`. La columna «Nuevas hrs» muestra lo calculado desde el horario guardado; si un texto viejo no se puede leer, lo marca para corregirlo.
 - Muestra el avance (X de 58 con contrato nuevo), totales por tipo con número y %, avance por sucursal y filtros por tipo, sucursal, puesto y estado.
 - Para que los gerentes editen, hay que compartir la página única con permiso de edición (desde Compartir en claude.ai).
 - 8 nov 2026: se precargaron `nuevo_horario` y `nuevas_horas` de 57 personas con la propuesta automática (`scripts/propuesta.py`), solo donde estaban vacíos. Corona Miranda quedó sin propuesta hasta corregir su captura. Los gerentes validan o corrigen; `contrato` sigue en falso. El `comentario` de esos 57 dice «Propuesta inicial, por validar»; el de Corona Miranda, «Sin propuesta: revisar captura del domingo (20:30–13:30)». Si un gerente cambia el horario, conviene que borre o cambie esa nota.

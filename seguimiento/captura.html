@@ -44,7 +44,7 @@
       <table>
         <thead><tr>
           <th>Colaborador</th><th>Sucursal</th><th>Tipo</th><th class="num">Hrs hoy</th><th class="num">Meta</th><th>Horario actual</th>
-          <th>Líder</th><th>Nuevo horario</th><th class="num">Nuevas hrs</th><th>Nuevo contrato</th><th>Comentario</th>
+          <th>Líder</th><th>Nuevo horario</th><th class="num">Nuevas hrs <span class="th-sub">(calculadas)</span></th><th>Nuevo contrato</th><th>Comentario</th>
         </tr></thead>
         <tbody id="rows"><tr><td colspan="11" class="empty">Cargando la lista de personas…</td></tr></tbody>
       </table>
@@ -57,7 +57,8 @@
         <li>Lista: colaboradores activos con jornada reconocida de 48 hrs o más (base del 5 nov 2026).</li>
         <li>Diurna baja a 46 hrs en 2027. Mixta se queda en su máximo actual de 45 hrs, que no cambia con la reforma. Nocturna: pendiente de confirmar.</li>
         <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
-        <li>«Nuevas hrs» se marca en naranja si sigue arriba de la meta del tipo de jornada.</li>
+        <li>«Nuevas hrs» las calcula la página: suma de la entrada a la salida de cada día y descuenta la comida igual que en el horario actual de la persona. Se marca en naranja si sigue arriba de la meta.</li>
+        <li>El nuevo horario se captura con «Editar», día por día. No hace falta escribirlo ni sumar las horas a mano.</li>
       </ul>
     </section>
   </section>
@@ -134,6 +135,145 @@
     return i;
   }
 
+  // ── Nuevo horario día por día: la página cuenta las horas ──
+  const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+  const DNOM = { lun: 'lunes', mar: 'martes', mie: 'miércoles', jue: 'jueves', vie: 'viernes', sab: 'sábado', dom: 'domingo' };
+  const DCORTO = { lun: 'Lun', mar: 'Mar', mie: 'Mié', jue: 'Jue', vie: 'Vie', sab: 'Sáb', dom: 'Dom' };
+  const LETRA = { lun: 'L', mar: 'M', mie: 'Mi', jue: 'J', vie: 'V', sab: 'S', dom: 'D' };
+  const aMin = (t) => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+  const dur = (e, s) => { const a = aMin(e), b = aMin(s); if (a == null || b == null || a === b) return null; return b > a ? b - a : b + 1440 - a; };
+  const fmtHM = (min) => { const h = Math.floor(min / 60), m = Math.round(min % 60); return m ? (h ? `${h} h ${m} min` : `${m} min`) : `${h} h`; };
+  let editing = null;
+  const drafts = {};
+
+  // Horario actual de la persona (del Excel): de ahí sale cuánta comida se descuenta cada día.
+  function filaActual(r) {
+    const d = window.dash && window.dash.data ? window.dash.data('horarios') : null;
+    return d && d.status === 'ok' ? d.data.find((x) => x.nombre === r.nombre) || null : null;
+  }
+  function comidaPorDia(r) {
+    const f = filaActual(r), out = {}, vals = [];
+    if (f) DIAS.forEach((d) => {
+      if (!f[d]) return;
+      const [e, s] = String(f[d]).split('–'); const t = dur(e, s);
+      if (t != null) { const c = Math.max(0, t - Math.round(Number(f[d + '_h']) * 60)); out[d] = c; vals.push(c); }
+    });
+    const moda = vals.length ? vals.slice().sort((a, b) => vals.filter((v) => v === b).length - vals.filter((v) => v === a).length)[0] : 0;
+    DIAS.forEach((d) => { if (out[d] == null) out[d] = moda; });
+    return out;
+  }
+  // Lee el formato «L–V 07:00–14:40 · S 07:00–14:40 · D descanso». Devuelve null si no lo entiende.
+  function leerTexto(txt) {
+    if (!txt || !String(txt).trim()) return null;
+    const idx = { l: 0, m: 1, mi: 2, j: 3, v: 4, s: 5, d: 6 };
+    const res = Object.fromEntries(DIAS.map((d) => [d, null]));
+    for (const parte of String(txt).split('·')) {
+      const m = /^\s*([A-Za-z]+)(?:\s*[–-]\s*([A-Za-z]+))?\s+(.+?)\s*$/.exec(parte);
+      if (!m) return null;
+      const a = idx[m[1].toLowerCase()], b = m[2] ? idx[m[2].toLowerCase()] : a;
+      if (a == null || b == null || b < a) return null;
+      const v = m[3].trim().toLowerCase() === 'descanso' ? null : m[3].replace(/\s/g, '').replace('-', '–');
+      if (v && !/^\d{1,2}:\d{2}–\d{1,2}:\d{2}$/.test(v)) return null;
+      for (let i = a; i <= b; i++) res[DIAS[i]] = v;
+    }
+    return res;
+  }
+  function textoSemana(dias) {
+    const grupos = [];
+    DIAS.forEach((d) => { const v = dias[d] || 'descanso'; const g = grupos[grupos.length - 1]; if (g && g.v === v) g.ds.push(d); else grupos.push({ ds: [d], v }); });
+    return grupos.map((g) => `${g.ds.length === 1 ? LETRA[g.ds[0]] : LETRA[g.ds[0]] + '–' + LETRA[g.ds[g.ds.length - 1]]} ${g.v}`).join(' · ');
+  }
+  function diasGuardados(r) { return r.nuevo_horario_dias || leerTexto(r.nuevo_horario); }
+  function borrador(r) {
+    if (drafts[r.id]) return drafts[r.id];
+    let src = diasGuardados(r), origen = 'guardado';
+    if (!src) { const f = filaActual(r); src = Object.fromEntries(DIAS.map((d) => [d, f && f[d] ? f[d] : null])); origen = (r.nuevo_horario || '').trim() ? 'ilegible' : 'actual'; }
+    const b = { origen, dias: {} };
+    DIAS.forEach((d) => { const v = src[d]; if (v) { const [e, s] = String(v).split('–'); b.dias[d] = { e, s }; } else b.dias[d] = null; });
+    drafts[r.id] = b; return b;
+  }
+  function calcular(r, dias) {
+    const com = comidaPorDia(r); let total = 0, trabaja = 0; const errores = [], avisos = [], porDia = {};
+    DIAS.forEach((d) => {
+      const x = dias[d]; if (!x) return;
+      trabaja++;
+      if (!x.e || !x.s) { errores.push(`Falta la hora de ${!x.e ? 'entrada' : 'salida'} del ${DNOM[d]}.`); return; }
+      const t = dur(x.e, x.s);
+      if (t == null) { errores.push(`La entrada y la salida del ${DNOM[d]} son iguales.`); return; }
+      const min = Math.max(0, t - com[d]); porDia[d] = min; total += min;
+      if (min > 12 * 60) avisos.push(`El ${DNOM[d]} suma más de 12 h; revisa las horas.`);
+    });
+    if (!trabaja) errores.push('Marca al menos un día de trabajo.');
+    return { total, porDia, errores, avisos, com };
+  }
+  // Horas de la semana a partir del horario guardado (si se puede leer).
+  function horasDe(r) {
+    const g = diasGuardados(r); if (!g) return null;
+    const dias = Object.fromEntries(DIAS.map((d) => { const v = g[d]; if (!v) return [d, null]; const [e, s] = String(v).split('–'); return [d, { e, s }]; }));
+    const c = calcular(r, dias); return c.errores.length ? null : Math.round(c.total / 60 * 100) / 100;
+  }
+  function estadoMeta(horas, meta) {
+    if (horas == null || meta == null) return null;
+    const dif = Math.round((horas - meta) * 60);
+    return dif > 0 ? { ok: false, txt: `Arriba de ${meta} por ${fmtHM(dif)}` } : { ok: true, txt: `Cumple la meta de ${meta}` };
+  }
+
+  function editorRow(r, meta) {
+    const b = borrador(r);
+    const tr = el('tr', 'editor'); const td = el('td'); td.colSpan = 11; tr.appendChild(td);
+    const head = el('div', 'ed-head');
+    head.append(el('b', '', `Nuevo horario de ${r.nombre}`), el('span', 'ed-hint', 'Pon la entrada y la salida de cada día, o marca «Descanso». La página suma las horas de la semana.'));
+    td.appendChild(head);
+    if (b.origen === 'ilegible') td.appendChild(el('p', 'ed-aviso', `No pude leer el horario escrito («${r.nuevo_horario}»). Empecé con su horario actual; corrígelo aquí.`));
+    const grid = el('div', 'ed-dias'); td.appendChild(grid);
+    const com = comidaPorDia(r);
+    const vals = Object.values(com); const hayCom = vals.some((v) => v > 0);
+    td.appendChild(el('p', 'ed-com', !hayCom ? 'La comida va incluida en la jornada: no se descuenta.'
+      : vals.every((v) => v === vals[0]) ? `Se descuenta ${fmtHM(vals[0])} de comida por día, como en su horario actual.`
+      : 'Se descuenta la comida de cada día igual que en su horario actual.'));
+    const pie = el('div', 'ed-pie'); td.appendChild(pie);
+    const tot = el('div', 'ed-total'); const msg = el('div', 'ed-msg');
+    const bG = el('button', 'btn btn-acc', 'Guardar horario'); bG.type = 'button'; bG.id = `ed-${r.id}-guardar`;
+    const bC = el('button', 'btn', 'Cancelar'); bC.type = 'button'; bC.id = `ed-${r.id}-cancelar`;
+    const acc = el('div', 'ed-acc'); acc.append(bC, bG);
+    pie.append(tot, acc); td.appendChild(msg);
+    const hrsDia = {};
+    const actualizar = () => {
+      const c = calcular(r, b.dias);
+      DIAS.forEach((d) => { hrsDia[d].textContent = c.porDia[d] != null ? fmtHM(c.porDia[d]) : (b.dias[d] ? '—' : ''); });
+      const st = estadoMeta(c.total / 60, meta);
+      tot.replaceChildren(el('span', 'lbl', 'Total de la semana'), el('b', 'ed-num', fmtHM(c.total)));
+      if (!c.errores.length) tot.appendChild(el('span', st ? (st.ok ? 'okflag' : 'flag') : 'flag', st ? st.txt : 'Meta por confirmar'));
+      msg.replaceChildren(...c.errores.concat(c.avisos).map((t) => el('span', '', t)));
+      bG.disabled = !!c.errores.length;
+    };
+    const comun = () => { const xs = DIAS.map((d) => b.dias[d]).filter((x) => x && x.e && x.s); return xs.length ? xs[0] : { e: '', s: '' }; };
+    DIAS.forEach((d) => {
+      const box = el('div', 'ed-dia');
+      const e = el('input'); e.type = 'time'; e.step = 300; e.id = `ed-${r.id}-${d}-e`; e.setAttribute('aria-label', `Entrada del ${DNOM[d]}`);
+      const s = el('input'); s.type = 'time'; s.step = 300; s.id = `ed-${r.id}-${d}-s`; s.setAttribute('aria-label', `Salida del ${DNOM[d]}`);
+      const lab = el('label', 'ed-desc'); const cb = el('input'); cb.type = 'checkbox'; cb.id = `ed-${r.id}-${d}-d`; lab.append(cb, el('span', '', 'Descanso'));
+      hrsDia[d] = el('span', 'ed-h');
+      const sync = () => { const x = b.dias[d]; cb.checked = !x; e.disabled = s.disabled = !x; e.value = x ? x.e : ''; s.value = x ? x.s : ''; box.classList.toggle('off', !x); };
+      e.addEventListener('input', () => { if (b.dias[d]) { b.dias[d].e = e.value; actualizar(); } });
+      s.addEventListener('input', () => { if (b.dias[d]) { b.dias[d].s = s.value; actualizar(); } });
+      cb.addEventListener('change', () => { b.dias[d] = cb.checked ? null : { ...comun() }; sync(); actualizar(); });
+      const fila = (t, i) => { const w = el('label', 'ed-t'); w.append(el('span', '', t), i); return w; };
+      box.append(el('span', 'ed-d', DCORTO[d]), fila('Entra', e), fila('Sale', s), lab, hrsDia[d]);
+      grid.appendChild(box); sync();
+    });
+    bC.addEventListener('click', () => { delete drafts[r.id]; editing = null; renderRows(); });
+    bG.addEventListener('click', async () => {
+      const c = calcular(r, b.dias); if (c.errores.length) return;
+      const dias = Object.fromEntries(DIAS.map((d) => [d, b.dias[d] ? `${b.dias[d].e}–${b.dias[d].s}` : null]));
+      const patch = { nuevo_horario: textoSemana(dias), nuevo_horario_dias: dias, nuevas_horas: Math.round(c.total / 60 * 100) / 100 };
+      Object.assign(r, patch); delete drafts[r.id]; editing = null;
+      await save(r.id, patch, bG); render();
+    });
+    actualizar();
+    return tr;
+  }
+
   function renderRows() {
     const list = filtered().sort((a, b) => Number(a.contrato) - Number(b.contrato) || a.sucursal.localeCompare(b.sucursal, 'es') || a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
     $('f-count').textContent = list.length;
@@ -151,20 +291,29 @@
       tr.appendChild(meta == null ? el('td', 'num meta pend', 'Por confirmar') : el('td', 'num meta', `${meta} (−${fmt(r.horas_actuales - meta)})`));
       tr.appendChild(el('td', 'hor', r.horario_actual));
       const cl = el('td'); cl.appendChild(textInput(r, 'lider', 'Líder')); tr.appendChild(cl);
-      const cn = el('td'); cn.appendChild(textInput(r, 'nuevo_horario', 'Ej. L–V 07:00–14:45', 'wide')); tr.appendChild(cn);
+      const cn = el('td', 'nh');
+      const legible = !(r.nuevo_horario || '').trim() || diasGuardados(r);
+      cn.appendChild(el('span', 'nh-txt' + ((r.nuevo_horario || '').trim() ? '' : ' vacio'), (r.nuevo_horario || '').trim() || 'Sin capturar'));
+      if (!legible) cn.appendChild(el('span', 'flag', 'No se puede leer: ábrelo y corrígelo'));
+      if (canWrite) {
+        const bt = el('button', 'btn btn-sm', editing === r.id ? 'Editando…' : ((r.nuevo_horario || '').trim() ? 'Editar' : 'Capturar'));
+        bt.type = 'button'; bt.id = `ed-${r.id}-abrir`; bt.disabled = editing === r.id; bt.setAttribute('aria-label', `Editar el nuevo horario de ${r.nombre}`);
+        bt.addEventListener('click', () => { editing = r.id; renderRows(); const f = document.getElementById(`ed-${r.id}-lun-e`); if (f && !f.disabled) f.focus(); });
+        cn.appendChild(bt);
+      }
+      tr.appendChild(cn);
       const ch = el('td', 'num');
-      const n = el('input'); n.type = 'number'; n.step = '0.5'; n.min = '0'; n.max = '60'; n.id = `nh-${r.id}`; n.disabled = !canWrite;
-      n.setAttribute('aria-label', `Nuevas horas de ${r.nombre}`);
-      n.value = r.nuevas_horas == null ? '' : r.nuevas_horas;
-      n.addEventListener('change', () => { const v = n.value === '' ? null : Number(n.value); r.nuevas_horas = v; save(r.id, { nuevas_horas: v }, n); renderRows(); });
-      ch.appendChild(n);
-      if (r.nuevas_horas != null && meta != null) ch.appendChild(r.nuevas_horas > meta ? el('span', 'flag', `Arriba de ${meta}`) : el('span', 'okflag', 'Cumple'));
+      const hrs = horasDe(r) ?? (r.nuevas_horas ?? null);
+      ch.appendChild(el('b', 'nh-num', hrs == null ? '—' : fmt(hrs)));
+      const st = estadoMeta(hrs, meta);
+      if (st) ch.appendChild(el('span', st.ok ? 'okflag' : 'flag', st.ok ? 'Cumple' : `Arriba de ${meta}`));
       tr.appendChild(ch);
       const cc = el('td'); const lab = el('label', 'chk'); const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!r.contrato; cb.id = `ct-${r.id}`; cb.disabled = !canWrite;
       cb.addEventListener('change', () => { r.contrato = cb.checked; save(r.id, { contrato: cb.checked }, lab); render(); });
       lab.append(cb, el('span', '', r.contrato ? 'Realizado' : 'Pendiente')); cc.appendChild(lab); tr.appendChild(cc);
       const co = el('td'); co.appendChild(textInput(r, 'comentario', 'Comentario')); tr.appendChild(co);
       tb.appendChild(tr);
+      if (editing === r.id && canWrite) tb.appendChild(editorRow(r, meta));
     });
   }
 
@@ -182,7 +331,7 @@
   $('f-q').addEventListener('input', (e) => { F.q = e.target.value; renderRows(); });
   $('f-clear').addEventListener('click', () => { Object.keys(F).forEach((k) => { F[k] = ''; }); ['f-tipo', 'f-suc', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); render(); });
   document.querySelectorAll('.tipo').forEach((b) => b.addEventListener('click', () => { F.tipo = F.tipo === b.dataset.tipo ? '' : b.dataset.tipo; $('f-tipo').value = F.tipo; render(); }));
-  document.addEventListener('focusout', () => setTimeout(() => { if (!document.activeElement || document.activeElement.tagName !== 'INPUT') renderRows(); }, 0));
+  document.addEventListener('focusout', () => setTimeout(() => { if (editing) return; if (!document.activeElement || document.activeElement.tagName !== 'INPUT') renderRows(); }, 0));
 
   (async () => {
     const claude = window.claude;
