@@ -33,7 +33,7 @@
         <label for="f-tipo">Tipo de jornada<select id="f-tipo"><option value="">Todas</option><option>Diurna</option><option>Mixta</option><option>Nocturna</option></select></label>
         <label for="f-suc">Sucursal<select id="f-suc"><option value="">Todas</option></select></label>
         <label for="f-puesto">Puesto<select id="f-puesto"><option value="">Todos</option></select></label>
-        <label for="f-est">Estado<select id="f-est"><option value="">Todos</option><option value="pend">Pendiente</option><option value="done">Contrato realizado</option></select></label>
+        <label for="f-est">Estado<select id="f-est"><option value="">Todos</option><option value="pend">Pendiente</option><option value="done">Contrato realizado</option><option value="adn-por">Adendum por recibir</option><option value="adn-rec">Adendum recibido</option></select></label>
         <label for="f-q" class="grow">Buscar<input id="f-q" type="search" placeholder="Nombre, puesto o líder"></label>
         <button type="button" class="btn" id="f-clear">Limpiar filtros</button>
         <span class="count"><b id="f-count">—</b> personas</span>
@@ -57,11 +57,12 @@
 
     <section class="card adn" aria-labelledby="adn-tit">
       <h2 class="h2" id="adn-tit">Adendum de contrato</h2>
-      <p class="adn-intro">Cada adendum se llena solo con los datos de la persona: puesto, jornada de contrato, horario actual, nuevo horario y horas. Está listo cuando el nuevo horario está guardado, cumple la meta y su sucursal tiene gerente y lugar de firma.</p>
+      <p class="adn-intro">Cada adendum sale en PDF de una sola página y se llena solo con los datos de la persona: puesto, jornada de contrato, horario actual, nuevo horario y horas. Está listo cuando el nuevo horario está guardado, cumple la meta y su sucursal tiene gerente y lugar de firma.</p>
       <div class="adn-top">
         <label for="adn-fecha">Fecha de firma<input id="adn-fecha" type="date"></label>
-        <div class="adn-cuenta"><b id="adn-listos">—</b> de <span id="adn-total">—</span> adendums listos</div>
-        <button type="button" class="btn btn-acc" id="adn-todos">Descargar los listos (.zip)</button>
+        <div class="adn-cuenta"><b id="adn-listos">—</b> listos · <b id="adn-desc">—</b> descargados · <b id="adn-rec">—</b> recibidos firmados, de <span id="adn-total">—</span></div>
+        <button type="button" class="btn btn-acc" id="adn-todos">Descargar los listos por entregar (.zip de PDF)</button>
+        <button type="button" class="btn" id="adn-csv">Descargar control (.csv)</button>
       </div>
       <h3 class="h3">Gerente que firma y lugar, por sucursal</h3>
       <div class="adn-unis" id="adn-unis"><span class="status">Cargando sucursales…</span></div>
@@ -76,6 +77,7 @@
         <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
         <li>«Nuevas hrs» las calcula la página: suma de la entrada a la salida de cada día y descuenta la comida igual que en el horario actual de la persona. Se marca en naranja si sigue arriba de la meta.</li>
         <li>El nuevo horario se captura con «Editar», día por día. No hace falta escribirlo ni sumar las horas a mano.</li>
+        <li>Control: al recibir el adendum firmado, marca «Recibido firmado»; queda la fecha y quién lo capturó, y el contrato se marca como realizado. Si después cambia el nuevo horario, la página avisa que falta un adendum nuevo.</li>
         <li>Adendum: patrón GIMNASIOS AMERICANOS SAPI DE CV. El antecedente I usa la jornada de contrato del Excel y el horario actual; la cláusula PRIMERA, las horas y el horario nuevos (46 diurna, 45 mixta).</li>
       </ul>
     </section>
@@ -102,7 +104,7 @@
   function filtered() {
     const q = F.q.trim().toLowerCase();
     return rows.filter((r) => (!F.tipo || r.tipo === F.tipo) && (!F.suc || r.sucursal === F.suc) && (!F.puesto || r.puesto === F.puesto)
-      && (!F.est || (F.est === 'done' ? r.contrato : !r.contrato))
+      && (!F.est || (F.est === 'done' ? r.contrato : F.est === 'pend' ? !r.contrato : F.est === 'adn-rec' ? !!r.adendum_recibido : !r.adendum_recibido))
       && (!q || `${r.nombre} ${r.puesto} ${r.lider || ''}`.toLowerCase().includes(q)));
   }
 
@@ -311,7 +313,6 @@
   const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
   let unidades = {};
   const slug = (t) => String(t || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  const xmlEsc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const horasTxt = (h) => { const min = Math.round(h * 60), hh = Math.floor(min / 60), mm = min % 60; return mm ? `${hh} horas con ${mm} minutos` : `${hh} horas`; };
   function fechaTxt(iso) { const [y, m, d] = String(iso).split('-').map(Number); return y && m && d ? `${d} de ${MESES[m - 1]} de ${y}` : ''; }
   function hoyISO() { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; }
@@ -368,17 +369,74 @@
     return t(a) === t(b);
   }
   function fechaFirma() { const i = $('adn-fecha'); return (i && i.value) || hoyISO(); }
-  let plantillaZip = null;
-  async function docxDe(datos) {
-    if (!window.JSZip || !window.ADENDUM_DOCX_B64) throw new Error('sin_plantilla');
-    if (!plantillaZip) plantillaZip = await JSZip.loadAsync(window.ADENDUM_DOCX_B64, { base64: true });
-    const xml = await plantillaZip.file('word/document.xml').async('string');
-    const lleno = xml.replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => (k in datos ? xmlEsc(datos[k]) : m));
-    const z = await JSZip.loadAsync(window.ADENDUM_DOCX_B64, { base64: true });
-    z.file('word/document.xml', lleno);
-    return z.generateAsync({ type: 'blob', compression: 'DEFLATE', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  // ── PDF de una sola página con el texto de la plantilla (window.ADENDUM_PARRAFOS) ──
+  function pdfDe(datos) {
+    const { jsPDF } = window.jspdf || {};
+    if (!jsPDF || !window.ADENDUM_PARRAFOS) throw new Error('sin_plantilla');
+    const llenar = (t) => t.replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => (k in datos ? String(datos[k]) : m));
+    const pars = window.ADENDUM_PARRAFOS;
+    const iFirma = pars.findIndex((pp) => pp.runs.some((r) => r.t.includes('EL PATRON')));
+    const cuerpo = pars.slice(0, iFirma < 0 ? pars.length : iFirma);
+    while (cuerpo.length && !cuerpo[cuerpo.length - 1].runs.length) cuerpo.pop();
+    const W = 612, H = 792, MX = 64, MY = 54, ANCHO = W - 2 * MX;
+    // Palabras con partes en negrita: [{t, b}]
+    const palabras = (runs) => {
+      const out = []; let cur = [];
+      runs.forEach((r) => {
+        const partes = llenar(r.t).split(/(\s+)/);
+        partes.forEach((pz) => {
+          if (!pz) return;
+          if (/^\s+$/.test(pz)) { if (cur.length) { out.push(cur); cur = []; } return; }
+          cur.push({ t: pz, b: r.b });
+        });
+      });
+      if (cur.length) out.push(cur);
+      return out;
+    };
+    const ancho = (doc, w) => w.reduce((s, sg) => { doc.setFont('helvetica', sg.b ? 'bold' : 'normal'); return s + doc.getTextWidth(sg.t); }, 0);
+    function componer(doc, fs, dibujar) {
+      const lh = fs * 1.32; let y = MY + fs;
+      doc.setFontSize(fs);
+      const esp = (() => { doc.setFont('helvetica', 'normal'); return doc.getTextWidth(' '); })();
+      cuerpo.forEach((pp) => {
+        if (!pp.runs.length) { y += lh * 0.45; return; }
+        const ws = palabras(pp.runs).map((w) => ({ w, a: ancho(doc, w) }));
+        const lineas = []; let ln = [], la = 0;
+        ws.forEach((x) => { const n = la + (ln.length ? esp : 0) + x.a; if (ln.length && n > ANCHO) { lineas.push([ln, la]); ln = [x]; la = x.a; } else { ln.push(x); la = n; } });
+        if (ln.length) lineas.push([ln, la]);
+        lineas.forEach(([l, a], k) => {
+          if (dibujar) {
+            const ultima = k === lineas.length - 1;
+            let x = MX, gap = esp;
+            if (pp.align === 'center') x = MX + (ANCHO - a) / 2;
+            else if (pp.align === 'both' && !ultima && l.length > 1) gap = esp + (ANCHO - a) / (l.length - 1);
+            l.forEach((wd) => { wd.w.forEach((sg) => { doc.setFont('helvetica', sg.b ? 'bold' : 'normal'); doc.text(sg.t, x, y); x += doc.getTextWidth(sg.t); }); x += gap; });
+          }
+          y += lh;
+        });
+        y += lh * 0.3;
+      });
+      // Firmas: dos columnas
+      const colW = ANCHO * 0.42, c1 = MX + ANCHO * 0.25, c2 = MX + ANCHO * 0.75;
+      y += lh * 1.2;
+      if (dibujar) { doc.setFont('helvetica', 'bold'); doc.text('EL PATRON', c1, y, { align: 'center' }); doc.text('EL TRABAJADOR', c2, y, { align: 'center' }); }
+      y += lh * 3.4;
+      if (dibujar) { doc.setLineWidth(0.6); doc.line(c1 - colW / 2, y, c1 + colW / 2, y); doc.line(c2 - colW / 2, y, c2 + colW / 2, y); }
+      y += lh;
+      doc.setFont('helvetica', 'bold');
+      const n1 = doc.splitTextToSize(String(datos.FIRMA_PATRON || ''), colW), n2 = doc.splitTextToSize(String(datos.FIRMA_TRABAJADOR || ''), colW);
+      if (dibujar) { n1.forEach((t, k) => doc.text(t, c1, y + k * lh, { align: 'center' })); n2.forEach((t, k) => doc.text(t, c2, y + k * lh, { align: 'center' })); }
+      y += lh * (Math.max(n1.length, n2.length) - 1);
+      return y;
+    }
+    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+    let fs = 11;
+    while (fs > 6.5 && componer(doc, fs, false) > H - MY) fs -= 0.25;
+    componer(doc, fs, true);
+    doc.setProperties({ title: `Adendum jornada 2027 - ${datos.NOMBRE}` });
+    return doc.output('blob');
   }
-  const archivo = (r) => `Adendum jornada 2027 - ${r.nombre}.docx`;
+  const archivo = (r) => `Adendum jornada 2027 - ${r.nombre}.pdf`;
   async function descargar(nombreArchivo, blob, nodo) {
     const st = $('adn-status');
     const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
@@ -393,18 +451,43 @@
   }
   async function descargarUno(r, btn) {
     const e = estadoAdendum(r); if (!e.listo) return;
-    try { const blob = await docxDe(e.datos); if (await descargar(archivo(r), blob, btn)) { await marcarGenerado([r]); renderRows(); } }
+    try { const blob = pdfDe(e.datos); if (await descargar(archivo(r), blob, btn)) { await marcarGenerado([r]); renderRows(); } }
     catch (err) { $('adn-status').textContent = 'No se pudo armar el adendum. Recarga la página e inténtalo de nuevo.'; }
   }
   async function descargarTodos() {
-    const listos = rows.map((r) => [r, estadoAdendum(r)]).filter(([, e]) => e.listo);
-    if (!listos.length) { $('adn-status').textContent = 'Todavía no hay adendums listos.'; return; }
+    const listos = rows.map((r) => [r, estadoAdendum(r)]).filter(([r, e]) => e.listo && !r.adendum_recibido);
+    if (!listos.length) { $('adn-status').textContent = 'No hay adendums listos por entregar.'; return; }
     try {
       const zip = new JSZip();
-      for (const [r, e] of listos) zip.file(archivo(r), await docxDe(e.datos));
+      for (const [r, e] of listos) zip.file(archivo(r), pdfDe(e.datos));
       const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
       if (await descargar(`Adendums jornada 2027 - ${fechaFirma()}.zip`, blob, $('adn-todos'))) { await marcarGenerado(listos.map(([r]) => r)); renderRows(); }
     } catch (err) { $('adn-status').textContent = 'No se pudieron armar los adendums. Recarga la página e inténtalo de nuevo.'; }
+  }
+
+  // ── Control de adendums recibidos (auditoría) ──
+  let uid = null, usuarios = null; const nombres = {};
+  async function resolverNombres() {
+    if (!usuarios) return;
+    const ids = [...new Set(rows.concat(fueraRows).map((r) => r.adendum_recibido_por).filter((x) => x && !(x in nombres)))];
+    if (!ids.length) return;
+    try { const ps = await usuarios.profiles(ids); ids.forEach((i) => { nombres[i] = (ps[i] && ps[i].name) || ''; }); renderRows(); } catch (e) { /* sin nombres: se muestra sin «por» */ }
+  }
+  const quien = (r) => (r.adendum_recibido_por && nombres[r.adendum_recibido_por]) || '';
+  async function marcarRecibido(r, si, nodo) {
+    const patch = si ? { adendum_recibido: hoyISO(), adendum_recibido_por: uid || null, adendum_recibido_horario: r.nuevo_horario || '', contrato: true }
+      : { adendum_recibido: null, adendum_recibido_por: null, adendum_recibido_horario: null };
+    Object.assign(r, patch); await save(r.id, patch, nodo); render(); resolverNombres();
+  }
+  function csvControl() {
+    const q = (v) => { const t = v == null ? '' : String(v); return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+    const cab = ['Nombre', 'Puesto', 'Sucursal', 'Tipo', 'Hrs actuales', 'Nuevo horario', 'Nuevas hrs', 'Estado del adendum', 'Descargado', 'Recibido firmado', 'Recibió', 'Contrato nuevo', 'Comentario'];
+    const filas = rows.slice().sort((a, b) => a.sucursal.localeCompare(b.sucursal, 'es') || a.nombre.localeCompare(b.nombre, 'es')).map((r) => {
+      const e = estadoAdendum(r);
+      const est = r.adendum_recibido ? 'Recibido' : e.listo ? (r.adendum_generado ? 'Descargado, por recibir' : 'Listo, por descargar') : e.motivo;
+      return [r.nombre, r.puesto, r.sucursal, r.tipo, r.horas_actuales, r.nuevo_horario, horasDe(r) ?? r.nuevas_horas, est, r.adendum_generado || '', r.adendum_recibido || '', quien(r), r.contrato ? 'Sí' : 'No', r.comentario || ''];
+    });
+    return '﻿' + [cab].concat(filas).map((f) => f.map(q).join(',')).join('\n');
   }
   function renderUnidades() {
     const box = $('adn-unis'); if (!box) return;
@@ -434,7 +517,12 @@
   }
   function renderAdnCuenta() {
     const n = rows.filter((r) => estadoAdendum(r).listo).length;
-    if ($('adn-listos')) { $('adn-listos').textContent = n; $('adn-total').textContent = rows.length; $('adn-todos').disabled = !n; }
+    const pend = rows.filter((r) => !r.adendum_recibido && estadoAdendum(r).listo).length;
+    if ($('adn-listos')) {
+      $('adn-listos').textContent = n; $('adn-total').textContent = rows.length; $('adn-todos').disabled = !pend;
+      $('adn-desc').textContent = rows.filter((r) => r.adendum_generado || r.adendum_recibido).length;
+      $('adn-rec').textContent = rows.filter((r) => r.adendum_recibido).length;
+    }
   }
 
   function renderRows() {
@@ -476,12 +564,21 @@
       lab.append(cb, el('span', '', r.contrato ? 'Realizado' : 'Pendiente')); cc.appendChild(lab); tr.appendChild(cc);
       const co = el('td'); co.appendChild(textInput(r, 'comentario', 'Comentario')); tr.appendChild(co);
       const ca = el('td', 'adn-cel'); const ea = estadoAdendum(r);
-      if (ea.listo) {
+      if (r.adendum_recibido) {
+        ca.appendChild(el('span', 'okflag adn-rec', `Recibido firmado el ${fechaTxt(r.adendum_recibido)}`));
+        if (quien(r)) ca.appendChild(el('span', 'adn-pend', `Capturó: ${quien(r)}`));
+        if (r.adendum_recibido_horario != null && r.adendum_recibido_horario !== (r.nuevo_horario || '')) ca.appendChild(el('span', 'flag', 'El horario cambió después: falta firmar un adendum nuevo'));
+      } else if (ea.listo) {
         ca.appendChild(el('span', 'okflag', r.adendum_generado ? `Descargado el ${fechaTxt(r.adendum_generado)}` : 'Listo'));
-        const bd = el('button', 'btn btn-sm', 'Descargar'); bd.type = 'button'; bd.id = `adn-${r.id}`; bd.setAttribute('aria-label', `Descargar el adendum de ${r.nombre}`);
+        const bd = el('button', 'btn btn-sm', 'Descargar PDF'); bd.type = 'button'; bd.id = `adn-${r.id}`; bd.setAttribute('aria-label', `Descargar el adendum de ${r.nombre} en PDF`);
         bd.addEventListener('click', () => descargarUno(r, bd)); ca.appendChild(bd);
         if (ea.aviso) ca.appendChild(el('span', 'flag', ea.aviso));
       } else ca.appendChild(el('span', 'adn-pend', ea.motivo));
+      if (canWrite && (ea.listo || r.adendum_recibido)) {
+        const lr = el('label', 'chk adn-chk'); const cr = el('input'); cr.type = 'checkbox'; cr.id = `rec-${r.id}`; cr.checked = !!r.adendum_recibido;
+        cr.addEventListener('change', () => marcarRecibido(r, cr.checked, lr));
+        lr.append(cr, el('span', '', 'Recibido firmado')); ca.appendChild(lr);
+      }
       tr.appendChild(ca);
       tb.appendChild(tr);
       if (editing === r.id && canWrite) tb.appendChild(editorRow(r, meta));
@@ -514,6 +611,7 @@
 
   if ($('adn-fecha')) { $('adn-fecha').value = hoyISO(); $('adn-fecha').addEventListener('change', () => renderRows()); }
   if ($('adn-todos')) $('adn-todos').addEventListener('click', descargarTodos);
+  if ($('adn-csv')) $('adn-csv').addEventListener('click', () => descargar(`Control adendums jornada 2027 - ${hoyISO()}.csv`, new Blob([csvControl()]), $('adn-csv')));
 
   (async () => {
     const claude = window.claude;
@@ -521,13 +619,17 @@
     db = await claude.use('db');
     if (!db) { $('status').textContent = 'No se pudo conectar con la lista. Inicia sesión en Claude y vuelve a abrir la página.'; return; }
     const user = await claude.use('user');
-    if (user) { const c = await user.can('data.write'); if (c === false) { canWrite = false; $('status').textContent = 'Tienes acceso de solo lectura.'; } }
+    if (user) {
+      usuarios = user;
+      try { uid = await user.id(); } catch (e) { uid = null; }
+      const c = await user.can('data.write'); if (c === false) { canWrite = false; $('status').textContent = 'Tienes acceso de solo lectura.'; }
+    }
     db.collection('personas').onSnapshot((snap) => {
       const docs = snap.docs || snap;
       const todos = docs.map((d) => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
       rows = todos.filter((r) => !r.fuera);
       fueraRows = todos.filter((r) => r.fuera);
-      render();
+      render(); resolverNombres();
     }, () => { $('status').textContent = 'No se pudo cargar la lista. Recarga la página.'; });
     db.collection('unidades').onSnapshot((snap) => {
       const docs = snap.docs || snap;

@@ -125,3 +125,10 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 #t-seg .fuera summary { cursor: pointer; font-size: 13px; color: var(--muted); }
 #t-seg .fuera summary b { color: var(--fg); }
 #t-seg .fuera ul { margin-top: 8px; }
+
+/* Control de adendums recibidos */
+#t-seg .adn-cel > * { display: block; }
+#t-seg .adn-cel .btn-sm { margin: 4px 0; }
+#t-seg .adn-chk { margin-top: 6px; font-size: 12px; }
+#t-seg .adn-chk input { width: 16px; height: 16px; }
+#t-seg .adn-rec { font-weight: 600; }

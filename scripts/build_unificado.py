@@ -10,7 +10,8 @@ https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k):
   - la pestaña «Seguimiento» (seguimiento/captura.html + captura_estilos.css), que
     guarda lo que captura el equipo en la base de datos del artifact;
   - una tarjeta de avance en el Resumen;
-  - la plantilla del adendum (seguimiento/adendum_plantilla.docx) y JSZip para llenarla.
+  - el texto de la plantilla del adendum (seguimiento/adendum_plantilla.docx), jsPDF para armar el PDF
+    de una página y JSZip para juntar varios en un .zip.
 """
 import base64
 import json
@@ -21,6 +22,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 SALIDA = RAIZ / 'seguimiento' / 'nuevas_jornadas.html'
 D3 = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js'
 JSZIP = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'
+JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
 
 # Colores y tipografía de la página. Los nombres --color-* / --cds-* son los que usa
 # el tablero; los cortos (--bg, --fg, ...) los usa la pestaña de seguimiento.
@@ -76,6 +78,31 @@ RESUMEN_AVANCE = """  <article class="gx-card" id="avance-contratos">
 """
 
 
+def parrafos_adendum():
+    """Texto de la plantilla del adendum, párrafo por párrafo, con negritas y alineación."""
+    import html, zipfile
+    xml = zipfile.ZipFile(RAIZ / 'seguimiento' / 'adendum_plantilla.docx').read('word/document.xml').decode('utf-8')
+    out = []
+    for p in re.findall(r'<w:p[ >].*?</w:p>', xml, re.S):
+        jc = re.search(r'<w:jc w:val="(\w+)"', p)
+        runs = []
+        for r in re.findall(r'<w:r[ >].*?</w:r>', p, re.S):
+            t = ''.join(re.findall(r'<w:t(?: [^>]*)?>(.*?)</w:t>', r, re.S))
+            if '<w:tab/>' in r:
+                t += ' '
+            t = re.sub(r'\s+', ' ', html.unescape(t))
+            if t:
+                b = bool(re.search(r'<w:b/>|<w:b w:val="(true|1)"', r))
+                if runs and runs[-1]['b'] == b:
+                    runs[-1]['t'] += t
+                else:
+                    runs.append({'t': t, 'b': b})
+        if runs and not ''.join(x['t'] for x in runs).strip():
+            runs = []
+        out.append({'align': jc.group(1) if jc else '', 'runs': runs})
+    return out
+
+
 def reemplazar(texto, viejo, nuevo):
     assert texto.count(viejo) == 1, f'No encontré exactamente una vez: {viejo[:70]}'
     return texto.replace(viejo, nuevo)
@@ -117,7 +144,8 @@ def main():
         '<style>' + BASE_CSS + '\n' + estilos_seg + '</style>',
         f'<script src="{D3}"></script>',
         f'<script src="{JSZIP}"></script>',
-        '<script>window.ADENDUM_DOCX_B64 = "' + base64.b64encode((RAIZ / 'seguimiento' / 'adendum_plantilla.docx').read_bytes()).decode() + '";</script>',
+        f'<script src="{JSPDF}"></script>',
+        '<script>window.ADENDUM_PARRAFOS = ' + json.dumps(parrafos_adendum(), ensure_ascii=False) + ';</script>',
         shim,
         '<div id="dash-root">',
         tab,
