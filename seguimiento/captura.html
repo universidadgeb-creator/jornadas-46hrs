@@ -336,7 +336,10 @@
     const contrato = contratoDe(r);
     if (contrato == null) return { listo: false, motivo: 'Falta la jornada de contrato en el Excel' };
     const u = unidades[slug(r.sucursal)] || {};
-    if (!(u.firmante || '').trim()) return { listo: false, motivo: 'Falta el gerente de la sucursal' };
+    // Quien firma por la empresa: el gerente de la sucursal, salvo que la persona tenga uno propio (firmante_patron).
+    const firmante = String(r.firmante_patron || u.firmante || '').trim();
+    if (!firmante) return { listo: false, motivo: 'Falta el gerente de la sucursal' };
+    if (mismaPersona(firmante, r.nombre)) return { listo: false, motivo: 'El gerente no puede firmar su propio adendum: falta quién firme por la empresa' };
     if (!(u.lugar || '').trim()) return { listo: false, motivo: 'Falta el lugar de firma' };
     const actual = Object.fromEntries(DIAS.map((d) => [d, f[d] || null]));
     const nuevo = Object.fromEntries(DIAS.map((d) => [d, g[d] || null]));
@@ -344,7 +347,12 @@
     return { listo: true, aviso, datos: {
       NOMBRE: r.nombre, PUESTO: r.puesto, HORAS_ACTUALES: horasTxt(contrato), HORARIO_ACTUAL: horarioLargo(actual),
       HORAS_NUEVAS: horasTxt(nuevas), HORARIO_NUEVO: (() => { const t = horarioLargo(nuevo); return t.charAt(0).toUpperCase() + t.slice(1) + '.'; })(),
-      FECHA_LUGAR: `${fechaTxt(fechaFirma())}, en ${u.lugar.trim()}`, FIRMA_PATRON: u.firmante.trim(), FIRMA_TRABAJADOR: r.nombre } };
+      FECHA_LUGAR: `${fechaTxt(fechaFirma())}, en ${u.lugar.trim()}`, FIRMA_PATRON: firmante, FIRMA_TRABAJADOR: r.nombre } };
+  }
+  // «PATRICIO VILLARREAL DAMY» y «Villarreal Damy Patricio» son la misma persona.
+  function mismaPersona(a, b) {
+    const t = (x) => slug(x).split('-').filter(Boolean).sort().join(' ');
+    return t(a) === t(b);
   }
   function fechaFirma() { const i = $('adn-fecha'); return (i && i.value) || hoyISO(); }
   let plantillaZip = null;
