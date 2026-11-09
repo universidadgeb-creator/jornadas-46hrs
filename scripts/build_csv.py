@@ -31,9 +31,22 @@ def hhmm(v):
     return t
 
 
+# Puestos que no entran al reporte (pedido de Patty, 9 nov 2026): instructores y tutoriales.
+# «ATP» también se excluirá cuando Patty indique cómo aparece en el Excel.
+EXCLUIR_PUESTOS = re.compile(r'instructor|tutorial', re.I)
+
+
 def main(xlsx, out):
     df = pd.read_excel(xlsx, sheet_name='Base de Datos', header=2)
     a = df[df['Activo en TabBD'] == 'Sí'].copy()
+    fuera = a['Puesto'].astype(str).str.contains(EXCLUIR_PUESTOS)
+    if fuera.any():
+        print(f'Excluidos del reporte (instructores y tutoriales): {int(fuera.sum())} · ' + ', '.join(f'{k} ({v})' for k, v in a.loc[fuera, 'Puesto'].value_counts().items()))
+    a = a[~fuera]
+    sin_nombre = a['Nombre'].isna() | (a['Nombre'].astype(str).str.strip().isin(['', 'nan']))
+    if sin_nombre.any():
+        print(f'Filas sin nombre (se omiten hasta que se capture el nombre): {int(sin_nombre.sum())}')
+    a = a[~sin_nombre]
 
     p = pd.DataFrame()
     p['nombre'] = a['Nombre'].astype(str).str.strip().str.replace(r'\s+', ' ', regex=True)

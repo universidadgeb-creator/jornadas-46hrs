@@ -19,9 +19,9 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 
 ## Fuente de datos
 
-- Archivo `Revision_Jornadas_48hrs_GEB.xlsx`. **Desde el 9 nov 2026 la hoja buena es «Base Original»** (acuerdo con Patty; la hoja «Revisar diferencias» del Excel dice que ahí quedó lo correcto). Encabezados en la **fila 3**. `limpiar_excel.py` la toma y la guarda en el Excel limpio como «Base de Datos», que es lo que lee `build_csv.py`. Último corte: **9 nov 2026** (Patty mandará más cambios).
+- Archivo `Revision_Jornadas_48hrs_GEB.xlsx`. **Desde el 9 nov 2026 la hoja buena es «Base Original»** (acuerdo con Patty; la hoja «Revisar diferencias» del Excel dice que ahí quedó lo correcto). Encabezados en la **fila 3**. `limpiar_excel.py` la toma y la guarda en el Excel limpio como «Base de Datos», que es lo que lee `build_csv.py`. Último corte: **10 nov 2026** (Patty mandará más cambios).
 - Columnas usadas: `Nombre`, `Puesto`, `División`, `Ubicación`, `Activo en TabBD`, `Jornada laboral` (horas de contrato), `Total jornada reconocida` (horas reales semanales, ya sin comida), `TIPO DE JORNADA (LFT)`, y `<Día> entrada / salida / jornada reconocida` de lunes a domingo.
-- Universo: activos con `Activo en TabBD = «Sí»` (333 en «Base Original», todas «Sí»). Los que tienen tipo «Sin horario capturado» (7) quedan fuera de los cálculos, así que la base de cálculo es de **326**.
+- Universo: activos con `Activo en TabBD = «Sí»`, **sin instructores ni tutoriales** (pedido de Patty, 10 nov 2026: `EXCLUIR_PUESTOS` en `build_csv.py` = puestos que contienen «instructor» o «tutorial»; hoy 22: Instructor de Acuática 12, Coach Tutorial 6, Instructor de Clases de Salón 3, TUTORIAL 1). «ATP» también se excluirá cuando Patty diga cómo aparece en el Excel (no está en ninguna columna). Las filas sin nombre se omiten (hubo 2 altas a medio capturar). Corte 10 nov: 314 activos, 312 con horario.
 - Normalizaciones: puesto vacío → «Sin puesto»; «R.P» → «R.P.»; «Vivo 47» → «VIVO 47»; «La estancia», «Estancia» y «estancia» → «La Estancia».
 - Para regenerar los CSV: `python scripts/build_csv.py datos/Revision_Jornadas_48hrs_GEB.xlsx datos/` (antes, limpiar el Excel recibido con `scripts/limpiar_excel.py`).
 
@@ -48,7 +48,12 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 - **Etapas 2027–2030**: con los horarios actuales se cuenta a quién queda arriba de cada límite (46/44/42/40). «Nuevas» son las personas que no estaban arriba del límite de la etapa anterior.
 - **Plazas equivalentes** = horas a reacomodar ÷ 46. Es una referencia de capacidad, no una propuesta de contratación.
 
-## Cifras actuales (corte 9 nov 2026, hoja «Base Original»)
+## Cifras actuales (corte 10 nov 2026, hoja «Base Original», sin instructores ni tutoriales)
+
+- 66 personas con 48 hrs (25 diurnas, 41 mixtas) y 36 entre 46 y 48: **102 pasan de 46 hrs** (en Seguimiento). Horas a reacomodar a 46: ~173.5/semana; con la propuesta (mixtas a 45): ~240.5. Etapas: 2027 → 102 · 2028 → 139 · 2029 → 141 · 2030 → 154.
+- Cambios 9→10 nov: entran a seguimiento Viloria Uribe (Lavaloza, ahora con horario: 48 mixta), Macías Cervantes (Auxiliar General, 48) y Chávez Rivera (Mesero, 48), los tres de Nuevos Negocios; sale Cuevas Ramírez (ya no está en la base). Escalante Núñez pasó a mixta (propuesta recalculada a 45). Nueva ubicación «Onara VR» (2 baristas, 46 h: no entran). Macías y Chávez no traen jornada de contrato.
+
+### Corte anterior (9 nov 2026)
 
 - 64 personas con 48 hrs: **25 diurnas, 39 mixtas, 0 nocturnas**. (Corte del 5 nov: 58 = 24 diurnas, 33 mixtas, 1 nocturna.)
 - 100 personas se pasan de 46 hrs (64 + 36). Horas a reacomodar para bajar a 46: ~169.5 hrs/semana, unas 3.7 plazas. Con la propuesta (mixtas a 45): ~234.5 hrs.
