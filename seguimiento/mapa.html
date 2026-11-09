@@ -22,12 +22,12 @@
         <tbody id="mp-fr"></tbody>
       </table>
     </div>
-    <h3 class="mp-h3">Turnos</h3>
-    <p class="note">Personas que comparten el mismo horario en la semana, por puesto y de la entrada más temprano a la más tarde. Abre un turno para ver los nombres.</p>
-    <div class="gx-tablebox">
-      <table class="gx-table mp-tur">
-        <thead><tr><th>Puesto</th><th>Horario de la semana</th><th class="num">Personas</th></tr></thead>
-        <tbody id="mp-tur"></tbody>
+    <h3 class="mp-h3">Plantilla por turno</h3>
+    <p class="note">Nombres y horarios, de la mañana al cierre. Cada turno agrupa a quienes entran en ese rango (según su primer día de trabajo de la semana). En 2027 se marcan los días que cambian y cómo eran hoy.</p>
+    <div class="gx-tablebox mp-plantilla">
+      <table class="gx-table gx-sem mp-tabla">
+        <thead><tr><th>Nombre</th><th>Puesto</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th></tr></thead>
+        <tbody id="mp-rows"></tbody>
       </table>
     </div>
     <p class="status" id="mp-status"></p>
@@ -36,15 +36,6 @@
       <p class="note">Una persona cuenta en un bloque si trabaja al menos 15 minutos de él.</p>
       <div class="mp-leyenda" id="mp-ley" aria-hidden="true"></div>
       <div class="mp-chart" id="mp-chart" role="img" aria-label="Personas en piso por media hora y día"></div>
-    </details>
-    <details class="mp-det">
-      <summary>Ver horarios por persona</summary>
-    <div class="gx-tablebox">
-      <table class="gx-table gx-sem mp-tabla">
-        <thead><tr><th>Nombre</th><th>Puesto</th><th class="hide-sm">Tipo</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th></tr></thead>
-        <tbody id="mp-rows"></tbody>
-      </table>
-    </div>
     </details>
   </article>
 </section>
@@ -106,7 +97,9 @@
   // Hora de entrada del primer día trabajado de la semana (para ordenar de más temprano a más tarde)
   function entrada(p, clave) { const d = DIAS.find((x) => p[clave][x]); return d ? aMin(String(p[clave][d]).split('–')[0]) : 9999; }
   function salida(p, clave) { const d = DIAS.find((x) => p[clave][x]); return d ? aMin(String(p[clave][d]).split('–')[1]) : 9999; }
-  const porHora = (clave) => (a, b) => a.puesto.localeCompare(b.puesto, 'es') || entrada(a, clave) - entrada(b, clave) || salida(a, clave) - salida(b, clave) || a.nombre.localeCompare(b.nombre, 'es');
+  const porHora = (clave) => (a, b) => entrada(a, clave) - entrada(b, clave) || salida(a, clave) - salida(b, clave) || a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es');
+  const TURNOS = [['Apertura', 'entran antes de las 7:00', 0, 420], ['Mañana', 'entran de 7:00 a 11:59', 420, 720], ['Tarde', 'entran de 12:00 a 16:59', 720, 1020], ['Noche', 'entran a las 17:00 o después', 1020, 9998], ['Sin horario', 'descanso toda la semana', 9998, 10000]];
+  const turnoDe = (p, clave) => { const m = entrada(p, clave); return TURNOS.find((t) => m >= t[2] && m < t[3]) || TURNOS[TURNOS.length - 1]; };
   function turnos(lista, clave) {
     const m = new Map();
     lista.forEach((p) => { const t = textoSemana(p[clave]); const k = p.puesto + '|' + t; if (!m.has(k)) m.set(k, { puesto: p.puesto, horario: t, gente: [] }); m.get(k).gente.push(p); });
@@ -137,21 +130,6 @@
     });
     if (!tb.children.length) { const tr = el('tr'); const td = el('td', 'vacio', 'No hay horarios con estos filtros.'); td.colSpan = 8; tr.appendChild(td); tb.appendChild(tr); }
   }
-  function renderTurnos(lista) {
-    const tb = $('mp-tur'); tb.replaceChildren();
-    const clave = M.modo === 'hoy' ? 'hoy' : 'nuevo';
-    turnos(lista, clave).forEach((t) => {
-      const tr = el('tr');
-      tr.append(el('td', '', t.puesto));
-      const ch = el('td', 'mp-tur-h', t.horario);
-      const cambian = clave === 'nuevo' ? t.gente.filter((p) => textoSemana(p.hoy) !== t.horario).length : 0;
-      if (cambian) ch.appendChild(el('span', 'h', cambian === t.gente.length ? 'Horario nuevo 2027' : `Horario nuevo para ${cambian}`));
-      tr.appendChild(ch);
-      const cn = el('td', 'num'); const det = el('details'); det.append(el('summary', '', String(t.gente.length)), el('div', 'mp-nombres', t.gente.map((p) => p.nombre).sort((a, b) => a.localeCompare(b, 'es')).join(', '))); cn.appendChild(det);
-      tr.appendChild(cn); tb.appendChild(tr);
-    });
-    if (!tb.children.length) { const tr = el('tr'); const td = el('td', 'vacio', 'No hay personas con estos filtros.'); td.colSpan = 3; tr.appendChild(td); tb.appendChild(tr); }
-  }
   function filtradas() { return personas().filter((p) => (!M.suc || p.sucursal === M.suc) && (!M.pue || p.puesto === M.pue)); }
 
   function opciones() {
@@ -177,7 +155,7 @@
     if (!opciones()) { box.replaceChildren(el('p', 'status', 'Cargando horarios…')); return; }
     const lista = filtradas();
     const gHoy = cobertura(lista, 'hoy'), gNue = cobertura(lista, 'nuevo');
-    renderFranjas(gHoy, gNue); renderTurnos(lista);
+    renderFranjas(gHoy, gNue);
     // Estadísticas
     $('mp-n').textContent = lista.length.toLocaleString('es-MX');
     $('mp-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
@@ -238,19 +216,27 @@
   function renderTabla(lista) {
     const tb = $('mp-rows'); tb.replaceChildren();
     const clave = M.modo === 'hoy' ? 'hoy' : 'nuevo';
-    lista.slice().sort(porHora(clave)).forEach((p) => {
-      const tr = el('tr');
-      tr.append(el('td', '', p.nombre), el('td', '', p.puesto), el('td', 'hide-sm', p.tipo));
-      DIAS.forEach((d) => {
-        const v = p[clave][d]; const c = el('td', 'd' + (v ? '' : ' libre'), v || 'Descanso');
-        if (clave === 'nuevo' && p.cambia && (p.nuevo[d] || '') !== (p.hoy[d] || '')) { c.classList.add('full'); c.appendChild(el('span', 'h', p.hoy[d] ? `hoy ${p.hoy[d]}` : 'hoy descanso')); }
-        tr.appendChild(c);
+    const orden = lista.slice().sort(porHora(clave));
+    TURNOS.forEach((t) => {
+      const grupo = orden.filter((p) => turnoDe(p, clave) === t);
+      if (!grupo.length) return;
+      const trh = el('tr', 'mp-grupo'); const th = el('td'); th.colSpan = 10;
+      th.append(el('b', '', t[0]), el('span', '', ` · ${t[1]} · ${grupo.length} ${grupo.length === 1 ? 'persona' : 'personas'}`));
+      trh.appendChild(th); tb.appendChild(trh);
+      grupo.forEach((p) => {
+        const tr = el('tr');
+        tr.append(el('td', '', p.nombre), el('td', 'mp-pue', p.puesto));
+        DIAS.forEach((d) => {
+          const v = p[clave][d]; const c = el('td', 'd' + (v ? '' : ' libre'), v || 'Descanso');
+          if (clave === 'nuevo' && p.cambia && (p.nuevo[d] || '') !== (p.hoy[d] || '')) { c.classList.add('full'); c.appendChild(el('span', 'h', p.hoy[d] ? `hoy ${p.hoy[d]}` : 'hoy descanso')); }
+          tr.appendChild(c);
+        });
+        const n = el('td', 'num', fmt(clave === 'hoy' ? p.hHoy : p.hNuevo));
+        if (clave === 'nuevo' && Math.abs(p.hNuevo - p.hHoy) > 0.01) n.appendChild(el('span', 'h', `hoy ${fmt(p.hHoy)}`));
+        tr.appendChild(n); tb.appendChild(tr);
       });
-      const t = el('td', 'num', fmt(clave === 'hoy' ? p.hHoy : p.hNuevo));
-      if (clave === 'nuevo' && Math.abs(p.hNuevo - p.hHoy) > 0.01) t.appendChild(el('span', 'h', `hoy ${fmt(p.hHoy)}`));
-      tr.appendChild(t); tb.appendChild(tr);
     });
-    if (!lista.length) { const tr = el('tr'); const td = el('td', 'vacio', 'No hay personas con estos filtros.'); td.colSpan = 11; tr.appendChild(td); tb.appendChild(tr); }
+    if (!lista.length) { const tr = el('tr'); const td = el('td', 'vacio', 'No hay personas con estos filtros.'); td.colSpan = 10; tr.appendChild(td); tb.appendChild(tr); }
   }
 
   // Archivo maestro: hoja «Resumen» + una hoja por sucursal (personas y cobertura por hora)
@@ -271,15 +257,15 @@
       FRANJAS.forEach((f, i) => { if (DIAS.some((d) => fh[i][d] || fn[i][d])) aoa.push([f[0], rangoF(f), ...DIAS.map((d) => (fn[i][d] === fh[i][d] ? fn[i][d] : `${fn[i][d]} (${fh[i][d]})`))]); });
       aoa.push([], ['Turnos 2027'], ['Puesto', 'Horario de la semana', 'Personas', 'Nombres']);
       turnos(l, 'nuevo').forEach((t) => aoa.push([t.puesto, t.horario, t.gente.length, t.gente.map((p) => p.nombre).join(', ')]));
-      aoa.push([], ['Horarios por persona'], ['Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027']);
-      l.forEach((p) => aoa.push([p.nombre, p.puesto, p.tipo, ...DIAS.map((d) => p.hoy[d] || 'Descanso'), +p.hHoy.toFixed(2), ...DIAS.map((d) => p.nuevo[d] || 'Descanso'), +p.hNuevo.toFixed(2)]));
+      aoa.push([], ['Plantilla por turno (2027), de la mañana al cierre'], ['Turno 2027', 'Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027']);
+      l.forEach((p) => aoa.push([turnoDe(p, 'nuevo')[0], p.nombre, p.puesto, p.tipo, ...DIAS.map((d) => p.hoy[d] || 'Descanso'), +p.hHoy.toFixed(2), ...DIAS.map((d) => p.nuevo[d] || 'Descanso'), +p.hNuevo.toFixed(2)]));
       [['2027', 'nuevo'], ['hoy', 'hoy']].forEach(([t, k]) => {
         const gg = cobertura(l, k);
         aoa.push([], [`Detalle: personas en piso por media hora (${t})`], ['Horario', ...DIAS.map((d) => DN[d])]);
         d3.range(SL).filter((k) => DIAS.some((d) => gg[d][k])).forEach((k) => aoa.push([`${hh(k)}–${hh(k + 1)}`, ...DIAS.map((d) => gg[d][k])]));
       });
       const ws = XLSX.utils.aoa_to_sheet(aoa);
-      ws['!cols'] = [{ wch: 34 }, { wch: 28 }, { wch: 9 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 9 }];
+      ws['!cols'] = [{ wch: 12 }, { wch: 34 }, { wch: 28 }, { wch: 9 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 9 }];
       XLSX.utils.book_append_sheet(wb, ws, s.replace(/[\\/?*[\]:]/g, ' ').slice(0, 31));
     });
     const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });

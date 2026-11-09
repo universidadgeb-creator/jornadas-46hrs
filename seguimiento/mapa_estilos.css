@@ -30,3 +30,8 @@
 .mp-det { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-sm); }
 .mp-det > summary { cursor: pointer; font-size: var(--cds-font-size-body); font-weight: 600; padding: .3rem 0; }
 .mp-det[open] > summary { margin-bottom: var(--cds-gap-sm); }
+.mp-plantilla { max-height: none; }
+.mp-tabla tr.mp-grupo td { background: var(--color-bg); padding-top: .7rem; font-size: var(--cds-font-size-body); }
+.mp-tabla tr.mp-grupo td b { color: var(--gx-accent); }
+.mp-tabla tr.mp-grupo td span { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.mp-tabla td.mp-pue { color: var(--color-fg-muted); }
