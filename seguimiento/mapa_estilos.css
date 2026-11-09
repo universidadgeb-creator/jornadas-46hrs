@@ -19,3 +19,14 @@
 .mp-chart g.c:hover rect { stroke: var(--color-fg); stroke-width: 1.5; }
 .mp-h3 { font-size: var(--cds-font-size-body); font-weight: 600; margin: var(--cds-gap-sm) 0 0; }
 .mp-tabla td.num .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
+.mp-scroll { overflow-x: auto; }
+.mp-fr { min-width: 34rem; }
+.mp-fr td.mp-fr-n b { display: block; font-weight: 600; }
+.mp-fr td .h, .mp-tur td .h { display: block; font-size: .7rem; color: var(--color-fg-muted); font-weight: 400; }
+.mp-fr td.mp-fr-c { text-align: center; font-size: var(--cds-font-size-body); font-weight: 600; border-left: 2px solid var(--color-panel); }
+.mp-tur td.mp-tur-h { font-variant-numeric: tabular-nums; }
+.mp-tur details summary { cursor: pointer; font-weight: 600; color: var(--gx-accent); }
+.mp-tur .mp-nombres { text-align: left; font-size: .75rem; color: var(--color-fg-muted); max-width: 22rem; margin-left: auto; padding-top: .2rem; }
+.mp-det { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-sm); }
+.mp-det > summary { cursor: pointer; font-size: var(--cds-font-size-body); font-weight: 600; padding: .3rem 0; }
+.mp-det[open] > summary { margin-bottom: var(--cds-gap-sm); }

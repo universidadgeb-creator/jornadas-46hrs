@@ -195,6 +195,17 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 .mp-chart g.c:hover rect { stroke: var(--color-fg); stroke-width: 1.5; }
 .mp-h3 { font-size: var(--cds-font-size-body); font-weight: 600; margin: var(--cds-gap-sm) 0 0; }
 .mp-tabla td.num .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
+.mp-scroll { overflow-x: auto; }
+.mp-fr { min-width: 34rem; }
+.mp-fr td.mp-fr-n b { display: block; font-weight: 600; }
+.mp-fr td .h, .mp-tur td .h { display: block; font-size: .7rem; color: var(--color-fg-muted); font-weight: 400; }
+.mp-fr td.mp-fr-c { text-align: center; font-size: var(--cds-font-size-body); font-weight: 600; border-left: 2px solid var(--color-panel); }
+.mp-tur td.mp-tur-h { font-variant-numeric: tabular-nums; }
+.mp-tur details summary { cursor: pointer; font-weight: 600; color: var(--gx-accent); }
+.mp-tur .mp-nombres { text-align: left; font-size: .75rem; color: var(--color-fg-muted); max-width: 22rem; margin-left: auto; padding-top: .2rem; }
+.mp-det { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-sm); }
+.mp-det > summary { cursor: pointer; font-size: var(--cds-font-size-body); font-weight: 600; padding: .3rem 0; }
+.mp-det[open] > summary { margin-bottom: var(--cds-gap-sm); }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -689,7 +700,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
   <section class="gx-tab" id="t-mapa" hidden>
   <article class="gx-card mp">
     <h2>Mapa de horarios por sucursal</h2>
-    <p class="note">Cuántas personas hay en piso cada hora de la semana. «2027» usa el nuevo horario de quienes están en el Seguimiento (lo capturado o la propuesta) y el horario actual de los demás. «Cambio» muestra dónde queda más o menos gente. Va en bloques de media hora: una persona cuenta en un bloque si trabaja al menos 15 minutos de él.</p>
+    <p class="note">Cómo queda cubierta cada sucursal a lo largo de la semana. «2027» usa el nuevo horario de quienes están en el Seguimiento (lo capturado o la propuesta) y el horario actual de los demás. «Cambio» muestra dónde queda más o menos gente.</p>
     <div class="mp-tools">
       <label for="mp-suc">Sucursal<select class="gx-select" id="mp-suc"></select></label>
       <label for="mp-pue">Puesto<select class="gx-select" id="mp-pue"></select></label>
@@ -702,16 +713,38 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       <div class="is-a"><span class="lbl">Horas por semana, 2027</span><span class="val" id="mp-hn">—</span></div>
       <div><span class="lbl">Hora con más gente</span><span class="val" id="mp-pico">—</span></div>
     </div>
-    <div class="mp-leyenda" id="mp-ley" aria-hidden="true"></div>
-    <div class="mp-chart" id="mp-chart" role="img" aria-label="Personas en piso por hora y día"></div>
+    <h3 class="mp-h3">Personas en piso por franja del día</h3>
+    <p class="note">El momento con más gente dentro de cada franja.</p>
+    <div class="mp-scroll">
+      <table class="gx-table mp-fr">
+        <thead><tr><th>Franja</th><th class="num">Lun</th><th class="num">Mar</th><th class="num">Mié</th><th class="num">Jue</th><th class="num">Vie</th><th class="num">Sáb</th><th class="num">Dom</th></tr></thead>
+        <tbody id="mp-fr"></tbody>
+      </table>
+    </div>
+    <h3 class="mp-h3">Turnos</h3>
+    <p class="note">Personas que comparten el mismo horario en la semana, por puesto. Abre un turno para ver los nombres.</p>
+    <div class="gx-tablebox">
+      <table class="gx-table mp-tur">
+        <thead><tr><th>Puesto</th><th>Horario de la semana</th><th class="num">Personas</th></tr></thead>
+        <tbody id="mp-tur"></tbody>
+      </table>
+    </div>
     <p class="status" id="mp-status"></p>
-    <h3 class="mp-h3">Horarios de la sucursal</h3>
+    <details class="mp-det">
+      <summary>Ver detalle por media hora</summary>
+      <p class="note">Una persona cuenta en un bloque si trabaja al menos 15 minutos de él.</p>
+      <div class="mp-leyenda" id="mp-ley" aria-hidden="true"></div>
+      <div class="mp-chart" id="mp-chart" role="img" aria-label="Personas en piso por media hora y día"></div>
+    </details>
+    <details class="mp-det">
+      <summary>Ver horarios por persona</summary>
     <div class="gx-tablebox">
       <table class="gx-table gx-sem mp-tabla">
         <thead><tr><th>Nombre</th><th>Puesto</th><th class="hide-sm">Tipo</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th></tr></thead>
         <tbody id="mp-rows"></tbody>
       </table>
     </div>
+    </details>
   </article>
 </section>
 
@@ -1841,6 +1874,61 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     }));
     return g;
   }
+  const FRANJAS = [['Madrugada', 0, 5], ['Temprano', 5, 9], ['Media mañana', 9, 13], ['Tarde', 13, 17], ['Noche', 17, 21], ['Cierre', 21, 24]];
+  const rangoF = (f) => `${String(f[1]).padStart(2, '0')}:00–${String(f[2] % 24).padStart(2, '0')}:00`;
+  // Máximo de personas en piso dentro de cada franja (bloques de media hora)
+  function porFranja(g) { return FRANJAS.map((f) => Object.fromEntries(DIAS.map((d) => [d, d3.max(d3.range(f[1] * 2, f[2] * 2), (k) => g[d][k]) || 0]))); }
+  const LETRA = { lun: 'L', mar: 'M', mie: 'Mi', jue: 'J', vie: 'V', sab: 'S', dom: 'D' };
+  function textoSemana(dias) {
+    const gr = [];
+    DIAS.forEach((d) => { const v = dias[d] || 'descanso'; const g = gr[gr.length - 1]; if (g && g.v === v) g.ds.push(d); else gr.push({ ds: [d], v }); });
+    return gr.map((g) => `${g.ds.length === 1 ? LETRA[g.ds[0]] : LETRA[g.ds[0]] + '–' + LETRA[g.ds[g.ds.length - 1]]} ${g.v}`).join(' · ');
+  }
+  function turnos(lista, clave) {
+    const m = new Map();
+    lista.forEach((p) => { const t = textoSemana(p[clave]); const k = p.puesto + '|' + t; if (!m.has(k)) m.set(k, { puesto: p.puesto, horario: t, gente: [] }); m.get(k).gente.push(p); });
+    return [...m.values()].sort((a, b) => a.puesto.localeCompare(b.puesto, 'es') || b.gente.length - a.gente.length || a.horario.localeCompare(b.horario));
+  }
+  function renderFranjas(gHoy, gNue) {
+    const tb = $('mp-fr'); tb.replaceChildren();
+    const fh = porFranja(gHoy), fn = porFranja(gNue);
+    const maxN = d3.max(fn.concat(fh).flatMap((o) => Object.values(o))) || 1;
+    const acento = css('--gx-accent') || '#0f8b8d', panel = css('--color-panel') || '#fff', ambar = css('--color-warn') || '#a15c00';
+    FRANJAS.forEach((f, i) => {
+      if (!DIAS.some((d) => fh[i][d] || fn[i][d])) return;
+      const tr = el('tr'); const th = el('td', 'mp-fr-n'); th.append(el('b', '', f[0]), el('span', 'h', rangoF(f))); tr.appendChild(th);
+      DIAS.forEach((d) => {
+        const a = fh[i][d], b = fn[i][d], x = b - a; const c = el('td', 'num mp-fr-c');
+        if (M.modo === 'cambio') {
+          c.textContent = x ? (x > 0 ? '+' : '−') + Math.abs(x) : (b ? '=' : '');
+          if (x) c.style.background = d3.interpolateRgb(panel, x > 0 ? acento : ambar)(0.25);
+        } else {
+          const n = M.modo === 'hoy' ? a : b;
+          c.textContent = n || '';
+          if (n) c.style.background = d3.interpolateRgb(panel, acento)(0.08 + 0.32 * n / maxN);
+          if (M.modo === 'nuevo' && x) c.appendChild(el('span', 'h', `hoy ${a}`));
+        }
+        tr.appendChild(c);
+      });
+      tb.appendChild(tr);
+    });
+    if (!tb.children.length) { const tr = el('tr'); const td = el('td', 'vacio', 'No hay horarios con estos filtros.'); td.colSpan = 8; tr.appendChild(td); tb.appendChild(tr); }
+  }
+  function renderTurnos(lista) {
+    const tb = $('mp-tur'); tb.replaceChildren();
+    const clave = M.modo === 'hoy' ? 'hoy' : 'nuevo';
+    turnos(lista, clave).forEach((t) => {
+      const tr = el('tr');
+      tr.append(el('td', '', t.puesto));
+      const ch = el('td', 'mp-tur-h', t.horario);
+      const cambian = clave === 'nuevo' ? t.gente.filter((p) => textoSemana(p.hoy) !== t.horario).length : 0;
+      if (cambian) ch.appendChild(el('span', 'h', cambian === t.gente.length ? 'Horario nuevo 2027' : `Horario nuevo para ${cambian}`));
+      tr.appendChild(ch);
+      const cn = el('td', 'num'); const det = el('details'); det.append(el('summary', '', String(t.gente.length)), el('div', 'mp-nombres', t.gente.map((p) => p.nombre).sort((a, b) => a.localeCompare(b, 'es')).join(', '))); cn.appendChild(det);
+      tr.appendChild(cn); tb.appendChild(tr);
+    });
+    if (!tb.children.length) { const tr = el('tr'); const td = el('td', 'vacio', 'No hay personas con estos filtros.'); td.colSpan = 3; tr.appendChild(td); tb.appendChild(tr); }
+  }
   function filtradas() { return personas().filter((p) => (!M.suc || p.sucursal === M.suc) && (!M.pue || p.puesto === M.pue)); }
 
   function opciones() {
@@ -1866,12 +1954,13 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     if (!opciones()) { box.replaceChildren(el('p', 'status', 'Cargando horarios…')); return; }
     const lista = filtradas();
     const gHoy = cobertura(lista, 'hoy'), gNue = cobertura(lista, 'nuevo');
+    renderFranjas(gHoy, gNue); renderTurnos(lista);
     // Estadísticas
     $('mp-n').textContent = lista.length.toLocaleString('es-MX');
     $('mp-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
     $('mp-hn').textContent = fmt(d3.sum(lista, (p) => p.hNuevo));
     let pico = { n: 0 }; DIAS.forEach((d) => gNue[d].forEach((n, k) => { if (n > pico.n) pico = { n, d, h: k }; }));
-    $('mp-pico').textContent = pico.n ? `${DN[pico.d]} ${hh(pico.h)} · ${pico.n}` : '—';
+    $('mp-pico').textContent = pico.n ? `${DN[pico.d]} ${hh(pico.h)} · ${pico.n} personas` : '—';
     // Horas visibles: de la primera a la última con gente (en cualquiera de los dos)
     const usadas = d3.range(SL).filter((h) => DIAS.some((d) => gHoy[d][h] || gNue[d][h]));
     box.replaceChildren(); $('mp-ley').replaceChildren();
@@ -1953,11 +2042,17 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     XLSX.utils.book_append_sheet(wb, ws0, 'Resumen');
     sucs.forEach((s) => {
       const l = ps.filter((p) => p.sucursal === s).sort((a, b) => a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
-      const aoa = [[`${s} · horarios hoy y 2027`], [], ['Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027']];
+      const aoa = [[`${s} · horarios hoy y 2027`], []];
+      const fh = porFranja(cobertura(l, 'hoy')), fn = porFranja(cobertura(l, 'nuevo'));
+      aoa.push(['Personas en piso por franja (máximo dentro de la franja): 2027 (hoy)'], ['Franja', 'Horario', ...DIAS.map((d) => DN[d])]);
+      FRANJAS.forEach((f, i) => { if (DIAS.some((d) => fh[i][d] || fn[i][d])) aoa.push([f[0], rangoF(f), ...DIAS.map((d) => (fn[i][d] === fh[i][d] ? fn[i][d] : `${fn[i][d]} (${fh[i][d]})`))]); });
+      aoa.push([], ['Turnos 2027'], ['Puesto', 'Horario de la semana', 'Personas', 'Nombres']);
+      turnos(l, 'nuevo').forEach((t) => aoa.push([t.puesto, t.horario, t.gente.length, t.gente.map((p) => p.nombre).join(', ')]));
+      aoa.push([], ['Horarios por persona'], ['Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027']);
       l.forEach((p) => aoa.push([p.nombre, p.puesto, p.tipo, ...DIAS.map((d) => p.hoy[d] || 'Descanso'), +p.hHoy.toFixed(2), ...DIAS.map((d) => p.nuevo[d] || 'Descanso'), +p.hNuevo.toFixed(2)]));
       [['2027', 'nuevo'], ['hoy', 'hoy']].forEach(([t, k]) => {
         const gg = cobertura(l, k);
-        aoa.push([], [`Personas en piso por media hora (${t})`], ['Horario', ...DIAS.map((d) => DN[d])]);
+        aoa.push([], [`Detalle: personas en piso por media hora (${t})`], ['Horario', ...DIAS.map((d) => DN[d])]);
         d3.range(SL).filter((k) => DIAS.some((d) => gg[d][k])).forEach((k) => aoa.push([`${hh(k)}–${hh(k + 1)}`, ...DIAS.map((d) => gg[d][k])]));
       });
       const ws = XLSX.utils.aoa_to_sheet(aoa);
