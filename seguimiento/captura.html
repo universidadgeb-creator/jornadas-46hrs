@@ -601,7 +601,12 @@
     }));
   }
 
-  function render() { renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera(); }
+  function render() {
+    renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera();
+    // Para el mapa por sucursal: horarios nuevos de quienes están en seguimiento
+    window.SEG = { rows, fuera: fueraRows, diasDe: diasGuardados, horasDe };
+    window.dispatchEvent(new Event('seg:datos'));
+  }
 
   [['f-tipo', 'tipo'], ['f-suc', 'suc'], ['f-puesto', 'puesto'], ['f-est', 'est']].forEach(([id, k]) => $(id).addEventListener('change', (e) => { F[k] = e.target.value; render(); }));
   $('f-q').addEventListener('input', (e) => { F.q = e.target.value; renderRows(); });

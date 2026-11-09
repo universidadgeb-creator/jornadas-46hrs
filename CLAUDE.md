@@ -10,7 +10,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 
 | Pieza | Qué es | Dónde |
 |---|---|---|
-| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Personas, Jornadas por rol, 2027–2030 y Seguimiento (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
+| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Personas, Jornadas por rol, 2027–2030, Seguimiento y Mapa por sucursal (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
 | Tablero anterior (respaldo, ya no se usa) | Dashboard de análisis (artifact de tipo Dashboard en claude.ai) | https://claude.ai/artifact/Rcd92fe4fQ8SdhX3g5cSo1 · su código, `dashboard/index.html`, sigue siendo la fuente de las pestañas de análisis |
 | Versión para proyectar | El mismo tablero en un HTML autónomo y sin internet, con d3 y los datos incrustados | `dashboard/Jornada_46hrs_2027_proyectar.html` |
 | Captura de seguimiento | La pestaña «Seguimiento» de la página única (desde el 9 nov 2026, **todas las personas que pasan de 46 hrs**: 100) | `seguimiento/captura.html` + `seguimiento/captura_estilos.css` |
@@ -81,6 +81,12 @@ Detalles técnicos:
 - d3 se carga de cdnjs (7.8.5). En este contenedor cdnjs está bloqueado: para probar en local, servir d3 desde la copia que trae la versión para proyectar.
 - Flujo para cualquier cambio: editar `dashboard/index.html` o `seguimiento/captura*` → `python scripts/build_proyectar.py` → `python scripts/build_unificado.py` → publicar `seguimiento/nuevas_jornadas.html` en el artifact HcTgQg9… (sin `capabilities`, para conservar `db` y `user`).
 - El enlace directo a una pestaña usa el hash: `#t-seg` abre Seguimiento.
+
+## Mapa por sucursal (9 nov 2026, para Dirección)
+
+- Pestaña «Mapa por sucursal» de la página única (`seguimiento/mapa.html` + `mapa_estilos.css`, solo lectura). Por sucursal y puesto: personas en piso por día y **media hora** (cuenta si trabaja ≥ 15 min del bloque; cruza medianoche), en tres vistas: Hoy, 2027 y Cambio (ámbar = menos gente, verde azulado = más). «2027» usa el nuevo horario guardado en el Seguimiento (o la propuesta precargada) y el horario actual de quienes no están en seguimiento. Debajo, la tabla de horarios de la sucursal (en 2027 marca lo que cambia contra hoy).
+- «Descargar archivo maestro (.xlsx)» (SheetJS 0.18.5, cdnjs): hoja «Resumen» por sucursal (personas, cuántas pasan de 46, horas por semana hoy y 2027) + una hoja por sucursal con cada persona (Lun–Dom hoy y 2027, horas) y la cobertura por media hora 2027 y hoy.
+- El script del Seguimiento publica `window.SEG = {rows, fuera, diasDe, horasDe}` y el evento `seg:datos`; el mapa lo escucha.
 
 ## Seguimiento (colección `personas`)
 

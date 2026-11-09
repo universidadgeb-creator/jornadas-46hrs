@@ -11,7 +11,9 @@ https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k):
     guarda lo que captura el equipo en la base de datos del artifact;
   - una tarjeta de avance en el Resumen;
   - el texto de la plantilla del adendum (seguimiento/adendum_plantilla.docx), jsPDF para armar el PDF
-    de una página y JSZip para juntar varios en un .zip.
+    de una página y JSZip para juntar varios en un .zip;
+  - la pestaña «Mapa por sucursal» (seguimiento/mapa.html + mapa_estilos.css): cobertura por hora
+    hoy / 2027 / cambio y el archivo maestro en Excel (SheetJS 0.18.5).
 """
 import base64
 import json
@@ -23,6 +25,7 @@ SALIDA = RAIZ / 'seguimiento' / 'nuevas_jornadas.html'
 D3 = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js'
 JSZIP = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'
 JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+XLSX_JS = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
 
 # Colores y tipografía de la página. Los nombres --color-* / --cds-* son los que usa
 # el tablero; los cortos (--bg, --fg, ...) los usa la pestaña de seguimiento.
@@ -124,18 +127,21 @@ def main():
     tab = tab.replace('<meta name="dash-one-writer">\n', '', 1)
     tab = reemplazar(tab, '<button type="button" role="tab" data-tab="t-etapas" aria-selected="false">2027–2030</button>\n',
                      '<button type="button" role="tab" data-tab="t-etapas" aria-selected="false">2027–2030</button>\n'
-                     '    <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>\n')
+                     '    <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>\n'
+                     '    <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>\n')
     tab = reemplazar(tab, '<a class="gx-link" href="https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k" target="_blank" rel="noopener">Ver avance de contratos →</a>',
                      '<button type="button" class="gx-link" data-tab-go="t-seg">Ver avance de contratos →</button>')
     tab = reemplazar(tab, '  <section class="gx-tab" id="t-resumen">\n',
                      '  <section class="gx-tab" id="t-resumen">\n' + RESUMEN_AVANCE)
     captura = (RAIZ / 'seguimiento' / 'captura.html').read_text(encoding='utf-8')
     seccion, script_seg = captura.split('\n\n<script>', 1)
+    mapa = (RAIZ / 'seguimiento' / 'mapa.html').read_text(encoding='utf-8')
+    seccion_mapa, script_mapa = mapa.split('\n\n<script>', 1)
     tab = reemplazar(tab, '  <details class="gx-card gx-details" id="criterios">',
-                     '  ' + seccion.strip() + '\n\n  <details class="gx-card gx-details" id="criterios">')
+                     '  ' + seccion.strip() + '\n\n  ' + seccion_mapa.strip() + '\n\n  <details class="gx-card gx-details" id="criterios">')
     tab = tab.rstrip() + "\n<script>\ndocument.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('click', () => { abrirTab(b.dataset.tabGo); window.scrollTo({ top: 0 }); }));\n</script>\n"
 
-    estilos_seg = (RAIZ / 'seguimiento' / 'captura_estilos.css').read_text(encoding='utf-8')
+    estilos_seg = (RAIZ / 'seguimiento' / 'captura_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'mapa_estilos.css').read_text(encoding='utf-8')
     pagina = '\n'.join([
         '<title>Jornada 46 hrs 2027</title>',
         '<meta name="claude:viewport-fit-sides" content="cover">',
@@ -145,11 +151,13 @@ def main():
         f'<script src="{D3}"></script>',
         f'<script src="{JSZIP}"></script>',
         f'<script src="{JSPDF}"></script>',
+        f'<script src="{XLSX_JS}"></script>',
         '<script>window.ADENDUM_PARRAFOS = ' + json.dumps(parrafos_adendum(), ensure_ascii=False) + ';</script>',
         shim,
         '<div id="dash-root">',
         tab,
         '<script>' + script_seg,
+        '<script>' + script_mapa,
         '</div>',
         '',
     ])

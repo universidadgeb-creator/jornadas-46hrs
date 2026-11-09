@@ -1,0 +1,215 @@
+<section class="gx-tab" id="t-mapa" hidden>
+  <article class="gx-card mp">
+    <h2>Mapa de horarios por sucursal</h2>
+    <p class="note">Cuántas personas hay en piso cada hora de la semana. «2027» usa el nuevo horario de quienes están en el Seguimiento (lo capturado o la propuesta) y el horario actual de los demás. «Cambio» muestra dónde queda más o menos gente. Va en bloques de media hora: una persona cuenta en un bloque si trabaja al menos 15 minutos de él.</p>
+    <div class="mp-tools">
+      <label for="mp-suc">Sucursal<select class="gx-select" id="mp-suc"></select></label>
+      <label for="mp-pue">Puesto<select class="gx-select" id="mp-pue"></select></label>
+      <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-mp="hoy" aria-pressed="false">Hoy</button><button type="button" data-mp="nuevo" aria-pressed="true">2027</button><button type="button" data-mp="cambio" aria-pressed="false">Cambio</button></span></div>
+      <button type="button" class="gx-btn mp-xlsx" id="mp-xlsx">Descargar archivo maestro (.xlsx)</button>
+    </div>
+    <div class="mp-stats">
+      <div><span class="lbl">Personas</span><span class="val" id="mp-n">—</span></div>
+      <div><span class="lbl">Horas por semana, hoy</span><span class="val" id="mp-hh">—</span></div>
+      <div class="is-a"><span class="lbl">Horas por semana, 2027</span><span class="val" id="mp-hn">—</span></div>
+      <div><span class="lbl">Hora con más gente</span><span class="val" id="mp-pico">—</span></div>
+    </div>
+    <div class="mp-leyenda" id="mp-ley" aria-hidden="true"></div>
+    <div class="mp-chart" id="mp-chart" role="img" aria-label="Personas en piso por hora y día"></div>
+    <p class="status" id="mp-status"></p>
+    <h3 class="mp-h3">Horarios de la sucursal</h3>
+    <div class="gx-tablebox">
+      <table class="gx-table gx-sem mp-tabla">
+        <thead><tr><th>Nombre</th><th>Puesto</th><th class="hide-sm">Tipo</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th></tr></thead>
+        <tbody id="mp-rows"></tbody>
+      </table>
+    </div>
+  </article>
+</section>
+
+<script>
+(() => {
+  const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+  const DN = { lun: 'Lun', mar: 'Mar', mie: 'Mié', jue: 'Jue', vie: 'Vie', sab: 'Sáb', dom: 'Dom' };
+  const DL = { lun: 'lunes', mar: 'martes', mie: 'miércoles', jue: 'jueves', vie: 'viernes', sab: 'sábado', dom: 'domingo' };
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  const aMin = (t) => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+  const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('es-MX', { maximumFractionDigits: 1 });
+  const SL = 48;  // bloques de media hora
+  const hh = (k) => { const m = ((k % SL) + SL) % SL * 30; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+  const M = { suc: '', pue: '', modo: 'nuevo' };
+
+  function horarios() {
+    const d = window.dash && window.dash.data ? window.dash.data('horarios') : null;
+    return d && d.status === 'ok' ? d.data.filter((r) => r.tipo_jornada !== 'Sin captura') : [];
+  }
+  // Cada persona con su horario de hoy y el de 2027
+  function personas() {
+    const seg = window.SEG || { rows: [] };
+    const porNombre = new Map(seg.rows.map((r) => [r.nombre, r]));
+    return horarios().map((h) => {
+      const hoy = Object.fromEntries(DIAS.map((d) => [d, h[d] || null]));
+      const s = porNombre.get(h.nombre);
+      const g = s && seg.diasDe ? seg.diasDe(s) : null;
+      const nuevo = g ? Object.fromEntries(DIAS.map((d) => [d, g[d] || null])) : hoy;
+      const hn = g && seg.horasDe ? (seg.horasDe(s) ?? Number(h.horas_reales)) : Number(h.horas_reales);
+      return { nombre: h.nombre, puesto: h.puesto || 'Sin puesto', sucursal: h.ubicacion, tipo: h.tipo_jornada, hoy, nuevo, hHoy: Number(h.horas_reales), hNuevo: hn, cambia: !!g };
+    });
+  }
+  // Personas en piso por día y media hora (cuenta si trabaja ≥ 15 min del bloque; cruza medianoche)
+  function cobertura(lista, clave) {
+    const g = Object.fromEntries(DIAS.map((d) => [d, new Array(SL).fill(0)]));
+    lista.forEach((p) => DIAS.forEach((d, i) => {
+      const v = p[clave][d]; if (!v) return;
+      const [e, s] = String(v).split('–'); let a = aMin(e), b = aMin(s); if (a == null || b == null) return;
+      if (b <= a) b += 1440;
+      for (let k = Math.floor(a / 30); k * 30 < b; k++) {
+        const ov = Math.min(b, (k + 1) * 30) - Math.max(a, k * 30);
+        if (ov >= 15) { const dd = DIAS[(i + Math.floor(k / SL)) % 7]; g[dd][k % SL]++; }
+      }
+    }));
+    return g;
+  }
+  function filtradas() { return personas().filter((p) => (!M.suc || p.sucursal === M.suc) && (!M.pue || p.puesto === M.pue)); }
+
+  function opciones() {
+    const ps = personas(); if (!ps.length) return false;
+    const cnt = d3.rollup(ps, (v) => v.length, (p) => p.sucursal);
+    const sucs = [...cnt.keys()].sort((a, b) => cnt.get(b) - cnt.get(a) || a.localeCompare(b, 'es'));
+    if (M.suc === '' && !$('mp-suc').dataset.init) { M.suc = sucs[0]; $('mp-suc').dataset.init = '1'; }
+    $('mp-suc').replaceChildren(new Option(`Todas las sucursales (${ps.length})`, ''), ...sucs.map((s) => new Option(`${s} (${cnt.get(s)})`, s)));
+    $('mp-suc').value = M.suc;
+    const enSuc = ps.filter((p) => !M.suc || p.sucursal === M.suc);
+    const cp = d3.rollup(enSuc, (v) => v.length, (p) => p.puesto);
+    const pues = [...cp.keys()].sort((a, b) => a.localeCompare(b, 'es'));
+    if (M.pue && !pues.includes(M.pue)) M.pue = '';
+    $('mp-pue').replaceChildren(new Option('Todos los puestos', ''), ...pues.map((p) => new Option(`${p} (${cp.get(p)})`, p)));
+    $('mp-pue').value = M.pue;
+    return true;
+  }
+
+  const css = (n) => getComputedStyle(document.querySelector('.gx') || document.documentElement).getPropertyValue(n).trim();
+  let tip = null;
+  function dibujar() {
+    const box = $('mp-chart'); if (!box || box.closest('[hidden]')) return;
+    if (!opciones()) { box.replaceChildren(el('p', 'status', 'Cargando horarios…')); return; }
+    const lista = filtradas();
+    const gHoy = cobertura(lista, 'hoy'), gNue = cobertura(lista, 'nuevo');
+    // Estadísticas
+    $('mp-n').textContent = lista.length.toLocaleString('es-MX');
+    $('mp-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
+    $('mp-hn').textContent = fmt(d3.sum(lista, (p) => p.hNuevo));
+    let pico = { n: 0 }; DIAS.forEach((d) => gNue[d].forEach((n, k) => { if (n > pico.n) pico = { n, d, h: k }; }));
+    $('mp-pico').textContent = pico.n ? `${DN[pico.d]} ${hh(pico.h)} · ${pico.n}` : '—';
+    // Horas visibles: de la primera a la última con gente (en cualquiera de los dos)
+    const usadas = d3.range(SL).filter((h) => DIAS.some((d) => gHoy[d][h] || gNue[d][h]));
+    box.replaceChildren(); $('mp-ley').replaceChildren();
+    if (!usadas.length) { box.appendChild(el('p', 'status', 'No hay horarios capturados con estos filtros.')); renderTabla(lista); return; }
+    const horas = d3.range(d3.min(usadas), d3.max(usadas) + 1);
+    const W = Math.max(320, box.clientWidth), izq = 48, top = 22, celH = 17, gap = 2;
+    const celW = (W - izq) / 7;
+    const Hh = top + horas.length * celH + 4;
+    const acento = css('--gx-accent') || '#0f8b8d', panel = css('--color-panel') || '#fff', ambar = css('--color-warn') || '#a15c00';
+    const maxN = d3.max(DIAS.flatMap((d) => horas.map((h) => Math.max(gHoy[d][h], gNue[d][h])))) || 1;
+    const maxD = d3.max(DIAS.flatMap((d) => horas.map((h) => Math.abs(gNue[d][h] - gHoy[d][h])))) || 1;
+    const seq = (n) => (n ? d3.interpolateRgb(panel, acento)(0.15 + 0.85 * n / maxN) : 'transparent');
+    const div = (x) => (x === 0 ? 'transparent' : d3.interpolateRgb(panel, x > 0 ? acento : ambar)(0.2 + 0.8 * Math.abs(x) / maxD));
+    const oscuro = (n, max) => n / max > 0.55;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${Hh}`).attr('height', Hh);
+    svg.selectAll('text.dia').data(DIAS).join('text').attr('class', 'mp-eje').attr('x', (d, i) => izq + i * celW + celW / 2).attr('y', 14).attr('text-anchor', 'middle').text((d) => DN[d]);
+    svg.selectAll('text.hora').data(horas).join('text').attr('class', 'mp-eje').attr('x', izq - 8).attr('y', (h, i) => top + i * celH + celH / 2 + 4).attr('text-anchor', 'end').text((k) => (k % 2 ? '' : hh(k)));
+    const celdas = [];
+    DIAS.forEach((d, i) => horas.forEach((h, j) => {
+      const a = gHoy[d][h], b = gNue[d][h], x = b - a;
+      celdas.push({ d, h, i, j, a, b, x });
+    }));
+    const g = svg.append('g');
+    const sel = g.selectAll('g.c').data(celdas).join('g').attr('class', 'c').attr('transform', (c) => `translate(${izq + c.i * celW + gap / 2},${top + c.j * celH + gap / 2})`);
+    sel.append('rect').attr('width', celW - gap).attr('height', celH - gap).attr('rx', 3)
+      .attr('fill', (c) => (M.modo === 'cambio' ? div(c.x) : seq(M.modo === 'hoy' ? c.a : c.b)))
+      .attr('stroke', 'var(--color-border-line)').attr('stroke-width', (c) => ((M.modo === 'cambio' ? c.x : (M.modo === 'hoy' ? c.a : c.b)) ? 0 : 1));
+    if (celW >= 26) sel.append('text').attr('x', (celW - gap) / 2).attr('y', celH / 2 + 3.5).attr('text-anchor', 'middle').attr('class', 'mp-num')
+      .attr('fill', (c) => { if (M.modo === 'cambio') return Math.abs(c.x) / maxD > 0.55 ? 'var(--color-bg)' : 'var(--color-fg)'; const n = M.modo === 'hoy' ? c.a : c.b; return oscuro(n, maxN) ? 'var(--color-bg)' : 'var(--color-fg)'; })
+      .text((c) => { if (M.modo === 'cambio') return c.x ? (c.x > 0 ? '+' : '−') + Math.abs(c.x) : ''; const n = M.modo === 'hoy' ? c.a : c.b; return n || ''; });
+    // Tooltip
+    if (!tip) { tip = el('div', 'gx-tip'); tip.hidden = true; document.body.appendChild(tip); }
+    sel.on('mousemove', (ev, c) => {
+      tip.replaceChildren(el('b', '', `${DL[c.d][0].toUpperCase() + DL[c.d].slice(1)} ${hh(c.h)}–${hh(c.h + 1)}`), el('div', '', `2027: ${c.b} personas`), el('div', 't', `Hoy: ${c.a}${c.x ? ` (${c.x > 0 ? '+' : '−'}${Math.abs(c.x)})` : ''}`));
+      tip.hidden = false;
+      const r = tip.getBoundingClientRect();
+      tip.style.left = Math.min(window.innerWidth - r.width - 8, ev.clientX + 12) + window.scrollX + 'px';
+      tip.style.top = ev.clientY + 14 + window.scrollY + 'px';
+    }).on('mouseleave', () => { tip.hidden = true; });
+    // Leyenda
+    const ley = $('mp-ley');
+    if (M.modo === 'cambio') {
+      ley.append(el('span', 'mp-sw', ''), el('span', '', 'menos gente en 2027'), el('span', 'mp-sw mp-sw-a', ''), el('span', '', 'más gente en 2027'));
+      ley.children[0].style.background = div(-maxD); ley.children[2].style.background = div(maxD);
+    } else {
+      const grad = el('span', 'mp-grad'); grad.style.background = `linear-gradient(90deg, ${seq(1)}, ${seq(maxN)})`;
+      ley.append(el('span', '', '1 persona'), grad, el('span', '', `${maxN} personas`));
+    }
+    renderTabla(lista);
+  }
+
+  function renderTabla(lista) {
+    const tb = $('mp-rows'); tb.replaceChildren();
+    const clave = M.modo === 'hoy' ? 'hoy' : 'nuevo';
+    lista.slice().sort((a, b) => a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es')).forEach((p) => {
+      const tr = el('tr');
+      tr.append(el('td', '', p.nombre), el('td', '', p.puesto), el('td', 'hide-sm', p.tipo));
+      DIAS.forEach((d) => {
+        const v = p[clave][d]; const c = el('td', 'd' + (v ? '' : ' libre'), v || 'Descanso');
+        if (clave === 'nuevo' && p.cambia && (p.nuevo[d] || '') !== (p.hoy[d] || '')) { c.classList.add('full'); c.appendChild(el('span', 'h', p.hoy[d] ? `hoy ${p.hoy[d]}` : 'hoy descanso')); }
+        tr.appendChild(c);
+      });
+      const t = el('td', 'num', fmt(clave === 'hoy' ? p.hHoy : p.hNuevo));
+      if (clave === 'nuevo' && Math.abs(p.hNuevo - p.hHoy) > 0.01) t.appendChild(el('span', 'h', `hoy ${fmt(p.hHoy)}`));
+      tr.appendChild(t); tb.appendChild(tr);
+    });
+    if (!lista.length) { const tr = el('tr'); const td = el('td', 'vacio', 'No hay personas con estos filtros.'); td.colSpan = 11; tr.appendChild(td); tb.appendChild(tr); }
+  }
+
+  // Archivo maestro: hoja «Resumen» + una hoja por sucursal (personas y cobertura por hora)
+  async function descargarMaestro() {
+    const st = $('mp-status');
+    if (!window.XLSX) { st.textContent = 'No se pudo preparar el Excel. Recarga la página.'; return; }
+    const ps = personas(); const wb = XLSX.utils.book_new();
+    const sucs = [...new Set(ps.map((p) => p.sucursal))].sort((a, b) => a.localeCompare(b, 'es'));
+    const res = [['Sucursal', 'Personas', 'Pasan de 46 hrs hoy', 'Horas por semana hoy', 'Horas por semana 2027', 'Diferencia']];
+    sucs.forEach((s) => { const l = ps.filter((p) => p.sucursal === s); const a = d3.sum(l, (p) => p.hHoy), b = d3.sum(l, (p) => p.hNuevo); res.push([s, l.length, l.filter((p) => p.hHoy > 46).length, +a.toFixed(2), +b.toFixed(2), +(b - a).toFixed(2)]); });
+    const ws0 = XLSX.utils.aoa_to_sheet(res); ws0['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 18 }, { wch: 20 }, { wch: 20 }, { wch: 11 }];
+    XLSX.utils.book_append_sheet(wb, ws0, 'Resumen');
+    sucs.forEach((s) => {
+      const l = ps.filter((p) => p.sucursal === s).sort((a, b) => a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
+      const aoa = [[`${s} · horarios hoy y 2027`], [], ['Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027']];
+      l.forEach((p) => aoa.push([p.nombre, p.puesto, p.tipo, ...DIAS.map((d) => p.hoy[d] || 'Descanso'), +p.hHoy.toFixed(2), ...DIAS.map((d) => p.nuevo[d] || 'Descanso'), +p.hNuevo.toFixed(2)]));
+      [['2027', 'nuevo'], ['hoy', 'hoy']].forEach(([t, k]) => {
+        const gg = cobertura(l, k);
+        aoa.push([], [`Personas en piso por media hora (${t})`], ['Horario', ...DIAS.map((d) => DN[d])]);
+        d3.range(SL).filter((k) => DIAS.some((d) => gg[d][k])).forEach((k) => aoa.push([`${hh(k)}–${hh(k + 1)}`, ...DIAS.map((d) => gg[d][k])]));
+      });
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      ws['!cols'] = [{ wch: 34 }, { wch: 28 }, { wch: 9 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 9 }];
+      XLSX.utils.book_append_sheet(wb, ws, s.replace(/[\\/?*[\]:]/g, ' ').slice(0, 31));
+    });
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+    if (!dl) { st.textContent = 'Esta vista no permite descargar archivos. Abre la página en claude.ai.'; return; }
+    const hoy = new Date(); const f = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    try { await dl.save({ filename: `Archivo maestro de horarios - ${f}.xlsx`, data: new Blob([buf]) }); st.textContent = 'Archivo maestro descargado.'; }
+    catch (e) { st.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : 'No se pudo descargar el archivo. Inténtalo de nuevo.'; }
+  }
+
+  $('mp-suc').addEventListener('change', (e) => { M.suc = e.target.value; M.pue = ''; dibujar(); });
+  $('mp-pue').addEventListener('change', (e) => { M.pue = e.target.value; dibujar(); });
+  document.querySelectorAll('[data-mp]').forEach((b) => b.addEventListener('click', () => {
+    M.modo = b.dataset.mp; document.querySelectorAll('[data-mp]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); dibujar();
+  }));
+  $('mp-xlsx').addEventListener('click', descargarMaestro);
+  window.addEventListener('seg:datos', dibujar);
+  let ancho = 0;
+  new ResizeObserver(() => { const w = $('mp-chart').clientWidth; if (w && w !== ancho) { ancho = w; dibujar(); } }).observe($('mp-chart'));
+})();
+</script>

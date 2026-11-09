@@ -1,0 +1,21 @@
+/* Pestaña «Mapa por sucursal» */
+.mp-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: end; }
+.mp-tools label { display: flex; flex-direction: column; gap: .25rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); flex: 1 1 13rem; min-width: 0; }
+.mp-tools .gx-ver { display: flex; flex-direction: column; gap: .25rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.mp-tools .mp-xlsx { align-self: end; }
+.mp-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: var(--cds-gap-sm); }
+.mp-stats div { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; }
+.mp-stats .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.mp-stats .val { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+.mp-stats .is-a .val { color: var(--gx-accent); }
+.mp-leyenda { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .6rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); min-height: 1.2rem; }
+.mp-grad { display: inline-block; width: 8rem; height: .6rem; border-radius: 3px; }
+.mp-sw { display: inline-block; width: .8rem; height: .8rem; border-radius: 3px; }
+.mp-chart { width: 100%; min-height: 4rem; }
+.mp-chart svg { display: block; }
+.mp-eje { font-size: 11px; fill: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.mp-num { font-size: 10.5px; font-weight: 600; font-variant-numeric: tabular-nums; pointer-events: none; }
+.mp-chart g.c { cursor: default; }
+.mp-chart g.c:hover rect { stroke: var(--color-fg); stroke-width: 1.5; }
+.mp-h3 { font-size: var(--cds-font-size-body); font-weight: 600; margin: var(--cds-gap-sm) 0 0; }
+.mp-tabla td.num .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
