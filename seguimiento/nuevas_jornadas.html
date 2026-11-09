@@ -722,7 +722,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       </table>
     </div>
     <h3 class="mp-h3">Turnos</h3>
-    <p class="note">Personas que comparten el mismo horario en la semana, por puesto. Abre un turno para ver los nombres.</p>
+    <p class="note">Personas que comparten el mismo horario en la semana, por puesto y de la entrada más temprano a la más tarde. Abre un turno para ver los nombres.</p>
     <div class="gx-tablebox">
       <table class="gx-table mp-tur">
         <thead><tr><th>Puesto</th><th>Horario de la semana</th><th class="num">Personas</th></tr></thead>
@@ -1884,10 +1884,14 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     DIAS.forEach((d) => { const v = dias[d] || 'descanso'; const g = gr[gr.length - 1]; if (g && g.v === v) g.ds.push(d); else gr.push({ ds: [d], v }); });
     return gr.map((g) => `${g.ds.length === 1 ? LETRA[g.ds[0]] : LETRA[g.ds[0]] + '–' + LETRA[g.ds[g.ds.length - 1]]} ${g.v}`).join(' · ');
   }
+  // Hora de entrada del primer día trabajado de la semana (para ordenar de más temprano a más tarde)
+  function entrada(p, clave) { const d = DIAS.find((x) => p[clave][x]); return d ? aMin(String(p[clave][d]).split('–')[0]) : 9999; }
+  function salida(p, clave) { const d = DIAS.find((x) => p[clave][x]); return d ? aMin(String(p[clave][d]).split('–')[1]) : 9999; }
+  const porHora = (clave) => (a, b) => a.puesto.localeCompare(b.puesto, 'es') || entrada(a, clave) - entrada(b, clave) || salida(a, clave) - salida(b, clave) || a.nombre.localeCompare(b.nombre, 'es');
   function turnos(lista, clave) {
     const m = new Map();
     lista.forEach((p) => { const t = textoSemana(p[clave]); const k = p.puesto + '|' + t; if (!m.has(k)) m.set(k, { puesto: p.puesto, horario: t, gente: [] }); m.get(k).gente.push(p); });
-    return [...m.values()].sort((a, b) => a.puesto.localeCompare(b.puesto, 'es') || b.gente.length - a.gente.length || a.horario.localeCompare(b.horario));
+    return [...m.values()].sort((a, b) => a.puesto.localeCompare(b.puesto, 'es') || entrada(a.gente[0], clave) - entrada(b.gente[0], clave) || salida(a.gente[0], clave) - salida(b.gente[0], clave) || a.horario.localeCompare(b.horario));
   }
   function renderFranjas(gHoy, gNue) {
     const tb = $('mp-fr'); tb.replaceChildren();
@@ -2015,7 +2019,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
   function renderTabla(lista) {
     const tb = $('mp-rows'); tb.replaceChildren();
     const clave = M.modo === 'hoy' ? 'hoy' : 'nuevo';
-    lista.slice().sort((a, b) => a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es')).forEach((p) => {
+    lista.slice().sort(porHora(clave)).forEach((p) => {
       const tr = el('tr');
       tr.append(el('td', '', p.nombre), el('td', '', p.puesto), el('td', 'hide-sm', p.tipo));
       DIAS.forEach((d) => {
@@ -2041,7 +2045,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     const ws0 = XLSX.utils.aoa_to_sheet(res); ws0['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 18 }, { wch: 20 }, { wch: 20 }, { wch: 11 }];
     XLSX.utils.book_append_sheet(wb, ws0, 'Resumen');
     sucs.forEach((s) => {
-      const l = ps.filter((p) => p.sucursal === s).sort((a, b) => a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
+      const l = ps.filter((p) => p.sucursal === s).sort(porHora('nuevo'));
       const aoa = [[`${s} · horarios hoy y 2027`], []];
       const fh = porFranja(cobertura(l, 'hoy')), fn = porFranja(cobertura(l, 'nuevo'));
       aoa.push(['Personas en piso por franja (máximo dentro de la franja): 2027 (hoy)'], ['Franja', 'Horario', ...DIAS.map((d) => DN[d])]);
