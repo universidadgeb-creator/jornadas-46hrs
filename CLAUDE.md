@@ -13,7 +13,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 | **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Personas, Jornadas por rol, 2027–2030 y Seguimiento (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
 | Tablero anterior (respaldo, ya no se usa) | Dashboard de análisis (artifact de tipo Dashboard en claude.ai) | https://claude.ai/artifact/Rcd92fe4fQ8SdhX3g5cSo1 · su código, `dashboard/index.html`, sigue siendo la fuente de las pestañas de análisis |
 | Versión para proyectar | El mismo tablero en un HTML autónomo y sin internet, con d3 y los datos incrustados | `dashboard/Jornada_46hrs_2027_proyectar.html` |
-| Captura de seguimiento | La pestaña «Seguimiento» de la página única (las 58 personas de 48 hrs) | `seguimiento/captura.html` + `seguimiento/captura_estilos.css` |
+| Captura de seguimiento | La pestaña «Seguimiento» de la página única (desde el 9 nov 2026, **todas las personas que pasan de 46 hrs**: 100) | `seguimiento/captura.html` + `seguimiento/captura_estilos.css` |
 | Datos | Excel fuente y los dos CSV que lee el tablero | `datos/` |
 | Scripts | Regeneran los CSV, la versión para proyectar, la página única y la propuesta de horarios | `scripts/build_csv.py` · `scripts/build_proyectar.py` · `scripts/build_unificado.py` · `scripts/propuesta.py` |
 
@@ -37,7 +37,8 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 
 ## Reglas de negocio
 
-- **Grupo «48 hrs»**: horas reales ≥ 48. Es el universo principal acordado en la junta: **58 personas**.
+- **Grupo «48 hrs»**: horas reales ≥ 48. Fue el universo acordado en la junta del 5 nov (58; 64 al corte del 9 nov).
+- **Universo del Seguimiento y del adendum (desde el 9 nov 2026, por decisión de Patty): todas las personas con más de 46 hrs** (100 al 9 nov), porque las de 46–48 también rebasan el límite de 2027 y necesitan cambio de horario y adendum.
 - **Grupo «46–48 hrs»**: más de 46 y menos de 48 (34 personas). También rebasan el límite de 2027.
 - **Ajuste por tipo de jornada** (acuerdo de la junta del 5 nov 2026):
   - Diurna: bajar 2 hrs, a **46**.
@@ -89,6 +90,7 @@ Detalles técnicos:
 - **Conteo automático (8 nov 2026):** el nuevo horario ya no se escribe a mano. Con «Editar» se abre un editor día por día (entrada, salida, descanso) y la página calcula las horas: suma de entrada a salida de cada día (si la salida es menor, cruza medianoche) y descuenta la comida igual que en el horario actual de la persona (por día; de las 58, 52 no descuentan y 6 descuentan 1 h). Al guardar escribe `nuevo_horario` (texto «L–V 07:00–14:40 · S … · D descanso»), `nuevo_horario_dias` y `nuevas_horas`. La columna «Nuevas hrs» muestra lo calculado desde el horario guardado; si un texto viejo no se puede leer, lo marca para corregirlo.
 - Muestra el avance (X de 58 con contrato nuevo), totales por tipo con número y %, avance por sucursal y filtros por tipo, sucursal, puesto y estado.
 - Para que los gerentes editen, hay que compartir la página única con permiso de edición (desde Compartir en claude.ai).
+- 9 nov 2026: se agregaron al Seguimiento las 36 personas de 46–48 hrs (35 nuevas + Torres Campos, que regresó), con su propuesta precargada. Total: 100 en seguimiento, 1 fuera (Corona Miranda). Las tarjetas por tipo dicen «Meta: 46 hrs» / «Meta: 45 hrs».
 - 9 nov 2026: por la regla de transporte se corrigieron 20 propuestas precargadas que nadie había editado (turnos que salían a las 23:00: ahora entran 30 min más tarde).
 - 9 nov 2026: se agregaron 8 personas nuevas con la propuesta precargada y se re-propuso Palacios López (su horario actual cambió y ahora es mixta).
 - 8 nov 2026: se precargaron `nuevo_horario` y `nuevas_horas` de 57 personas con la propuesta automática (`scripts/propuesta.py`), solo donde estaban vacíos. Corona Miranda quedó sin propuesta hasta corregir su captura. Los gerentes validan o corrigen; `contrato` sigue en falso. El `comentario` de esos 57 dice «Propuesta inicial, por validar»; el de Corona Miranda, «Sin propuesta: revisar captura del domingo (20:30–13:30)». Si un gerente cambia el horario, conviene que borre o cambie esa nota.

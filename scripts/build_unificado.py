@@ -66,7 +66,7 @@ RESUMEN_AVANCE = """  <article class="gx-card" id="avance-contratos">
     <div class="seg-avance">
       <div>
         <h2>Avance del cambio de contrato</h2>
-        <div class="big"><span data-seg="done">—</span> <small>de <span data-seg="total">—</span> personas con 48 hrs</small></div>
+        <div class="big"><span data-seg="done">—</span> <small>de <span data-seg="total">—</span> personas que pasan de 46 hrs</small></div>
         <div class="seg-bar" aria-hidden="true"><i data-seg-bar></i></div>
         <div class="sub"><b data-seg="pct">—</b> con contrato nuevo · <b data-seg="hor">—</b> con nuevo horario · <b data-seg="lid">—</b> con líder asignado</div>
       </div>

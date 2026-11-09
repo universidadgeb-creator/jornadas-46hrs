@@ -363,7 +363,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
     <div class="seg-avance">
       <div>
         <h2>Avance del cambio de contrato</h2>
-        <div class="big"><span data-seg="done">—</span> <small>de <span data-seg="total">—</span> personas con 48 hrs</small></div>
+        <div class="big"><span data-seg="done">—</span> <small>de <span data-seg="total">—</span> personas que pasan de 46 hrs</small></div>
         <div class="seg-bar" aria-hidden="true"><i data-seg-bar></i></div>
         <div class="sub"><b data-seg="pct">—</b> con contrato nuevo · <b data-seg="hor">—</b> con nuevo horario · <b data-seg="lid">—</b> con líder asignado</div>
       </div>
@@ -581,11 +581,11 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       <section class="tipos" aria-label="Por tipo de jornada">
         <button type="button" class="tipo" data-tipo="Diurna" aria-pressed="false">
           <span class="lbl">Diurna</span><span class="n"><span data-k="Diurna-n">—</span><small data-k="Diurna-pct">—</small></span>
-          <span class="rule">Bajar 2 hrs → 46 hrs</span><span class="av"><span data-k="Diurna-done">—</span> con contrato nuevo</span>
+          <span class="rule">Meta: 46 hrs</span><span class="av"><span data-k="Diurna-done">—</span> con contrato nuevo</span>
         </button>
         <button type="button" class="tipo" data-tipo="Mixta" aria-pressed="false">
           <span class="lbl">Mixta</span><span class="n"><span data-k="Mixta-n">—</span><small data-k="Mixta-pct">—</small></span>
-          <span class="rule">Bajar 3 hrs → 45 hrs (máximo actual)</span><span class="av"><span data-k="Mixta-done">—</span> con contrato nuevo</span>
+          <span class="rule">Meta: 45 hrs (máximo legal de la mixta)</span><span class="av"><span data-k="Mixta-done">—</span> con contrato nuevo</span>
         </button>
         <button type="button" class="tipo" data-tipo="Nocturna" aria-pressed="false">
           <span class="lbl">Nocturna</span><span class="n"><span data-k="Nocturna-n">—</span><small data-k="Nocturna-pct">—</small></span>
@@ -622,7 +622,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
     </div>
     <p class="status" id="status"></p>
     <details class="card fuera" id="fuera-box" hidden>
-      <summary><b id="fuera-n">0</b> personas salieron del grupo de 48 hrs</summary>
+      <summary><b id="fuera-n">0</b> personas salieron del seguimiento</summary>
       <ul class="notes" id="fuera-list"></ul>
     </details>
 
@@ -642,7 +642,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
     <section class="card">
       <h2 class="h2">Criterios</h2>
       <ul class="notes">
-        <li>Lista: colaboradores activos con jornada reconocida de 48 hrs o más (corte del 9 nov 2026). Quien sale del grupo, porque su horario cambió o porque se dio de baja, pasa a «Fuera del grupo de 48 hrs», sin borrar lo que se capturó.</li>
+        <li>Lista: colaboradores activos con jornada reconocida de más de 46 hrs (corte del 9 nov 2026): los de 48 hrs o más y los de entre 46 y 48. Quien sale, porque su horario ya no pasa de 46 o porque se dio de baja, pasa a «salieron del seguimiento», sin borrar lo que se capturó.</li>
         <li>Diurna baja a 46 hrs en 2027. Mixta se queda en su máximo actual de 45 hrs, que no cambia con la reforma. Nocturna: pendiente de confirmar.</li>
         <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
         <li>«Nuevas hrs» las calcula la página: suma de la entrada a la salida de cada día y descuenta la comida igual que en el horario actual de la persona. Se marca en naranja si sigue arriba de la meta.</li>
