@@ -266,7 +266,7 @@
   <article class="gx-card" id="jornadas-por-rol">
     <h2>Jornadas por rol</h2>
     <p class="note" data-modo="actual">Elige un puesto, o deja «Todos los puestos», para ver el horario de cada persona, día por día. Los días de 8 hrs o más van sombreados. Incluye a todas las personas del puesto, se pasen o no de 46 hrs.</p>
-    <p class="note" data-modo="propuesta" hidden>Propuesta para las personas que se pasan de 46 hrs, según el acuerdo del 5 nov 2026: las diurnas bajan a 46 hrs y las mixtas a 45. El recorte se toma primero de los días más largos, en bloques de 5 min; si todos los días son iguales, queda parejo (−20 min diarios de 48 a 46, −30 min de 48 a 45). La hora de entrada no cambia y salen antes. Los días sombreados son los que cambian. Es un punto de partida para validar con cada gerente.</p>
+    <p class="note" data-modo="propuesta" hidden>Propuesta para las personas que se pasan de 46 hrs, según el acuerdo del 5 nov 2026: las diurnas bajan a 46 hrs y las mixtas a 45. El recorte se toma primero de los días más largos, en bloques de 5 min; si todos los días son iguales, queda parejo (−20 min diarios de 48 a 46, −30 min de 48 a 45). Por el transporte, no se mueven las entradas de las 5:00 (o antes) ni las salidas de las 23:00 (o después): normalmente salen antes, y quien sale a las 23:00 entra más tarde. Los días sombreados son los que cambian. Es un punto de partida para validar con cada gerente.</p>
     <div class="gx-rol-tools">
       <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-modo-btn="actual" aria-pressed="true">Horario actual</button><button type="button" data-modo-btn="propuesta" aria-pressed="false">Propuesta 2027</button></span></div>
       <label for="gx-rol">Puesto<select class="gx-select" id="gx-rol" data-draw="rol-opciones" data-source="horarios"></select></label>
@@ -602,6 +602,9 @@ const UMBRAL_PROP = 46;
 const aMin = (t) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + m; };
 const aHora = (m) => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
 const fmtHM = (min) => { const h = Math.floor(min / 60), m = Math.round(min % 60); return m ? (h ? `${h} h ${m} min` : `${m} min`) : `${h} h`; };
+const LIM_ENTRADA = 5 * 60, LIM_SALIDA = 23 * 60;  // horas del transporte
+const entradaFija = (e) => aMin(e) <= LIM_ENTRADA;
+const salidaFija = (e, s) => aMin(s) >= LIM_SALIDA || aMin(s) < aMin(e);  // o cruza la medianoche
 function propuesta(r) {
   const tot = Number(r.horas_reales);
   const dias = DIAS.filter((d) => r[d] && Number(r[d + '_h']) > 0);
@@ -610,18 +613,25 @@ function propuesta(r) {
   if (meta == null) return { estado: 'pendiente' };
   const total = Math.round((tot - meta) * 60);
   if (total <= 0 || !dias.length) return { estado: 'sin' };
+  // Transporte: si sale a las 23:00 o después, se mueve la entrada (entra más tarde); si no, la salida.
+  // Un día que entra a las 05:00 o antes y sale a las 23:00 o después no se puede recortar.
+  const salFija = (d) => salidaFija(...String(r[d]).split('–'));
+  const editable = dias.filter((d) => !(entradaFija(String(r[d]).split('–')[0]) && salFija(d)));
+  if (!editable.length) return { estado: 'revisar' };
   const cortes = Object.fromEntries(dias.map((d) => [d, 0]));
   const largo = (d) => Number(r[d + '_h']) * 60 - cortes[d];
   let resto = total;
   while (resto > 0) {
     const x = Math.min(5, resto);
-    const d = dias.reduce((a, b) => (largo(b) > largo(a) ? b : a));
+    const d = editable.reduce((a, b) => (largo(b) > largo(a) ? b : a));
     cortes[d] += x; resto -= x;
   }
   const dia = {};
   dias.filter((d) => cortes[d] > 0).forEach((d) => {
     const [ent, sal] = String(r[d]).split('–');
-    dia[d] = { txt: `${ent}–${aHora(aMin(sal) - cortes[d])}`, corte: cortes[d] };
+    dia[d] = salFija(d)
+      ? { txt: `${aHora(aMin(ent) + cortes[d])}–${sal}`, corte: cortes[d], entra: true }
+      : { txt: `${ent}–${aHora(aMin(sal) - cortes[d])}`, corte: cortes[d] };
   });
   return { estado: 'ok', meta, corte: total, nuevas: tot - total / 60, dia };
 }
@@ -693,7 +703,7 @@ dash.draw('rol-tabla', (tb) => {
       const hrs = Number(r[d + '_h']) || 0;
       if (p && p.estado === 'ok' && p.dia[d]) {
         const c = td(p.dia[d].txt, 'd cambio');
-        sub(c, '−' + fmtHM(p.dia[d].corte));
+        sub(c, '−' + fmtHM(p.dia[d].corte) + (p.dia[d].entra ? ' · entra después' : ''));
         return;
       }
       const c = td(r[d] ? r[d] : 'Descanso', 'd' + (r[d] ? (!p && hrs >= 8 ? ' full' : '') : ' libre'));

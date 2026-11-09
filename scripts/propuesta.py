@@ -6,7 +6,9 @@ Uso:
 Regla (junta del 5 nov 2026): diurna a 46 hrs, mixta a 45; nocturna por confirmar.
 Entran quienes pasan de 46 hrs. El recorte se toma en bloques de 5 min del día más
 largo en ese momento (empates: el primero de la semana); se conserva la entrada y se
-adelanta la salida. Si un día pasa de 12 h se marca «revisar».
+adelanta la salida. Por el transporte (acuerdo con Patty, 9 nov 2026) no se mueven las
+entradas de las 05:00 o antes ni las salidas de las 23:00 o después: si la salida es fija,
+se recorre la entrada (entra más tarde). Si un día pasa de 12 h se marca «revisar».
 """
 import json
 import sys
@@ -17,6 +19,8 @@ DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom']
 LETRA = {'lun': 'L', 'mar': 'M', 'mie': 'Mi', 'jue': 'J', 'vie': 'V', 'sab': 'S', 'dom': 'D'}
 META = {'Diurna': 46, 'Mixta': 45}
 UMBRAL = 46
+LIM_ENTRADA = 5 * 60
+LIM_SALIDA = 23 * 60
 
 
 def a_min(t):
@@ -56,12 +60,18 @@ def propuesta(r):
     total = round((tot - meta) * 60)
     if total <= 0 or not dias:
         return {'estado': 'sin'}
+    def sal_fija(d):
+        e, s = r[d].split('–')
+        return a_min(s) >= LIM_SALIDA or a_min(s) < a_min(e)
+    editables = [d for d in dias if not (a_min(r[d].split('–')[0]) <= LIM_ENTRADA and sal_fija(d))]
+    if not editables:
+        return {'estado': 'revisar'}
     cortes = {d: 0 for d in dias}
     resto = total
     while resto > 0:
         x = min(5, resto)
-        d = dias[0]
-        for b in dias:
+        d = editables[0]
+        for b in editables:
             if float(r[b + '_h']) * 60 - cortes[b] > float(r[d + '_h']) * 60 - cortes[d]:
                 d = b
         cortes[d] += x
@@ -69,7 +79,10 @@ def propuesta(r):
     nuevo = {}
     for d in dias:
         ent, sal = r[d].split('–')
-        nuevo[d] = f'{ent}–{a_hora(a_min(sal) - cortes[d])}'
+        if sal_fija(d):
+            nuevo[d] = f'{a_hora(a_min(ent) + cortes[d])}–{sal}'
+        else:
+            nuevo[d] = f'{ent}–{a_hora(a_min(sal) - cortes[d])}'
     return {'estado': 'ok', 'meta': meta, 'corte_min': total, 'nuevas_horas': round(tot - total / 60, 2),
             'por_dia': nuevo, 'texto': texto_semana(nuevo)}
 

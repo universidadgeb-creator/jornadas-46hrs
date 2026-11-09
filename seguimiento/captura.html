@@ -236,6 +236,19 @@
     return dif > 0 ? { ok: false, txt: `Arriba de ${meta} por ${fmtHM(dif)}` } : { ok: true, txt: `Cumple la meta de ${meta}` };
   }
 
+  // Transporte: entradas a las 05:00 o antes y salidas a las 23:00 o después no se mueven.
+  function avisosTransporte(r, dias) {
+    const f = filaActual(r); const out = [];
+    if (!f) return out;
+    DIAS.forEach((d) => {
+      if (!f[d] || !dias[d] || !dias[d].e || !dias[d].s) return;
+      const [e0, s0] = String(f[d]).split('–');
+      if (aMin(e0) <= 300 && dias[d].e !== e0) out.push(`El ${DNOM[d]} entra a las ${e0} por el transporte; no conviene moverla.`);
+      if ((aMin(s0) >= 1380 || aMin(s0) < aMin(e0)) && dias[d].s !== s0) out.push(`El ${DNOM[d]} sale a las ${s0} por el transporte; no conviene moverla.`);
+    });
+    return out;
+  }
+
   function editorRow(r, meta) {
     const b = borrador(r);
     const tr = el('tr', 'editor'); const td = el('td'); td.colSpan = 12; tr.appendChild(td);
@@ -262,7 +275,7 @@
       const st = estadoMeta(c.total / 60, meta);
       tot.replaceChildren(el('span', 'lbl', 'Total de la semana'), el('b', 'ed-num', fmtHM(c.total)));
       if (!c.errores.length) tot.appendChild(el('span', st ? (st.ok ? 'okflag' : 'flag') : 'flag', st ? st.txt : 'Meta por confirmar'));
-      msg.replaceChildren(...c.errores.concat(c.avisos).map((t) => el('span', '', t)));
+      msg.replaceChildren(...c.errores.concat(c.avisos, avisosTransporte(r, b.dias)).map((t) => el('span', '', t)));
       bG.disabled = !!c.errores.length;
     };
     const comun = () => { const xs = DIAS.map((d) => b.dias[d]).filter((x) => x && x.e && x.s); return xs.length ? xs[0] : { e: '', s: '' }; };
