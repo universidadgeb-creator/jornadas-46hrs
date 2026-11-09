@@ -125,10 +125,32 @@ def main():
     # 2. El tablero, con la pestaña nueva y la tarjeta de avance
     tab = (RAIZ / 'dashboard' / 'index.html').read_text(encoding='utf-8')
     tab = tab.replace('<meta name="dash-one-writer">\n', '', 1)
-    tab = reemplazar(tab, '<button type="button" role="tab" data-tab="t-etapas" aria-selected="false">2027–2030</button>\n',
-                     '<button type="button" role="tab" data-tab="t-etapas" aria-selected="false">2027–2030</button>\n'
-                     '    <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>\n'
-                     '    <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>\n')
+    # Pestañas (9 nov 2026, con Patty): se quitan «Personas» y «Jornadas por rol», que repetían
+    # lo que ya muestran Seguimiento y Mapa por sucursal; «2027–2030» pasa a «Próximas etapas».
+    ini = tab.index('    <button type="button" role="tab" data-tab="t-resumen"')
+    fin = tab.index('  </nav>')
+    tab = tab[:ini] + (
+        '    <button type="button" role="tab" data-tab="t-resumen" aria-selected="true">Resumen</button>\n'
+        '    <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>\n'
+        '    <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>\n'
+        '    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>\n') + tab[fin:]
+    ini = tab.index('  <section class="gx-tab" id="t-personas" hidden>')
+    fin = tab.index('  <section class="gx-tab" id="t-etapas" hidden>')
+    quitadas = tab[ini:fin]
+    a_ini = quitadas.index('      <article class="gx-card" id="por-ubicacion">')
+    a_fin = quitadas.index('</article>', a_ini) + len('</article>')
+    por_ubicacion = quitadas[a_ini:a_fin].replace('      <article', '    <article', 1)
+    tab = tab[:ini] + tab[fin:]
+    # La gráfica por sucursal pasa al Resumen, junto a la de puestos
+    tab = reemplazar(tab, '      <button type="button" class="gx-btn" id="gx-toggle-puestos"',
+                     '      <button type="button" class="gx-btn" id="gx-toggle-puestos"')
+    i = tab.index('    <article class="gx-card" id="por-puesto">')
+    j = tab.index('</article>', i) + len('</article>')
+    tab = tab[:j] + '\n' + por_ubicacion + tab[j:]
+    # Clic en un puesto: abre su plantilla en el Mapa por sucursal
+    tab = reemplazar(tab, "  if (GX.puesto) abrirTab('t-personas');",
+                     "  if (GX.puesto) { const pu = GX.puesto; GX.puesto = null; dash.draw('puestos'); window.dispatchEvent(new CustomEvent('mapa:puesto', { detail: pu })); abrirTab('t-mapa'); window.scrollTo({ top: 0 }); }")
+    tab = reemplazar(tab, 'Clic en una barra para ver los nombres.</p>', 'Clic en una barra para ver su plantilla por turno en el Mapa por sucursal.</p>')
     tab = reemplazar(tab, '<a class="gx-link" href="https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k" target="_blank" rel="noopener">Ver avance de contratos →</a>',
                      '<button type="button" class="gx-link" data-tab-go="t-seg">Ver avance de contratos →</button>')
     tab = reemplazar(tab, '  <section class="gx-tab" id="t-resumen">\n',

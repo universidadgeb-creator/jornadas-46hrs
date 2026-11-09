@@ -151,7 +151,7 @@
   const css = (n) => getComputedStyle(document.querySelector('.gx') || document.documentElement).getPropertyValue(n).trim();
   let tip = null;
   function dibujar() {
-    const box = $('mp-chart'); if (!box || box.closest('[hidden]')) return;
+    const box = $('mp-chart'); if (!box || $('t-mapa').closest('[hidden]')) return;
     if (!opciones()) { box.replaceChildren(el('p', 'status', 'Cargando horarios…')); return; }
     const lista = filtradas();
     const gHoy = cobertura(lista, 'hoy'), gNue = cobertura(lista, 'nuevo');
@@ -283,7 +283,15 @@
   }));
   $('mp-xlsx').addEventListener('click', descargarMaestro);
   window.addEventListener('seg:datos', dibujar);
-  let ancho = 0;
-  new ResizeObserver(() => { const w = $('mp-chart').clientWidth; if (w && w !== ancho) { ancho = w; dibujar(); } }).observe($('mp-chart'));
+  // Desde el Resumen: ver la plantilla de un puesto en todas las sucursales
+  window.addEventListener('mapa:puesto', (e) => { $('mp-suc').dataset.init = '1'; M.suc = ''; M.pue = e.detail || ''; dibujar(); });
+  // Dibuja al abrir la pestaña, al cambiar el ancho y al abrir el detalle por media hora
+  const medidas = new Map();
+  const ro = new ResizeObserver((entradas) => {
+    let cambia = false;
+    entradas.forEach((e) => { const w = Math.round(e.contentRect.width); if (w !== medidas.get(e.target)) { medidas.set(e.target, w); if (w) cambia = true; } });
+    if (cambia) dibujar();
+  });
+  ro.observe(document.querySelector('#t-mapa .mp')); ro.observe($('mp-chart'));
 })();
 </script>

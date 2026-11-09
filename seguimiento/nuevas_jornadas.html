@@ -399,11 +399,9 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
   </header>
   <nav class="gx-tabs" role="tablist" aria-label="Secciones">
     <button type="button" role="tab" data-tab="t-resumen" aria-selected="true">Resumen</button>
-    <button type="button" role="tab" data-tab="t-personas" aria-selected="false">Personas</button>
-    <button type="button" role="tab" data-tab="t-rol" aria-selected="false">Jornadas por rol</button>
-    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">2027–2030</button>
     <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>
     <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>
+    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>
   </nav>
 
   <section class="gx-tab" id="t-resumen">
@@ -451,11 +449,16 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
   <div class="gx-grid">
     <article class="gx-card" id="por-puesto">
       <h2>¿Qué puestos se pasan de 46 hrs?</h2>
-      <p class="note">Personas por puesto que se pasan de 46 hrs, sobre el total del puesto. Clic en una barra para ver los nombres.</p>
+      <p class="note">Personas por puesto que se pasan de 46 hrs, sobre el total del puesto. Clic en una barra para ver su plantilla por turno en el Mapa por sucursal.</p>
       <div class="gx-legend"><span><i class="sw-a"></i>48 hrs</span><span><i class="sw-b"></i>Entre 46 y 48 hrs</span><span><i class="sw-m"></i>Total del puesto</span></div>
       <div class="gx-chart" data-draw="puestos" data-source="por_puesto"></div>
       <button type="button" class="gx-btn" id="gx-toggle-puestos" aria-expanded="false"><span class="t-more">Mostrar todos los puestos</span><span class="t-less" hidden>Mostrar solo los 8 principales</span></button>
     </article>
+    <article class="gx-card" id="por-ubicacion">
+        <h2>¿En qué sucursales?</h2>
+        <p class="note">Personas que se pasan de 46 hrs, sobre el total de la sucursal.</p>
+        <div class="gx-chart" data-draw="ubicaciones" data-source="por_ubicacion"></div>
+      </article>
   </div>
   <article class="gx-card" id="lo-que-viene">
     <h2>Lo que viene: quién se va sumando cada año</h2>
@@ -489,89 +492,6 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
         <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2030" data-source="etapas_personas"></div>
         <button type="button" class="gx-btn" data-go="2030">Ver personas de 2030</button>
       </div>
-    </div>
-  </article>
-  </section>
-
-  <section class="gx-tab" id="t-personas" hidden>
-  <div class="gx-grid">
-      <article class="gx-card" id="por-ubicacion">
-        <h2>¿En qué sucursales?</h2>
-        <p class="note">Personas que se pasan de 46 hrs, sobre el total de la sucursal.</p>
-        <div class="gx-chart" data-draw="ubicaciones" data-source="por_ubicacion"></div>
-      </article>
-  </div>
-  <article class="gx-card" id="personas">
-    <h2>Personas que se pasan de 46 hrs</h2>
-    <p class="note">Ordenadas por horas reconocidas. «Ajuste» son las horas a bajar según el tipo de jornada: diurna a 46, mixta a 45 (su máximo no cambia) y nocturna por confirmar.</p>
-    <div class="gx-tools">
-      <span class="gx-seg" role="group" aria-label="Grupo"><button type="button" data-grupo="" aria-pressed="true">Todos</button><button type="button" data-grupo="48 hrs" aria-pressed="false">48 hrs</button><button type="button" data-grupo="46–48 hrs" aria-pressed="false">46–48 hrs</button></span>
-      <select class="gx-sel" id="gx-f-tipo" aria-label="Tipo de jornada"><option value="">Todos los tipos</option><option>Diurna</option><option>Mixta</option><option>Nocturna</option></select>
-      <select class="gx-sel" id="gx-f-suc" aria-label="Sucursal" data-draw="opt-suc" data-source="afectados"></select>
-      <select class="gx-sel" id="gx-f-puesto" aria-label="Puesto" data-draw="opt-puesto" data-source="afectados"></select>
-      <input class="gx-search" id="gx-search" type="search" placeholder="Buscar nombre, puesto o sucursal" aria-label="Buscar en la tabla">
-      <span class="gx-filtro" id="gx-filtro" hidden>Puesto: <span data-draw="filtro">—</span><button type="button" id="gx-filtro-x" aria-label="Quitar filtro de puesto">✕</button></span>
-      <span class="gx-count"><span data-draw="conteo">—</span> personas</span>
-    </div>
-    <div class="gx-tablebox">
-      <table class="gx-table" data-source="afectados" data-row-key="nombre">
-        <thead><tr>
-          <th data-field="nombre"><button type="button" data-sort="nombre">Nombre</button></th>
-          <th data-field="puesto"><button type="button" data-sort="puesto">Puesto</button></th>
-          <th data-field="grupo"><button type="button" data-sort="grupo">Grupo</button></th>
-          <th data-field="ubicacion" class="hide-sm"><button type="button" data-sort="ubicacion">Sucursal</button></th>
-          <th data-field="tipo_jornada" class="hide-sm"><button type="button" data-sort="tipo_jornada">Jornada</button></th>
-          <th data-field="horas_reales" class="num"><button type="button" data-sort="horas_reales">Hrs reales</button></th>
-          <th data-field="ajuste" class="num"><button type="button" data-sort="ajuste">Ajuste</button></th>
-          <th data-field="horas_contrato" class="num hide-sm"><button type="button" data-sort="horas_contrato">Contrato</button></th>
-        </tr></thead>
-        <tbody data-draw="tabla"></tbody>
-      </table>
-    </div>
-  </article>
-  </section>
-
-  <section class="gx-tab" id="t-rol" hidden>
-  <article class="gx-card" id="jornadas-por-rol">
-    <h2>Jornadas por rol</h2>
-    <p class="note" data-modo="actual">Elige un puesto, o deja «Todos los puestos», para ver el horario de cada persona, día por día. Los días de 8 hrs o más van sombreados. Incluye a todas las personas del puesto, se pasen o no de 46 hrs.</p>
-    <p class="note" data-modo="propuesta" hidden>Propuesta para las personas que se pasan de 46 hrs, según el acuerdo del 5 nov 2026: las diurnas bajan a 46 hrs y las mixtas a 45. El recorte se toma primero de los días más largos, en bloques de 5 min; si todos los días son iguales, queda parejo (−20 min diarios de 48 a 46, −30 min de 48 a 45). Por el transporte, no se mueven las entradas de las 5:00 (o antes) ni las salidas de las 23:00 (o después): normalmente salen antes, y quien sale a las 23:00 entra más tarde. Los días sombreados son los que cambian. Es un punto de partida para validar con cada gerente.</p>
-    <div class="gx-rol-tools">
-      <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-modo-btn="actual" aria-pressed="true">Horario actual</button><button type="button" data-modo-btn="propuesta" aria-pressed="false">Propuesta 2027</button></span></div>
-      <label for="gx-rol">Puesto<select class="gx-select" id="gx-rol" data-draw="rol-opciones" data-source="horarios"></select></label>
-      <label for="gx-suc">Sucursal<select class="gx-select" id="gx-suc" data-draw="suc-opciones" data-source="horarios"></select></label>
-    </div>
-    <div class="gx-rol-stats" data-source="horarios" data-modo="propuesta" hidden>
-      <div><span class="lbl">Personas arriba de 46 hrs</span><span class="val" data-draw="prop-stat" data-k="n">—</span></div>
-      <div class="is-a"><span class="lbl">Diurnas: a 46 hrs</span><span class="val" data-draw="prop-stat" data-k="d">—</span></div>
-      <div class="is-a"><span class="lbl">Mixtas: a 45 hrs</span><span class="val" data-draw="prop-stat" data-k="m">—</span></div>
-      <div><span class="lbl">Por confirmar</span><span class="val" data-draw="prop-stat" data-k="pc">—</span></div>
-      <div><span class="lbl">Horas por semana a reacomodar</span><span class="val" data-draw="prop-stat" data-k="hrs">—</span></div>
-    </div>
-    <div class="gx-rol-stats" data-source="horarios" data-modo="actual">
-      <div><span class="lbl">Personas</span><span class="val" data-draw="rol-stat" data-k="n">—</span></div>
-      <div class="is-a"><span class="lbl">Con 48 hrs</span><span class="val" data-draw="rol-stat" data-k="g48">—</span></div>
-      <div><span class="lbl">Entre 46 y 48 hrs</span><span class="val" data-draw="rol-stat" data-k="g46">—</span></div>
-      <div><span class="lbl">Dentro de 46 hrs</span><span class="val" data-draw="rol-stat" data-k="ok">—</span></div>
-      <div><span class="lbl">Promedio semanal</span><span class="val" data-draw="rol-stat" data-k="prom">—</span></div>
-    </div>
-    <div class="gx-tablebox">
-      <table class="gx-table gx-sem" data-source="horarios" data-row-key="nombre">
-        <thead><tr>
-          <th data-field="nombre"><button type="button" data-rsort="nombre">Nombre</button></th>
-          <th data-field="puesto"><button type="button" data-rsort="puesto">Puesto</button></th>
-          <th data-field="ubicacion" class="hide-sm"><button type="button" data-rsort="ubicacion">Sucursal</button></th>
-          <th data-field="lun" class="d">Lun</th>
-          <th data-field="mar" class="d">Mar</th>
-          <th data-field="mie" class="d">Mié</th>
-          <th data-field="jue" class="d">Jue</th>
-          <th data-field="vie" class="d">Vie</th>
-          <th data-field="sab" class="d">Sáb</th>
-          <th data-field="dom" class="d">Dom</th>
-          <th data-field="horas_reales" class="num"><button type="button" data-rsort="horas_reales">Total</button></th>
-        </tr></thead>
-        <tbody data-draw="rol-tabla"></tbody>
-      </table>
     </div>
   </article>
   </section>
@@ -904,7 +824,7 @@ function filtrarPuesto(p) {
   GX.puesto = GX.puesto === p ? null : p;
   document.querySelectorAll('#gx-filtro').forEach((n) => { n.hidden = !GX.puesto; });
   dash.draw('tabla'); dash.draw('filtro'); dash.draw('conteo'); dash.draw('puestos'); dash.draw('opt-puesto');
-  if (GX.puesto) abrirTab('t-personas');
+  if (GX.puesto) { const pu = GX.puesto; GX.puesto = null; dash.draw('puestos'); window.dispatchEvent(new CustomEvent('mapa:puesto', { detail: pu })); abrirTab('t-mapa'); window.scrollTo({ top: 0 }); }
 }
 
 dash.draw('puestos', (el) => {
@@ -1937,7 +1857,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
   const css = (n) => getComputedStyle(document.querySelector('.gx') || document.documentElement).getPropertyValue(n).trim();
   let tip = null;
   function dibujar() {
-    const box = $('mp-chart'); if (!box || box.closest('[hidden]')) return;
+    const box = $('mp-chart'); if (!box || $('t-mapa').closest('[hidden]')) return;
     if (!opciones()) { box.replaceChildren(el('p', 'status', 'Cargando horarios…')); return; }
     const lista = filtradas();
     const gHoy = cobertura(lista, 'hoy'), gNue = cobertura(lista, 'nuevo');
@@ -2069,8 +1989,16 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
   }));
   $('mp-xlsx').addEventListener('click', descargarMaestro);
   window.addEventListener('seg:datos', dibujar);
-  let ancho = 0;
-  new ResizeObserver(() => { const w = $('mp-chart').clientWidth; if (w && w !== ancho) { ancho = w; dibujar(); } }).observe($('mp-chart'));
+  // Desde el Resumen: ver la plantilla de un puesto en todas las sucursales
+  window.addEventListener('mapa:puesto', (e) => { $('mp-suc').dataset.init = '1'; M.suc = ''; M.pue = e.detail || ''; dibujar(); });
+  // Dibuja al abrir la pestaña, al cambiar el ancho y al abrir el detalle por media hora
+  const medidas = new Map();
+  const ro = new ResizeObserver((entradas) => {
+    let cambia = false;
+    entradas.forEach((e) => { const w = Math.round(e.contentRect.width); if (w !== medidas.get(e.target)) { medidas.set(e.target, w); if (w) cambia = true; } });
+    if (cambia) dibujar();
+  });
+  ro.observe(document.querySelector('#t-mapa .mp')); ro.observe($('mp-chart'));
 })();
 </script>
 

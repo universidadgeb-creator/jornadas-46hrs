@@ -10,7 +10,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 
 | Pieza | Qué es | Dónde |
 |---|---|---|
-| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Personas, Jornadas por rol, 2027–2030, Seguimiento y Mapa por sucursal (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
+| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Seguimiento, Mapa por sucursal y Próximas etapas (desde el 9 nov 2026; se quitaron «Personas» y «Jornadas por rol» porque repetían lo de Seguimiento y Mapa) (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
 | Tablero anterior (respaldo, ya no se usa) | Dashboard de análisis (artifact de tipo Dashboard en claude.ai) | https://claude.ai/artifact/Rcd92fe4fQ8SdhX3g5cSo1 · su código, `dashboard/index.html`, sigue siendo la fuente de las pestañas de análisis |
 | Versión para proyectar | El mismo tablero en un HTML autónomo y sin internet, con d3 y los datos incrustados | `dashboard/Jornada_46hrs_2027_proyectar.html` |
 | Captura de seguimiento | La pestaña «Seguimiento» de la página única (desde el 9 nov 2026, **todas las personas que pasan de 46 hrs**: 100) | `seguimiento/captura.html` + `seguimiento/captura_estilos.css` |
@@ -76,6 +76,8 @@ Detalles técnicos:
 - GitHub: https://github.com/universidadgeb-creator/jornadas-46hrs (público, por decisión de Patty). GitHub Pages publica `main` en https://universidadgeb-creator.github.io/jornadas-46hrs/ (el `index.html` de la raíz lleva a la versión para proyectar).
 
 ## Página única: cómo se arma y se publica
+
+- **Pestañas (9 nov 2026):** Resumen · Seguimiento · Mapa por sucursal · Próximas etapas. `build_unificado.py` arma la barra de pestañas, quita las secciones `t-personas` y `t-rol` de `dashboard/index.html`, pasa la gráfica «¿En qué sucursales?» al Resumen (junto a la de puestos) y hace que el clic en un puesto abra su plantilla por turno en el Mapa (evento `mapa:puesto`, todas las sucursales). `dashboard/index.html` y la versión para proyectar conservan las 4 pestañas originales.
 
 - `scripts/build_unificado.py` junta `dashboard/index.html` (análisis, con un `dash` local y los CSV incrustados, como la versión para proyectar), `seguimiento/captura.html` y `captura_estilos.css`, y agrega la pestaña «Seguimiento» y la tarjeta «Avance del cambio de contrato» en el Resumen (lee la misma colección `personas`).
 - d3 se carga de cdnjs (7.8.5). En este contenedor cdnjs está bloqueado: para probar en local, servir d3 desde la copia que trae la versión para proyectar.
