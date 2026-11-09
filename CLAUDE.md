@@ -19,10 +19,10 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 
 ## Fuente de datos
 
-- Archivo `Revision_Jornadas_48hrs_GEB.xlsx`, hoja **«Base de Datos»**, con encabezados en la **fila 3**. Último corte: **5 nov 2026**.
+- Archivo `Revision_Jornadas_48hrs_GEB.xlsx`. **Desde el 9 nov 2026 la hoja buena es «Base Original»** (acuerdo con Patty; la hoja «Revisar diferencias» del Excel dice que ahí quedó lo correcto). Encabezados en la **fila 3**. `limpiar_excel.py` la toma y la guarda en el Excel limpio como «Base de Datos», que es lo que lee `build_csv.py`. Último corte: **9 nov 2026** (Patty mandará más cambios).
 - Columnas usadas: `Nombre`, `Puesto`, `División`, `Ubicación`, `Activo en TabBD`, `Jornada laboral` (horas de contrato), `Total jornada reconocida` (horas reales semanales, ya sin comida), `TIPO DE JORNADA (LFT)`, y `<Día> entrada / salida / jornada reconocida` de lunes a domingo.
-- Universo: activos con `Activo en TabBD = «Sí»` (312). Los que tienen tipo «Sin horario capturado» (10) quedan fuera de los cálculos, así que la base de cálculo es de **302**.
-- Normalizaciones: puesto vacío → «Sin puesto»; «R.P» → «R.P.»; «Vivo 47» → «VIVO 47»; «La estancia» → «La Estancia».
+- Universo: activos con `Activo en TabBD = «Sí»` (333 en «Base Original», todas «Sí»). Los que tienen tipo «Sin horario capturado» (7) quedan fuera de los cálculos, así que la base de cálculo es de **326**.
+- Normalizaciones: puesto vacío → «Sin puesto»; «R.P» → «R.P.»; «Vivo 47» → «VIVO 47»; «La estancia», «Estancia» y «estancia» → «La Estancia».
 - Para regenerar los CSV: `python scripts/build_csv.py datos/Revision_Jornadas_48hrs_GEB.xlsx datos/` (antes, limpiar el Excel recibido con `scripts/limpiar_excel.py`).
 
 ## Cómo se actualizan los datos (acordado 8 nov 2026)
@@ -47,13 +47,14 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 - **Etapas 2027–2030**: con los horarios actuales se cuenta a quién queda arriba de cada límite (46/44/42/40). «Nuevas» son las personas que no estaban arriba del límite de la etapa anterior.
 - **Plazas equivalentes** = horas a reacomodar ÷ 46. Es una referencia de capacidad, no una propuesta de contratación.
 
-## Cifras actuales (corte 5 nov 2026)
+## Cifras actuales (corte 9 nov 2026, hoja «Base Original»)
 
-- 58 personas con 48 hrs: **24 diurnas, 33 mixtas, 1 nocturna**. En la junta se mencionaron ~23 mixtos; está por validar.
-- 92 personas se pasan de 46 hrs (58 + 34). Horas a reacomodar: ~162 hrs/semana, unas 3.5 plazas.
-- El puesto más expuesto es Técnico de Orden y Limpieza: 40 de 50.
-- Etapas: 2027 → 92 · 2028 → 141 (+49) · 2029 → 143 (+2) · 2030 → 155 (+12).
-- Por sucursal, de las 58: Naciones 24, Valle Real 13, Gourmetería 11, Nuevos Negocios 6, Ávila Camacho 2, Cañadas 1, Iteso 1.
+- 64 personas con 48 hrs: **25 diurnas, 39 mixtas, 0 nocturnas**. (Corte del 5 nov: 58 = 24 diurnas, 33 mixtas, 1 nocturna.)
+- 100 personas se pasan de 46 hrs (64 + 36). Horas a reacomodar para bajar a 46: ~169.5 hrs/semana, unas 3.7 plazas. Con la propuesta (mixtas a 45): ~234.5 hrs.
+- El puesto más expuesto es Técnico de Orden y Limpieza: 45 de 57.
+- Etapas: 2027 → 100 · 2028 → 137 · 2029 → 139 · 2030 → 152.
+- Por sucursal, de las 64: Naciones 27, Valle Real 14, Gourmetería 13, Nuevos Negocios 8, Ávila Camacho 1, Cañadas 1.
+- Cambios 5→9 nov en el grupo de 48: entran Cuevas Ramírez, Uribe De la Rocha, De la Cruz Rodríguez, Cuevas Rivera, González Álvarez, Pérez Suárez, Cruz Pérez y Rentería Tejeda; salen Corona Miranda (horario corregido a 30 h) y Torres Campos (47.5 h: sigue arriba de 46).
 
 ## Tablero: estructura
 
@@ -82,12 +83,13 @@ Detalles técnicos:
 
 ## Seguimiento (colección `personas`)
 
-- Colección `personas`: un documento por persona, con id = slug del nombre.
+- Colección `personas`: un documento por persona, con id = slug del nombre. Quien sale del grupo de 48 no se borra: lleva `fuera` (motivo) y `fuera_desde` (fecha); la página lo saca de los conteos y lo lista en «N personas salieron del grupo de 48 hrs».
 - Campos fijos: `nombre`, `puesto`, `sucursal`, `division`, `tipo`, `horas_actuales`, `horario_actual`.
 - Campos editables: `lider`, `nuevo_horario`, `nuevas_horas`, `contrato` (bool), `comentario`, y `nuevo_horario_dias` ({lun..dom: "HH:MM–HH:MM" o null}).
 - **Conteo automático (8 nov 2026):** el nuevo horario ya no se escribe a mano. Con «Editar» se abre un editor día por día (entrada, salida, descanso) y la página calcula las horas: suma de entrada a salida de cada día (si la salida es menor, cruza medianoche) y descuenta la comida igual que en el horario actual de la persona (por día; de las 58, 52 no descuentan y 6 descuentan 1 h). Al guardar escribe `nuevo_horario` (texto «L–V 07:00–14:40 · S … · D descanso»), `nuevo_horario_dias` y `nuevas_horas`. La columna «Nuevas hrs» muestra lo calculado desde el horario guardado; si un texto viejo no se puede leer, lo marca para corregirlo.
 - Muestra el avance (X de 58 con contrato nuevo), totales por tipo con número y %, avance por sucursal y filtros por tipo, sucursal, puesto y estado.
 - Para que los gerentes editen, hay que compartir la página única con permiso de edición (desde Compartir en claude.ai).
+- 9 nov 2026: se agregaron 8 personas nuevas con la propuesta precargada y se re-propuso Palacios López (su horario actual cambió y ahora es mixta).
 - 8 nov 2026: se precargaron `nuevo_horario` y `nuevas_horas` de 57 personas con la propuesta automática (`scripts/propuesta.py`), solo donde estaban vacíos. Corona Miranda quedó sin propuesta hasta corregir su captura. Los gerentes validan o corrigen; `contrato` sigue en falso. El `comentario` de esos 57 dice «Propuesta inicial, por validar»; el de Corona Miranda, «Sin propuesta: revisar captura del domingo (20:30–13:30)». Si un gerente cambia el horario, conviene que borre o cambie esa nota.
 
 ## Adendum de contrato (desde 8 nov 2026)
@@ -96,12 +98,12 @@ Detalles técnicos:
 - Acuerdos con Patty: razón social **GIMNASIOS AMERICANOS SAPI DE CV** para todas las divisiones; mixtas con 45 h en la cláusula PRIMERA (diurnas 46); antecedente I = jornada de contrato del Excel («Jornada laboral») + horario actual (está bien que diga 48: el adendum es para bajarla); firma por la empresa el gerente de cada sucursal; lugar = dirección por unidad de negocio (Patty las manda).
 - En la página (pestaña Seguimiento): tarjeta «Adendum de contrato» con fecha de firma, «Descargar los listos (.zip)» y, por sucursal, gerente que firma y lugar (colección `unidades`, id = slug de la sucursal: {sucursal, firmante, lugar}). Cada fila tiene la columna «Adendum»: Listo + Descargar, o el motivo (falta nuevo horario, pasa de la meta, falta gerente/lugar, falta jornada de contrato, jornada por confirmar). Al descargar guarda `adendum_generado` (fecha) en la persona; si después se vuelve a guardar su nuevo horario, se borra esa fecha para obligar a descargar el adendum otra vez.
 - Quién corrige qué: el **nuevo horario** lo corrige el gerente en la página (Editar); el **horario actual** y la **jornada de contrato** solo se corrigen en el Excel. La página declara `downloads` además de `db` y `user`.
-- Faltan jornada de contrato en el Excel (8 nov): Cadena Luna, Escalante Núñez, Aguilera Martínez, Meza Ramírez, Hernández Aguayo, Navarro Villarreal. Contrato distinto al horario: Villegas Velázquez y Palacios López (40 vs 48), Corona Miranda (30 vs 56).
+- Falta jornada de contrato en el Excel (9 nov): Aguilera Martínez, Meza Ramírez, Hernández Aguayo, Navarro Villarreal y Rentería Tejeda. Contrato distinto al horario: Villegas Velázquez, Palacios López y Pérez Suárez (40 vs 48).
 
 ## Pendientes
 
 1. Validar con los gerentes los horarios que ya avanzaron y capturar el **líder** de cada colaborador (lo trabajan Patty y Andy).
-2. Revisar la captura de **Corona Miranda Jesús Alejandro**: aparece con 56 hrs porque su domingo dice 20:30–13:30.
+2. ~~Revisar la captura de Corona Miranda~~: corregida en el corte del 9 nov (L–V 06:00–12:00, 30 h).
 3. Confirmar el ajuste para jornada **nocturna** y la duda de mixta y nocturna a 40 hrs con el abogado.
 4. Juntas: gerentes de Easy Fit (propuesta por sucursal), Vivo (después del 9 nov, cuando regrese Isma) y Center (Antonio y líderes) la siguiente semana. Center será piloto del reloj checador (~15 días) y después habrá capacitación con Vivo (200+ colaboradores).
 5. Calendario de jornada de 44 hrs: presentarlo y agendarlo con Operaciones en junio de 2027.

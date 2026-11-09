@@ -50,6 +50,10 @@
       </table>
     </div>
     <p class="status" id="status"></p>
+    <details class="card fuera" id="fuera-box" hidden>
+      <summary><b id="fuera-n">0</b> personas salieron del grupo de 48 hrs</summary>
+      <ul class="notes" id="fuera-list"></ul>
+    </details>
 
     <section class="card adn" aria-labelledby="adn-tit">
       <h2 class="h2" id="adn-tit">Adendum de contrato</h2>
@@ -67,7 +71,7 @@
     <section class="card">
       <h2 class="h2">Criterios</h2>
       <ul class="notes">
-        <li>Lista: colaboradores activos con jornada reconocida de 48 hrs o más (base del 5 nov 2026).</li>
+        <li>Lista: colaboradores activos con jornada reconocida de 48 hrs o más (corte del 9 nov 2026). Quien sale del grupo, porque su horario cambió o porque se dio de baja, pasa a «Fuera del grupo de 48 hrs», sin borrar lo que se capturó.</li>
         <li>Diurna baja a 46 hrs en 2027. Mixta se queda en su máximo actual de 45 hrs, que no cambia con la reforma. Nocturna: pendiente de confirmar.</li>
         <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
         <li>«Nuevas hrs» las calcula la página: suma de la entrada a la salida de cada día y descuenta la comida igual que en el horario actual de la persona. Se marca en naranja si sigue arriba de la meta.</li>
@@ -81,7 +85,7 @@
 (() => {
   const META = { Diurna: 46, Mixta: 45, Nocturna: null };
   const TIPOS = ['Diurna', 'Mixta', 'Nocturna'];
-  let rows = [];
+  let rows = [], fueraRows = [];
   let db = null, canWrite = true;
   const F = { tipo: '', suc: '', puesto: '', est: '', q: '' };
   const $ = (id) => document.getElementById(id);
@@ -471,7 +475,15 @@
     document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
   }
 
-  function render() { renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); }
+  function renderFuera() {
+    const box = $('fuera-box'); if (!box) return;
+    box.hidden = !fueraRows.length; $('fuera-n').textContent = fueraRows.length;
+    $('fuera-list').replaceChildren(...fueraRows.slice().sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')).map((r) => {
+      const li = el('li'); li.append(el('b', '', r.nombre), document.createTextNode(` · ${r.sucursal} · ${r.fuera}${r.fuera_desde ? ' (desde el ' + fechaTxt(r.fuera_desde) + ')' : ''}`)); return li;
+    }));
+  }
+
+  function render() { renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera(); }
 
   [['f-tipo', 'tipo'], ['f-suc', 'suc'], ['f-puesto', 'puesto'], ['f-est', 'est']].forEach(([id, k]) => $(id).addEventListener('change', (e) => { F[k] = e.target.value; render(); }));
   $('f-q').addEventListener('input', (e) => { F.q = e.target.value; renderRows(); });
@@ -491,7 +503,9 @@
     if (user) { const c = await user.can('data.write'); if (c === false) { canWrite = false; $('status').textContent = 'Tienes acceso de solo lectura.'; } }
     db.collection('personas').onSnapshot((snap) => {
       const docs = snap.docs || snap;
-      rows = docs.map((d) => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
+      const todos = docs.map((d) => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
+      rows = todos.filter((r) => !r.fuera);
+      fueraRows = todos.filter((r) => r.fuera);
       render();
     }, () => { $('status').textContent = 'No se pudo cargar la lista. Recarga la página.'; });
     db.collection('unidades').onSnapshot((snap) => {

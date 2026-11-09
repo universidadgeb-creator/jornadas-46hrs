@@ -40,7 +40,7 @@ def main(xlsx, out):
     # Normalizaciones acordadas: puesto vacío -> «Sin puesto»; «R.P» -> «R.P.»
     p['puesto'] = a['Puesto'].fillna('Sin puesto').astype(str).str.strip().replace({'R.P': 'R.P.'})
     p['division'] = a['División'].astype(str).str.strip().replace({'Vivo 47': 'VIVO 47', 'Ofna de Soporte': 'Oficina de Soporte'})
-    p['ubicacion'] = a['Ubicación'].astype(str).str.strip().replace({'La estancia': 'La Estancia'})
+    p['ubicacion'] = a['Ubicación'].astype(str).str.strip().replace({'La estancia': 'La Estancia', 'Estancia': 'La Estancia', 'estancia': 'La Estancia'})
     p['tipo_jornada'] = a['TIPO DE JORNADA (LFT)'].replace({'Sin horario capturado': 'Sin captura'})
     p['horas_reales'] = pd.to_numeric(a['Total jornada reconocida'], errors='coerce').fillna(0).round(2)
     p['horas_contrato'] = pd.to_numeric(a['Jornada laboral'], errors='coerce')
