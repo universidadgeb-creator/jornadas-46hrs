@@ -35,3 +35,16 @@
 .mp-tabla tr.mp-grupo td b { color: var(--gx-accent); }
 .mp-tabla tr.mp-grupo td span { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
 .mp-tabla td.mp-pue { color: var(--color-fg-muted); }
+/* Avance de captura por sucursal */
+.mp-av { min-width: 46rem; }
+.mp-av td { vertical-align: middle; }
+.mp-av td.mp-av-n { font-weight: 600; }
+.mp-av td.mp-av-c { min-width: 7.5rem; }
+.mp-av .mp-av-t { display: block; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; color: var(--color-fg-muted); }
+.mp-av .mp-av-bar { display: block; height: 6px; background: var(--gx-accent-soft); border-radius: 99px; overflow: hidden; margin-top: 3px; }
+.mp-av .mp-av-bar i { display: block; height: 100%; background: var(--gx-accent); }
+.mp-av td.ok .mp-av-t { color: var(--gx-accent); font-weight: 600; }
+.mp-av tr.mp-av-sel td { background: var(--gx-accent-soft); }
+.mp-av tr.mp-av-total td { border-top: 2px solid var(--color-border-line); font-weight: 600; }
+.mp-av .mp-av-ir { white-space: nowrap; }
+.mp table.gx-table th { padding: .5rem .5rem; }

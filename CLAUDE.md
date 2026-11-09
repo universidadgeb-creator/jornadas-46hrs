@@ -90,11 +90,14 @@ Detalles técnicos:
 - «Descargar archivo maestro (.xlsx)» (SheetJS 0.18.5, cdnjs): hoja «Resumen» por sucursal (personas, cuántas pasan de 46, horas por semana hoy y 2027) + una hoja por sucursal con franjas 2027 (hoy), turnos 2027, cada persona (Lun–Dom hoy y 2027, horas) y el detalle por media hora 2027 y hoy.
 - El script del Seguimiento publica `window.SEG = {rows, fuera, diasDe, horasDe}` y el evento `seg:datos`; el mapa lo escucha.
 
+- **Avance de captura por sucursal (9 nov 2026):** tabla arriba del Mapa con todas las sucursales (personas en seguimiento) y cuatro pasos con barra: horario validado, líder, adendum descargado y recibido firmado, más una fila Total. «Ver captura» abre el Seguimiento filtrado en esa sucursal (`SEG.verSucursal`).
+
 ## Seguimiento (colección `personas`)
 
 - Colección `personas`: un documento por persona, con id = slug del nombre. Quien sale del grupo de 48 no se borra: lleva `fuera` (motivo) y `fuera_desde` (fecha); la página lo saca de los conteos y lo lista en «N personas salieron del grupo de 48 hrs».
 - Campos fijos: `nombre`, `puesto`, `sucursal`, `division`, `tipo`, `horas_actuales`, `horario_actual`.
 - Campos editables: `lider`, `nuevo_horario`, `nuevas_horas`, `contrato` (bool), `comentario`, y `nuevo_horario_dias` ({lun..dom: "HH:MM–HH:MM" o null}).
+- **Horario validado (9 nov 2026):** al guardar en el editor se escriben `horario_validado` (fecha) y `horario_validado_por` (id del usuario), y si el comentario era «Propuesta inicial, por validar» se borra. La celda dice «Validado el …» o «Propuesta sin validar». Los contadores «con horario validado» (Seguimiento y Resumen) cuentan solo los validados, no las propuestas precargadas.
 - **Conteo automático (8 nov 2026):** el nuevo horario ya no se escribe a mano. Con «Editar» se abre un editor día por día (entrada, salida, descanso) y la página calcula las horas: suma de entrada a salida de cada día (si la salida es menor, cruza medianoche) y descuenta la comida igual que en el horario actual de la persona (por día; de las 58, 52 no descuentan y 6 descuentan 1 h). Al guardar escribe `nuevo_horario` (texto «L–V 07:00–14:40 · S … · D descanso»), `nuevo_horario_dias` y `nuevas_horas`. La columna «Nuevas hrs» muestra lo calculado desde el horario guardado; si un texto viejo no se puede leer, lo marca para corregirlo.
 - Muestra el avance (X de 58 con contrato nuevo), totales por tipo con número y %, avance por sucursal y filtros por tipo, sucursal, puesto y estado.
 - Para que los gerentes editen, hay que compartir la página única con permiso de edición (desde Compartir en claude.ai).

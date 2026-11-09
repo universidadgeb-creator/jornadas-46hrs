@@ -5,7 +5,7 @@
         <div class="lbl">Nuevo contrato realizado</div>
         <div class="big"><span id="p-done">—</span> <span>de <span id="p-total">—</span></span></div>
         <div class="bar" aria-hidden="true"><i id="p-bar"></i></div>
-        <div class="sub"><b id="p-pct">—</b> de avance · <span id="p-hor">—</span> con nuevo horario capturado · <span id="p-lid">—</span> con líder asignado</div>
+        <div class="sub"><b id="p-pct">—</b> de avance · <span id="p-hor">—</span> con horario validado · <span id="p-lid">—</span> con líder asignado</div>
       </section>
       <section class="tipos" aria-label="Por tipo de jornada">
         <button type="button" class="tipo" data-tipo="Diurna" aria-pressed="false">
@@ -76,7 +76,7 @@
         <li>Diurna baja a 46 hrs en 2027. Mixta se queda en su máximo actual de 45 hrs, que no cambia con la reforma. Nocturna: pendiente de confirmar.</li>
         <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
         <li>«Nuevas hrs» las calcula la página: suma de la entrada a la salida de cada día y descuenta la comida igual que en el horario actual de la persona. Se marca en naranja si sigue arriba de la meta.</li>
-        <li>El nuevo horario se captura con «Editar», día por día. No hace falta escribirlo ni sumar las horas a mano.</li>
+        <li>El nuevo horario se captura con «Editar», día por día. No hace falta escribirlo ni sumar las horas a mano. Al guardarlo queda «Validado» con la fecha; las propuestas precargadas que nadie ha guardado dicen «Propuesta sin validar».</li>
         <li>Control: al recibir el adendum firmado, marca «Recibido firmado»; queda la fecha y quién lo capturó, y el contrato se marca como realizado. Si después cambia el nuevo horario, la página avisa que falta un adendum nuevo.</li>
         <li>Adendum: patrón GIMNASIOS AMERICANOS SAPI DE CV. El antecedente I usa la jornada de contrato del Excel y el horario actual; la cláusula PRIMERA, las horas y el horario nuevos (46 diurna, 45 mixta).</li>
       </ul>
@@ -113,7 +113,7 @@
     $('p-done').textContent = done; $('p-total').textContent = total;
     $('p-pct').textContent = pct(done, total);
     $('p-bar').style.width = total ? (done / total * 100) + '%' : '0';
-    $('p-hor').textContent = rows.filter((r) => (r.nuevo_horario || '').trim()).length;
+    $('p-hor').textContent = rows.filter((r) => r.horario_validado).length;
     $('p-lid').textContent = rows.filter((r) => (r.lider || '').trim()).length;
     TIPOS.forEach((t) => {
       const g = rows.filter((r) => r.tipo === t);
@@ -299,7 +299,9 @@
     bG.addEventListener('click', async () => {
       const c = calcular(r, b.dias); if (c.errores.length) return;
       const dias = Object.fromEntries(DIAS.map((d) => [d, b.dias[d] ? `${b.dias[d].e}–${b.dias[d].s}` : null]));
-      const patch = { nuevo_horario: textoSemana(dias), nuevo_horario_dias: dias, nuevas_horas: Math.round(c.total / 60 * 100) / 100 };
+      const patch = { nuevo_horario: textoSemana(dias), nuevo_horario_dias: dias, nuevas_horas: Math.round(c.total / 60 * 100) / 100,
+        horario_validado: hoyISO(), horario_validado_por: uid || null };
+      if (r.comentario === 'Propuesta inicial, por validar') patch.comentario = '';  // la nota de la precarga ya no aplica
       if (r.adendum_generado) patch.adendum_generado = null;  // el Word descargado ya no corresponde: hay que volver a descargarlo
       Object.assign(r, patch); delete drafts[r.id]; editing = null;
       await save(r.id, patch, bG); render();
@@ -546,6 +548,8 @@
       const legible = !(r.nuevo_horario || '').trim() || diasGuardados(r);
       cn.appendChild(el('span', 'nh-txt' + ((r.nuevo_horario || '').trim() ? '' : ' vacio'), (r.nuevo_horario || '').trim() || 'Sin capturar'));
       if (!legible) cn.appendChild(el('span', 'flag', 'No se puede leer: ábrelo y corrígelo'));
+      else if (r.horario_validado) cn.appendChild(el('span', 'okflag', `Validado el ${fechaTxt(r.horario_validado)}`));
+      else if ((r.nuevo_horario || '').trim()) cn.appendChild(el('span', 'adn-pend', 'Propuesta sin validar'));
       if (canWrite) {
         const bt = el('button', 'btn btn-sm', editing === r.id ? 'Editando…' : ((r.nuevo_horario || '').trim() ? 'Editar' : 'Capturar'));
         bt.type = 'button'; bt.id = `ed-${r.id}-abrir`; bt.disabled = editing === r.id; bt.setAttribute('aria-label', `Editar el nuevo horario de ${r.nombre}`);
@@ -587,7 +591,7 @@
 
   function renderResumen() {
     const total = rows.length, done = rows.filter((r) => r.contrato).length;
-    const v = { done, total, pct: pct(done, total), hor: rows.filter((r) => (r.nuevo_horario || '').trim()).length,
+    const v = { done, total, pct: pct(done, total), hor: rows.filter((r) => r.horario_validado).length,
       lid: rows.filter((r) => (r.lider || '').trim()).length };
     document.querySelectorAll('[data-seg]').forEach((n) => { n.textContent = v[n.dataset.seg]; });
     document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
@@ -604,7 +608,8 @@
   function render() {
     renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera();
     // Para el mapa por sucursal: horarios nuevos de quienes están en seguimiento
-    window.SEG = { rows, fuera: fueraRows, diasDe: diasGuardados, horasDe };
+    window.SEG = { rows, fuera: fueraRows, diasDe: diasGuardados, horasDe, estadoAdendum,
+      verSucursal: (s) => { Object.keys(F).forEach((k) => { F[k] = ''; }); F.suc = s; ['f-tipo', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); renderSummary(); $('f-suc').value = s; renderRows(); } };
     window.dispatchEvent(new Event('seg:datos'));
   }
 
