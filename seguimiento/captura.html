@@ -31,6 +31,7 @@
     <section class="card" aria-label="Personas">
       <div class="filters">
         <label for="f-tipo">Tipo de jornada<select id="f-tipo"><option value="">Todas</option><option>Diurna</option><option>Mixta</option><option>Nocturna</option></select></label>
+        <label for="f-cad">Cadena<select id="f-cad"><option value="">Todas</option></select></label>
         <label for="f-suc">Sucursal<select id="f-suc"><option value="">Todas</option></select></label>
         <label for="f-puesto">Puesto<select id="f-puesto"><option value="">Todos</option></select></label>
         <label for="f-est">Estado<select id="f-est"><option value="">Todos</option><option value="pend">Pendiente</option><option value="done">Contrato realizado</option><option value="adn-por">Adendum por recibir</option><option value="adn-rec">Adendum recibido</option></select></label>
@@ -90,21 +91,21 @@
   const TIPOS = ['Diurna', 'Mixta', 'Nocturna'];
   let rows = [], fueraRows = [];
   let db = null, canWrite = true;
-  const F = { tipo: '', suc: '', puesto: '', est: '', q: '' };
+  const F = { tipo: '', cad: '', suc: '', puesto: '', est: '', q: '' };
   const $ = (id) => document.getElementById(id);
   const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('es-MX', { maximumFractionDigits: 1 });
   const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '0%';
   const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 
-  function setOptions(sel, values, label) {
-    const cur = sel.value;
+  function setOptions(sel, values, label, actual) {
+    const cur = actual ?? sel.value;
     sel.replaceChildren(new Option(label, ''), ...values.map((v) => new Option(v, v)));
     sel.value = values.includes(cur) ? cur : '';
   }
 
   function filtered() {
     const q = F.q.trim().toLowerCase();
-    return rows.filter((r) => (!F.tipo || r.tipo === F.tipo) && (!F.suc || r.sucursal === F.suc) && (!F.puesto || r.puesto === F.puesto)
+    return rows.filter((r) => (!F.tipo || r.tipo === F.tipo) && (!F.cad || (r.division || '—') === F.cad) && (!F.suc || r.sucursal === F.suc) && (!F.puesto || r.puesto === F.puesto)
       && (!F.est || (F.est === 'done' ? r.contrato : F.est === 'pend' ? !r.contrato : F.est === 'adn-rec' ? !!r.adendum_recibido : !r.adendum_recibido))
       && (!q || `${r.nombre} ${r.puesto} ${r.lider || ''}`.toLowerCase().includes(q)));
   }
@@ -135,7 +136,9 @@
       box.appendChild(b);
     });
     if (!rows.length) box.replaceChildren(el('span', 'status', 'Sin datos todavía.'));
-    setOptions($('f-suc'), [...m.keys()].sort((a, b) => a.localeCompare(b, 'es')), 'Todas');
+    setOptions($('f-cad'), [...new Set(rows.map((r) => r.division || '—'))].sort((a, b) => a.localeCompare(b, 'es')), 'Todas');
+    setOptions($('f-suc'), [...new Set(rows.filter((r) => !F.cad || (r.division || '—') === F.cad).map((r) => r.sucursal || '—'))].sort((a, b) => a.localeCompare(b, 'es')), 'Todas', F.suc);
+    F.suc = $('f-suc').value;
     setOptions($('f-puesto'), [...new Set(rows.map((r) => r.puesto))].sort((a, b) => a.localeCompare(b, 'es')), 'Todos');
   }
 
@@ -611,13 +614,13 @@
     renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera();
     // Para el mapa por sucursal: horarios nuevos de quienes están en seguimiento
     window.SEG = { rows, fuera: fueraRows, diasDe: diasGuardados, horasDe, estadoAdendum,
-      verSucursal: (s) => { Object.keys(F).forEach((k) => { F[k] = ''; }); F.suc = s; ['f-tipo', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); renderSummary(); $('f-suc').value = s; renderRows(); } };
+      verSucursal: (s) => { Object.keys(F).forEach((k) => { F[k] = ''; }); F.suc = s; ['f-tipo', 'f-cad', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); renderSummary(); $('f-suc').value = s; renderRows(); } };
     window.dispatchEvent(new Event('seg:datos'));
   }
 
-  [['f-tipo', 'tipo'], ['f-suc', 'suc'], ['f-puesto', 'puesto'], ['f-est', 'est']].forEach(([id, k]) => $(id).addEventListener('change', (e) => { F[k] = e.target.value; render(); }));
+  [['f-tipo', 'tipo'], ['f-cad', 'cad'], ['f-suc', 'suc'], ['f-puesto', 'puesto'], ['f-est', 'est']].forEach(([id, k]) => $(id).addEventListener('change', (e) => { F[k] = e.target.value; render(); }));
   $('f-q').addEventListener('input', (e) => { F.q = e.target.value; renderRows(); });
-  $('f-clear').addEventListener('click', () => { Object.keys(F).forEach((k) => { F[k] = ''; }); ['f-tipo', 'f-suc', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); render(); });
+  $('f-clear').addEventListener('click', () => { Object.keys(F).forEach((k) => { F[k] = ''; }); ['f-tipo', 'f-cad', 'f-suc', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); render(); });
   document.querySelectorAll('.tipo').forEach((b) => b.addEventListener('click', () => { F.tipo = F.tipo === b.dataset.tipo ? '' : b.dataset.tipo; $('f-tipo').value = F.tipo; render(); }));
   document.addEventListener('focusout', () => setTimeout(() => { if (editing) return; if (!document.activeElement || document.activeElement.tagName !== 'INPUT') renderRows(); }, 0));
 
