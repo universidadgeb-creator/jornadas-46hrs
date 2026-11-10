@@ -33,6 +33,8 @@ def hhmm(v):
 
 # Puestos que no entran al reporte (pedido de Patty, 9 nov 2026): instructores y tutoriales.
 # «ATP» también se excluirá cuando Patty indique cómo aparece en el Excel.
+# Avisado por Patty el 10 nov 2026: pasó de Onara (Nuevos Negocios) a Naciones, turno de noche
+CAMBIO_UBICACION = {'Medina Hernandez Cesar Abraham': 'Naciones'}
 EXCLUIR_PUESTOS = re.compile(r'instructor|tutorial', re.I)
 
 
@@ -54,6 +56,12 @@ def main(xlsx, out):
     p['puesto'] = a['Puesto'].fillna('Sin puesto').astype(str).str.strip().replace({'R.P': 'R.P.'})
     p['division'] = a['División'].astype(str).str.strip().replace({'Vivo 47': 'VIVO 47', 'Ofna de Soporte': 'Oficina de Soporte'})
     p['ubicacion'] = a['Ubicación'].astype(str).str.strip().replace({'La estancia': 'La Estancia', 'Estancia': 'La Estancia', 'estancia': 'La Estancia'})
+    # Cambios de sucursal que Patty avisó y que el Excel todavía no trae en «Ubicación»
+    for n, u in CAMBIO_UBICACION.items():
+        m = p['nombre'] == n
+        if m.any() and (p.loc[m, 'ubicacion'] != u).any():
+            print(f'Ubicación corregida: {n} → {u} (falta cambiarla en el Excel)')
+            p.loc[m, 'ubicacion'] = u
     # Área (Deportes, Mtto y Servicios, …): se unifica la escritura («mtto y Servicios» -> «Mtto y Servicios»)
     ar = a['Área'].fillna('').astype(str).str.strip().replace({'nan': 'Sin área', '': 'Sin área'}) if 'Área' in a.columns else pd.Series('Sin área', index=a.index)
     canon = {}

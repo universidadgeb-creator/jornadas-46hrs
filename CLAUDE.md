@@ -48,7 +48,12 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 - **Etapas 2027–2030**: con los horarios actuales se cuenta a quién queda arriba de cada límite (46/44/42/40). «Nuevas» son las personas que no estaban arriba del límite de la etapa anterior.
 - **Plazas equivalentes** = horas a reacomodar ÷ 46. Es una referencia de capacidad, no una propuesta de contratación.
 
-## Cifras actuales (corte 10 nov 2026, 2.º Excel del día: «jornadas pendientes»)
+## Cifras actuales (corte 10 nov 2026, 3.er Excel del día)
+
+- 63 personas con 48 hrs (22 diurnas, 41 mixtas) y 36 entre 46 y 48: **99 pasan de 46 hrs**. Horas a reacomodar a 46: ~167.5/semana. Etapas: 2027 → 99 · 2028 → 136 · 2029 → 138 · 2030 → 151.
+- Cambios: **Medina Hernandez Cesar Abraham** pasó de Barista en Onara (48 diurna) a Técnico de Orden y Limpieza en Naciones, noche L–V 22:00–06:00 (40 nocturna). En el Excel la «Ubicación» sigue como Nuevos Negocios: `CAMBIO_UBICACION` en `build_csv.py` lo pone en Naciones hasta que Patty lo corrija. En el Seguimiento quedó `fuera`. Ojo: 8 h nocturnas al día pasan del máximo diario de la nocturna (7 h); el Excel lo marca «Excede máx. diario». **Villarreal Damy Patricio** ya está en el Excel con L–V 9–18 (40 h): se marcó `aplicado_excel`; su adendum sigue pendiente de firma.
+
+## Corte del 10 nov 2026, 2.º Excel del día («jornadas pendientes»)
 
 - 65 personas con 48 hrs (24 diurnas, 41 mixtas) y 36 entre 46 y 48: **101 pasan de 46 hrs**. Horas a reacomodar a 46: ~171.5/semana; con la propuesta (mixtas a 45): ~238.5. Etapas: 2027 → 101 · 2028 → 138 · 2029 → 140 · 2030 → 153. Activos 314, 313 con horario.
 - Cambios contra el Excel anterior: Arechiga Alvarez Carlos Alberto (Coach Deportivo, Gourmetería) ya tiene horario: 40 h mixta, no entra. Pérez Suárez Dafne bajó de 48 a 40 en el Excel (ya firmó su adendum): sigue en el Seguimiento, marcada con `aplicado_excel` (fecha) y `excel_horas` (40), que la página muestra como «Ya aplicado en el Excel». Ojo: su horario validado descansa el viernes y el Excel dice jueves.
