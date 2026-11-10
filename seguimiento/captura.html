@@ -77,6 +77,7 @@
         <li>Pendiente con el abogado: si al llegar a 40 hrs la mixta bajará a 37 y la nocturna a 35.</li>
         <li>«Nuevas hrs» las calcula la página: suma de la entrada a la salida de cada día y descuenta la comida igual que en el horario actual de la persona. Se marca en naranja si sigue arriba de la meta.</li>
         <li>El nuevo horario se captura con «Editar», día por día. No hace falta escribirlo ni sumar las horas a mano. Al guardarlo queda «Validado» con la fecha; las propuestas precargadas que nadie ha guardado dicen «Propuesta sin validar».</li>
+        <li>«Ya aplicado en el Excel»: el horario de la persona ya se actualizó en la base de Capital Humano y quedó dentro de la meta. Sigue contando en el avance.</li>
         <li>Control: al recibir el adendum firmado, marca «Recibido firmado»; queda la fecha y quién lo capturó, y el contrato se marca como realizado. Si después cambia el nuevo horario, la página avisa que falta un adendum nuevo.</li>
         <li>Adendum: patrón GIMNASIOS AMERICANOS SAPI DE CV. El antecedente I usa la jornada de contrato del Excel y el horario actual; la cláusula PRIMERA, las horas y el horario nuevos (46 diurna, 45 mixta).</li>
       </ul>
@@ -549,6 +550,7 @@
       cn.appendChild(el('span', 'nh-txt' + ((r.nuevo_horario || '').trim() ? '' : ' vacio'), (r.nuevo_horario || '').trim() || 'Sin capturar'));
       if (!legible) cn.appendChild(el('span', 'flag', 'No se puede leer: ábrelo y corrígelo'));
       else if (r.horario_validado) cn.appendChild(el('span', 'okflag', `Validado el ${fechaTxt(r.horario_validado)}${r.horario_origen ? ' · desde ' + r.horario_origen : ''}`));
+      if (r.aplicado_excel) cn.appendChild(el('span', 'okflag', `Ya aplicado en el Excel (${fmt(r.excel_horas)} hrs) el ${fechaTxt(r.aplicado_excel)}`));
       else if ((r.nuevo_horario || '').trim()) cn.appendChild(el('span', 'adn-pend', 'Propuesta sin validar'));
       if (canWrite) {
         const bt = el('button', 'btn btn-sm', editing === r.id ? 'Editando…' : ((r.nuevo_horario || '').trim() ? 'Editar' : 'Capturar'));

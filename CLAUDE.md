@@ -48,7 +48,13 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 - **Etapas 2027–2030**: con los horarios actuales se cuenta a quién queda arriba de cada límite (46/44/42/40). «Nuevas» son las personas que no estaban arriba del límite de la etapa anterior.
 - **Plazas equivalentes** = horas a reacomodar ÷ 46. Es una referencia de capacidad, no una propuesta de contratación.
 
-## Cifras actuales (corte 10 nov 2026, hoja «Base Original», sin instructores ni tutoriales)
+## Cifras actuales (corte 10 nov 2026, 2.º Excel del día: «jornadas pendientes»)
+
+- 65 personas con 48 hrs (24 diurnas, 41 mixtas) y 36 entre 46 y 48: **101 pasan de 46 hrs**. Horas a reacomodar a 46: ~171.5/semana; con la propuesta (mixtas a 45): ~238.5. Etapas: 2027 → 101 · 2028 → 138 · 2029 → 140 · 2030 → 153. Activos 314, 313 con horario.
+- Cambios contra el Excel anterior: Arechiga Alvarez Carlos Alberto (Coach Deportivo, Gourmetería) ya tiene horario: 40 h mixta, no entra. Pérez Suárez Dafne bajó de 48 a 40 en el Excel (ya firmó su adendum): sigue en el Seguimiento, marcada con `aplicado_excel` (fecha) y `excel_horas` (40), que la página muestra como «Ya aplicado en el Excel». Ojo: su horario validado descansa el viernes y el Excel dice jueves.
+- **Regla nueva:** quien ya firmó y cuyo horario nuevo ya quedó en el Excel **no se marca como `fuera`** (seguiría contando en el avance); se marca con `aplicado_excel`.
+
+## Corte previo del 10 nov 2026 (hoja «Base Original», sin instructores ni tutoriales)
 
 - 66 personas con 48 hrs (25 diurnas, 41 mixtas) y 36 entre 46 y 48: **102 pasan de 46 hrs** (en Seguimiento). Horas a reacomodar a 46: ~173.5/semana; con la propuesta (mixtas a 45): ~240.5. Etapas: 2027 → 102 · 2028 → 139 · 2029 → 141 · 2030 → 154.
 - Cambios 9→10 nov: entran a seguimiento Viloria Uribe (Lavaloza, ahora con horario: 48 mixta), Macías Cervantes (Auxiliar General, 48) y Chávez Rivera (Mesero, 48), los tres de Nuevos Negocios; sale Cuevas Ramírez (ya no está en la base). Escalante Núñez pasó a mixta (propuesta recalculada a 45). Nueva ubicación «Onara VR» (2 baristas, 46 h: no entran). Macías y Chávez no traen jornada de contrato.
