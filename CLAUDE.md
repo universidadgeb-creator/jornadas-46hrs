@@ -10,7 +10,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 
 | Pieza | Qué es | Dónde |
 |---|---|---|
-| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Seguimiento, Mapa por sucursal y Próximas etapas (desde el 9 nov 2026; se quitaron «Personas» y «Jornadas por rol» porque repetían lo de Seguimiento y Mapa) (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
+| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Seguimiento, Mapa por sucursal, Planeación Gourmetería (10 nov) y Próximas etapas (desde el 9 nov 2026; se quitaron «Personas» y «Jornadas por rol» porque repetían lo de Seguimiento y Mapa) (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
 | Tablero anterior (respaldo, ya no se usa) | Dashboard de análisis (artifact de tipo Dashboard en claude.ai) | https://claude.ai/artifact/Rcd92fe4fQ8SdhX3g5cSo1 · su código, `dashboard/index.html`, sigue siendo la fuente de las pestañas de análisis |
 | Versión para proyectar | El mismo tablero en un HTML autónomo y sin internet, con d3 y los datos incrustados | `dashboard/Jornada_46hrs_2027_proyectar.html` |
 | Captura de seguimiento | La pestaña «Seguimiento» de la página única (desde el 9 nov 2026, **todas las personas que pasan de 46 hrs**: 100) | `seguimiento/captura.html` + `seguimiento/captura_estilos.css` |
@@ -96,6 +96,16 @@ Detalles técnicos:
 - El script del Seguimiento publica `window.SEG = {rows, fuera, diasDe, horasDe}` y el evento `seg:datos`; el mapa lo escucha.
 
 - **Avance de captura por sucursal (9 nov 2026):** tabla arriba del Mapa con todas las sucursales (personas en seguimiento) y cuatro pasos con barra: horario validado, líder, adendum descargado y recibido firmado, más una fila Total. «Ver captura» abre el Seguimiento filtrado en esa sucursal (`SEG.verSucursal`).
+
+## Planeación Gourmetería 2027 (10 nov 2026)
+
+- Pestaña «Planeación Gourmetería» (`seguimiento/plan.html` + `plan_estilos.css`). Nuevo horario del club en 2027: **sábado 7:00–17:00** (antes 7–16) y **domingo 8:30–15:00** (antes 9–15); lunes a viernes sin cambio.
+- Base de cada persona: su horario 2027 del Seguimiento (validado o propuesta) o, si no está en seguimiento, su horario actual.
+- **Coaches** (puestos que empiezan con «Coach»: Deportivo, Estiramiento, Mobility; no Líder Deportivo; decisión de Patty): dos descansos con el **mismo turno diario** (sus horas por semana bajan): uno entre semana que **rota** (la página sugiere uno repartido por turno mañana/tarde, en orden lunes→viernes) y su día de fin de semana **igual que hoy**. Quien ya tiene un descanso entre semana no cambia.
+- **Cobertura del fin de semana:** la decide **Operaciones**. La página no la impone: muestra por área (del Excel, columna `area` en `plantilla_jornadas.csv`) cuántas personas hay en el horario de apertura y qué medias horas quedan sin nadie. Corte 10 nov: Deportes y Mtto/Comercial sin nadie el sábado 15:00 (o 14:30)–17:00; Administración nadie el sábado; Comercial nadie el domingo; Ludoteca con huecos.
+- Operaciones puede **ajustar** el horario planeado de cualquiera (editor día por día con total de horas y aviso si pasa de 46/45). Se guarda en la colección `plan_gourmeteria` (id = slug del nombre: {nombre, dias, editado, editado_por}); «Volver a la propuesta» borra el ajuste. Esto **no cambia el Seguimiento** ni el adendum.
+- «Descargar planeación (.xlsx)»: hoja «Plan 2027» (por área, horario 2027 y hoy, horas, notas) y hoja «Cobertura fin de semana».
+- **Próximas etapas** tiene filtros **Cadena** (división: VIVO 47, EASY FIT, Nuevos Negocios…) y **Club** (sucursal); aplican a los conteos por año, la gráfica de puestos y la tabla.
 
 ## Seguimiento (colección `personas`)
 

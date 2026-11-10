@@ -1,0 +1,33 @@
+/* Pestaña «Planeación Gourmetería» */
+.pl-club { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--cds-gap-sm); }
+.pl-club div { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .1rem; }
+.pl-club div.is-a { border-color: var(--gx-accent); }
+.pl-club .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pl-club b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+.pl-club .h { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pl-cob { min-width: 34rem; }
+.pl-cob td.pl-cob-c b { display: block; font-weight: 600; }
+.pl-cob td.pl-cob-c .h { display: block; font-size: var(--cds-font-size-caption); }
+.pl-cob td.ok .h { color: var(--gx-accent); }
+.pl-cob td.hueco .h { color: var(--color-warn); font-weight: 600; }
+.pl-coach { min-width: 30rem; }
+.pl-coach td .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
+.pl-tabla td .pl-sub { display: block; font-size: .72rem; color: var(--color-fg-muted); }
+.pl-tabla td .okflag, .pl-tabla td .flag { display: block; font-size: .7rem; margin-top: 2px; }
+.pl-tabla td .okflag { color: var(--gx-accent); }
+.pl-tabla td .flag { color: var(--color-warn); }
+.pl-tabla td.pl-acc { white-space: nowrap; }
+.pl-tabla td.pl-acc .gx-btn { display: block; margin-bottom: 4px; font-size: .72rem; padding: .2rem .5rem; }
+.pl-tabla tr.pl-editor td { background: var(--color-bg); padding: 12px 14px; }
+.pl-ed-dias { display: grid; grid-template-columns: repeat(7, minmax(7rem, 1fr)); gap: 8px; margin: 8px 0; }
+@media (max-width: 1000px) { .pl-ed-dias { grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); } }
+.pl-editor .ed-dia { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+.pl-editor .ed-dia.off { background: transparent; border-style: dashed; }
+.pl-editor .ed-d { font-weight: 600; font-size: 13px; }
+.pl-editor .ed-t { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--color-fg-muted); }
+.pl-editor .ed-t input { font: inherit; font-size: 13px; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 6px; padding: 4px 6px; width: 100%; box-sizing: border-box; }
+.pl-editor .ed-t input:disabled { opacity: .4; }
+.pl-editor .ed-desc { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.pl-ed-pie { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.pl-ed-pie .pl-ed-tot { font-weight: 600; margin-right: auto; }
+.pl-ed-pie .flag { color: var(--color-warn); font-size: 12px; }

@@ -57,6 +57,7 @@
 .gx-seg button[aria-pressed=true] { background: var(--gx-accent); color: var(--color-bg); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .gx { --gx-accent: #3cc7c4; --gx-accent-soft: color-mix(in srgb, #3cc7c4 22%, transparent); --gx-accent-mid: color-mix(in srgb, #3cc7c4 55%, transparent); } }
 :root[data-theme="dark"] .gx { --gx-accent: #3cc7c4; --gx-accent-soft: color-mix(in srgb, #3cc7c4 22%, transparent); --gx-accent-mid: color-mix(in srgb, #3cc7c4 55%, transparent); }
+.gx-etapa-filtros { margin-bottom: var(--cds-gap-sm); }
 .gx-rol-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: end; }
 .gx-rol-tools label { display: flex; flex-direction: column; gap: .25rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); flex: 1 1 14rem; min-width: 0; }
 .gx-select { font: inherit; font-size: var(--cds-font-size-body); padding: .4rem .6rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); width: 100%; }
@@ -311,6 +312,10 @@
   <article class="gx-card" id="calendario-2030">
     <h2>Quién debe cambiar de jornada en cada etapa (2027–2030)</h2>
     <p class="note">Con los horarios de hoy, las personas que quedan arriba del máximo semanal de cada año. Elige un año para ver a las personas y los puestos que tendrán que ajustar su jornada en esa etapa. «Nuevas» son las que no tenían que cambiar en la etapa anterior.</p>
+    <div class="gx-rol-tools gx-etapa-filtros">
+      <label for="gx-e-cad">Cadena<select class="gx-select" id="gx-e-cad" data-draw="etapa-cad" data-source="etapas_personas"></select></label>
+      <label for="gx-e-suc">Club<select class="gx-select" id="gx-e-suc" data-draw="etapa-suc" data-source="etapas_personas"></select></label>
+    </div>
     <div class="gx-years" role="group" aria-label="Año de la reforma">
       <button type="button" class="gx-year" data-anio="2027" aria-pressed="false"><span class="y">2027 · límite 46 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2027">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2027">—</span> nuevas en esta etapa</span></button>
       <button type="button" class="gx-year" data-anio="2028" aria-pressed="true"><span class="y">2028 · límite 44 hrs</span><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2028">—</span><span class="s"><span data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2028">—</span> nuevas en esta etapa</span></button>
@@ -724,7 +729,7 @@ document.querySelectorAll('.gx-sem th button[data-rsort]').forEach((b) => b.addE
   dash.draw('rol-tabla');
 }));
 
-window.GXE = { anio: 2028, solo: '', q: '' };
+window.GXE = { anio: 2028, solo: '', q: '', cad: '', suc: '' };
 const LIMITES = { 2027: 46, 2028: 44, 2029: 42, 2030: 40 };
 dash.calc('etapas_personas', {
   title: 'Personas por encima del límite 2027–2030',
@@ -732,7 +737,7 @@ dash.calc('etapas_personas', {
   inputs: ['plantilla'],
   fn: (plantilla) => plantilla
     .filter((r) => r.captura === 'Capturado' && Number(r.horas_reales) > 40)
-    .map((r) => { const h = Number(r.horas_reales); return { nombre: r.nombre, puesto: r.puesto == null || r.puesto === '' ? 'Sin puesto' : r.puesto, ubicacion: r.ubicacion, horas_reales: h, desde: h > 46 ? 2027 : h > 44 ? 2028 : h > 42 ? 2029 : 2030 }; })
+    .map((r) => { const h = Number(r.horas_reales); return { nombre: r.nombre, puesto: r.puesto == null || r.puesto === '' ? 'Sin puesto' : r.puesto, ubicacion: r.ubicacion, division: r.division, horas_reales: h, desde: h > 46 ? 2027 : h > 44 ? 2028 : h > 42 ? 2029 : 2030 }; })
 });
 dash.calc('etapas', {
   title: 'Personas sobre el límite por año',
@@ -743,29 +748,44 @@ dash.calc('etapas', {
     return [[2027, 46, Infinity], [2028, 44, 46], [2029, 42, 44], [2030, 40, 42]].map(([anio, lim, prev]) => ({ anio, limite: lim, personas: h.filter((x) => x > lim).length, nuevos: h.filter((x) => x > lim && x <= prev).length }));
   }
 });
+// Filtro por cadena (división) y club (sucursal)
+const enFiltroEtapa = (r) => (!GXE.cad || r.division === GXE.cad) && (!GXE.suc || r.ubicacion === GXE.suc);
+function etapaBase() { const p = dash.data('etapas_personas'); return p.status === 'ok' ? p.data.filter(enFiltroEtapa) : null; }
+dash.draw('etapa-cad', (sel) => {
+  const p = dash.data('etapas_personas'); const l = p.status === 'ok' ? [...new Set(p.data.map((r) => r.division).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), 'es')) : [];
+  sel.replaceChildren(new Option('Todas las cadenas', ''), ...l.map((c) => new Option(c, c)));
+  if (GXE.cad && !l.includes(GXE.cad)) GXE.cad = '';
+  sel.value = GXE.cad;
+  sel.onchange = () => { GXE.cad = sel.value; GXE.suc = ''; redrawEtapa(); };
+});
+dash.draw('etapa-suc', (sel) => {
+  const p = dash.data('etapas_personas'); const l = p.status === 'ok' ? [...new Set(p.data.filter((r) => !GXE.cad || r.division === GXE.cad).map((r) => r.ubicacion).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), 'es')) : [];
+  sel.replaceChildren(new Option(GXE.cad ? 'Todos los clubes de la cadena' : 'Todos los clubes', ''), ...l.map((c) => new Option(c, c)));
+  if (GXE.suc && !l.includes(GXE.suc)) GXE.suc = '';
+  sel.value = GXE.suc;
+  sel.onchange = () => { GXE.suc = sel.value; redrawEtapa(); };
+});
 dash.draw('etapa-n', (el) => {
-  const e = dash.data('etapas');
-  const row = e.status === 'ok' ? e.data.find((r) => String(r.anio) === el.dataset.where.split('=')[1]) : null;
-  el.textContent = row ? fmtN(row.personas) : '—';
+  const b = etapaBase(); const lim = LIMITES[Number(el.dataset.where.split('=')[1])];
+  el.textContent = b ? fmtN(b.filter((r) => r.horas_reales > lim).length) : '—';
 });
 dash.draw('etapa-nuevos', (el) => {
-  const e = dash.data('etapas');
-  const row = e.status === 'ok' ? e.data.find((r) => String(r.anio) === el.dataset.where.split('=')[1]) : null;
-  el.textContent = row ? fmtN(row.nuevos) : '—';
+  const b = etapaBase(); const anio = Number(el.dataset.where.split('=')[1]);
+  el.textContent = b ? fmtN(b.filter((r) => r.desde === anio).length) : '—';
 });
 function etapaFilas() {
-  const p = dash.data('etapas_personas');
-  if (p.status !== 'ok') return null;
+  const base = etapaBase();
+  if (!base) return null;
   const lim = LIMITES[GXE.anio], q = GXE.q.trim().toLowerCase();
-  return p.data.filter((r) => r.horas_reales > lim && (!GXE.solo || r.desde === GXE.anio) && (!q || `${r.nombre} ${r.puesto} ${r.ubicacion}`.toLowerCase().includes(q)))
+  return base.filter((r) => r.horas_reales > lim && (!GXE.solo || r.desde === GXE.anio) && (!q || `${r.nombre} ${r.puesto} ${r.ubicacion}`.toLowerCase().includes(q)))
     .sort((a, b) => b.horas_reales - a.horas_reales || String(a.nombre).localeCompare(String(b.nombre)));
 }
 dash.draw('etapa-puestos', (el) => {
-  const p = dash.data('etapas_personas');
-  if (p.status !== 'ok') { el.replaceChildren(); return; }
+  const base = etapaBase();
+  if (!base) { el.replaceChildren(); return; }
   const lim = LIMITES[GXE.anio];
   const m = new Map();
-  p.data.filter((r) => r.horas_reales > lim).forEach((r) => {
+  base.filter((r) => r.horas_reales > lim).forEach((r) => {
     const d = m.get(r.puesto) || { puesto: r.puesto, afectados: 0, entre: 0, total: 0 };
     if (r.desde === GXE.anio) d.afectados += 1; else d.entre += 1;
     d.total = d.afectados + d.entre; m.set(r.puesto, d);
@@ -788,7 +808,7 @@ dash.draw('etapa-tabla', (tb) => {
   });
 });
 dash.draw('etapa-conteo', (el) => { const rows = etapaFilas(); el.textContent = rows ? fmtN(rows.length) : '—'; });
-function redrawEtapa() { ['etapa-puestos', 'etapa-tabla', 'etapa-conteo'].forEach((n) => dash.draw(n)); }
+function redrawEtapa() { ['etapa-cad', 'etapa-suc', 'etapa-n', 'etapa-nuevos', 'etapa-puestos', 'etapa-tabla', 'etapa-conteo'].forEach((n) => dash.draw(n)); }
 document.querySelectorAll('.gx-year[data-anio]').forEach((b) => b.addEventListener('click', () => {
   GXE.anio = Number(b.dataset.anio);
   document.querySelectorAll('.gx-year[data-anio]').forEach((n) => n.setAttribute('aria-pressed', String(Number(n.dataset.anio) === GXE.anio)));

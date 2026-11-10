@@ -133,6 +133,7 @@ def main():
         '    <button type="button" role="tab" data-tab="t-resumen" aria-selected="true">Resumen</button>\n'
         '    <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>\n'
         '    <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>\n'
+        '    <button type="button" role="tab" data-tab="t-plan" aria-selected="false">Planeación Gourmetería</button>\n'
         '    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>\n') + tab[fin:]
     ini = tab.index('  <section class="gx-tab" id="t-personas" hidden>')
     fin = tab.index('  <section class="gx-tab" id="t-etapas" hidden>')
@@ -159,11 +160,13 @@ def main():
     seccion, script_seg = captura.split('\n\n<script>', 1)
     mapa = (RAIZ / 'seguimiento' / 'mapa.html').read_text(encoding='utf-8')
     seccion_mapa, script_mapa = mapa.split('\n\n<script>', 1)
+    plan = (RAIZ / 'seguimiento' / 'plan.html').read_text(encoding='utf-8')
+    seccion_plan, script_plan = plan.split('\n\n<script>', 1)
     tab = reemplazar(tab, '  <details class="gx-card gx-details" id="criterios">',
-                     '  ' + seccion.strip() + '\n\n  ' + seccion_mapa.strip() + '\n\n  <details class="gx-card gx-details" id="criterios">')
+                     '  ' + seccion.strip() + '\n\n  ' + seccion_mapa.strip() + '\n\n  ' + seccion_plan.strip() + '\n\n  <details class="gx-card gx-details" id="criterios">')
     tab = tab.rstrip() + "\n<script>\ndocument.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('click', () => { abrirTab(b.dataset.tabGo); window.scrollTo({ top: 0 }); }));\n</script>\n"
 
-    estilos_seg = (RAIZ / 'seguimiento' / 'captura_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'mapa_estilos.css').read_text(encoding='utf-8')
+    estilos_seg = (RAIZ / 'seguimiento' / 'captura_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'mapa_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'plan_estilos.css').read_text(encoding='utf-8')
     pagina = '\n'.join([
         '<title>Jornada 46 hrs 2027</title>',
         '<meta name="claude:viewport-fit-sides" content="cover">',
@@ -180,6 +183,7 @@ def main():
         tab,
         '<script>' + script_seg,
         '<script>' + script_mapa,
+        '<script>' + script_plan,
         '</div>',
         '',
     ])

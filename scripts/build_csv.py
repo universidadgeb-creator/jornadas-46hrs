@@ -54,6 +54,14 @@ def main(xlsx, out):
     p['puesto'] = a['Puesto'].fillna('Sin puesto').astype(str).str.strip().replace({'R.P': 'R.P.'})
     p['division'] = a['División'].astype(str).str.strip().replace({'Vivo 47': 'VIVO 47', 'Ofna de Soporte': 'Oficina de Soporte'})
     p['ubicacion'] = a['Ubicación'].astype(str).str.strip().replace({'La estancia': 'La Estancia', 'Estancia': 'La Estancia', 'estancia': 'La Estancia'})
+    # Área (Deportes, Mtto y Servicios, …): se unifica la escritura («mtto y Servicios» -> «Mtto y Servicios»)
+    ar = a['Área'].fillna('').astype(str).str.strip().replace({'nan': 'Sin área', '': 'Sin área'}) if 'Área' in a.columns else pd.Series('Sin área', index=a.index)
+    canon = {}
+    for t in ar:
+        canon.setdefault(t.lower(), {}).setdefault(t, 0)
+        canon[t.lower()][t] += 1
+    canon = {k: max(v, key=v.get) for k, v in canon.items()}
+    p['area'] = [canon[t.lower()][:1].upper() + canon[t.lower()][1:] for t in ar]
     p['tipo_jornada'] = a['TIPO DE JORNADA (LFT)'].replace({'Sin horario capturado': 'Sin captura'})
     p['horas_reales'] = pd.to_numeric(a['Total jornada reconocida'], errors='coerce').fillna(0).round(2)
     p['horas_contrato'] = pd.to_numeric(a['Jornada laboral'], errors='coerce')
