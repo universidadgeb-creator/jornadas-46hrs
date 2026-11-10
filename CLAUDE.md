@@ -10,7 +10,7 @@ La reforma a la LFT (DOF 3 mar 2026) baja la jornada máxima semanal de 48 hrs a
 
 | Pieza | Qué es | Dónde |
 |---|---|---|
-| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Seguimiento, Mapa por sucursal, Planeación Gourmetería (10 nov) y Próximas etapas (desde el 9 nov 2026; se quitaron «Personas» y «Jornadas por rol» porque repetían lo de Seguimiento y Mapa) (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
+| **Página única «Jornada 46 hrs 2027»** (desde 8 nov 2026) | Tablero + seguimiento en un solo link: pestañas Resumen, Seguimiento, Mapa por sucursal, Planeación Gourmetería 2027, Planeación Valle Real 2028 (10 nov) y Próximas etapas (desde el 9 nov 2026; se quitaron «Personas» y «Jornadas por rol» porque repetían lo de Seguimiento y Mapa) (captura con base de datos compartida). Es la que se comparte. | https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k · se genera con `scripts/build_unificado.py` en `seguimiento/nuevas_jornadas.html` |
 | Tablero anterior (respaldo, ya no se usa) | Dashboard de análisis (artifact de tipo Dashboard en claude.ai) | https://claude.ai/artifact/Rcd92fe4fQ8SdhX3g5cSo1 · su código, `dashboard/index.html`, sigue siendo la fuente de las pestañas de análisis |
 | Versión para proyectar | El mismo tablero en un HTML autónomo y sin internet, con d3 y los datos incrustados | `dashboard/Jornada_46hrs_2027_proyectar.html` |
 | Captura de seguimiento | La pestaña «Seguimiento» de la página única (desde el 9 nov 2026, **todas las personas que pasan de 46 hrs**: 100) | `seguimiento/captura.html` + `seguimiento/captura_estilos.css` |
@@ -97,7 +97,12 @@ Detalles técnicos:
 
 - **Avance de captura por sucursal (9 nov 2026):** tabla arriba del Mapa con todas las sucursales (personas en seguimiento) y cuatro pasos con barra: horario validado, líder, adendum descargado y recibido firmado, más una fila Total. «Ver captura» abre el Seguimiento filtrado en esa sucursal (`SEG.verSucursal`).
 
-## Planeación Gourmetería 2027 (10 nov 2026)
+## Planeación por club (10 nov 2026)
+
+- **Una sola plantilla** (`seguimiento/plan.html`, marcas {{P}} prefijo de ids, {{TAB}}, {{TITULO}}, {{SAB}}, {{DOM}}, {{SAB_ANTES}}, {{DOM_ANTES}}, {{CONFIG}}); `build_unificado.py` la llena una vez por club con la lista `PLANES`. Para otro club: agregar una entrada a `PLANES` (prefijo, pestaña, club, título, colección de ajustes, horario del club).
+- Pestañas actuales: **Planeación Gourmetería 2027** (`t-plan`, ajustes en `plan_gourmeteria`) y **Planeación Valle Real 2028** (`t-planvr`, ajustes en `plan_valle_real`). Valle Real: sábado 7:00–17:00, domingo **8:30**–15:00 (antes 9:00–15:00), lunes a viernes sin cambio; 54 personas, 21 coaches. **Metas de 2027 (46/45) en las dos**: Patty dijo que «el enfoque solo es 2027», aunque el cambio de horario de Valle Real sea en 2028.
+
+### Planeación Gourmetería 2027
 
 - Pestaña «Planeación Gourmetería» (`seguimiento/plan.html` + `plan_estilos.css`). Nuevo horario del club en 2027: **sábado 7:00–17:00** (antes 7–16) y **domingo 8:30–15:00** (antes 9–15); lunes a viernes sin cambio.
 - Base de cada persona: su horario 2027 del Seguimiento (validado o propuesta) o, si no está en seguimiento, su horario actual.

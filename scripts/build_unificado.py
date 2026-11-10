@@ -81,6 +81,20 @@ RESUMEN_AVANCE = """  <article class="gx-card" id="avance-contratos">
 """
 
 
+# Planeación de jornadas por club (misma plantilla seguimiento/plan.html). Metas de 2027 (46 diurna, 45 mixta):
+# Patty pidió que el enfoque sea solo 2027, aunque Valle Real cambia su horario de club en 2028.
+PLANES = [
+    {'prefijo': 'pl', 'tab': 't-plan', 'club': 'Gourmeteria', 'pestana': 'Planeación Gourmetería 2027',
+     'titulo': 'Planeación Gourmetería 2027', 'coleccion': 'plan_gourmeteria', 'archivo': 'Planeacion Gourmeteria 2027',
+     'apertura': {'sab': ['07:00', '17:00'], 'dom': ['08:30', '15:00']}, 'sab': '7:00–17:00', 'dom': '8:30–15:00',
+     'sab_antes': '7:00–16:00', 'dom_antes': '9:00–15:00'},
+    {'prefijo': 'plv', 'tab': 't-planvr', 'club': 'Valle Real', 'pestana': 'Planeación Valle Real 2028',
+     'titulo': 'Planeación Valle Real 2028', 'coleccion': 'plan_valle_real', 'archivo': 'Planeacion Valle Real 2028',
+     'apertura': {'sab': ['07:00', '17:00'], 'dom': ['08:30', '15:00']}, 'sab': '7:00–17:00', 'dom': '8:30–15:00',
+     'sab_antes': '', 'dom_antes': '9:00–15:00'},
+]
+
+
 def parrafos_adendum():
     """Texto de la plantilla del adendum, párrafo por párrafo, con negritas y alineación."""
     import html, zipfile
@@ -133,7 +147,7 @@ def main():
         '    <button type="button" role="tab" data-tab="t-resumen" aria-selected="true">Resumen</button>\n'
         '    <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>\n'
         '    <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>\n'
-        '    <button type="button" role="tab" data-tab="t-plan" aria-selected="false">Planeación Gourmetería</button>\n'
+        + ''.join(f'    <button type="button" role="tab" data-tab="{c["tab"]}" aria-selected="false">{c["pestana"]}</button>\n' for c in PLANES) +
         '    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>\n') + tab[fin:]
     ini = tab.index('  <section class="gx-tab" id="t-personas" hidden>')
     fin = tab.index('  <section class="gx-tab" id="t-etapas" hidden>')
@@ -161,9 +175,20 @@ def main():
     mapa = (RAIZ / 'seguimiento' / 'mapa.html').read_text(encoding='utf-8')
     seccion_mapa, script_mapa = mapa.split('\n\n<script>', 1)
     plan = (RAIZ / 'seguimiento' / 'plan.html').read_text(encoding='utf-8')
-    seccion_plan, script_plan = plan.split('\n\n<script>', 1)
+    secciones_plan, scripts_plan = [], []
+    for c in PLANES:
+        antes = lambda t: f'<span class="h">antes {t}</span>' if t else ''
+        cfg = {'club': c['club'], 'titulo': c['titulo'], 'coleccion': c['coleccion'], 'archivo': c['archivo'],
+               'apertura': c['apertura'], 'texto': {'sab': c['sab'], 'dom': c['dom']}}
+        t = (plan.replace('{{P}}', c['prefijo']).replace('{{TAB}}', c['tab']).replace('{{TITULO}}', c['titulo'])
+             .replace('{{SAB}}', c['sab']).replace('{{DOM}}', c['dom'])
+             .replace('{{SAB_ANTES}}', antes(c.get('sab_antes'))).replace('{{DOM_ANTES}}', antes(c.get('dom_antes')))
+             .replace('{{CONFIG}}', json.dumps(cfg, ensure_ascii=False)))
+        assert '{{' not in t, 'Quedó una marca sin llenar en la planeación'
+        sec, scr = t.split('\n\n<script>', 1)
+        secciones_plan.append(sec.strip()); scripts_plan.append('<script>' + scr)
     tab = reemplazar(tab, '  <details class="gx-card gx-details" id="criterios">',
-                     '  ' + seccion.strip() + '\n\n  ' + seccion_mapa.strip() + '\n\n  ' + seccion_plan.strip() + '\n\n  <details class="gx-card gx-details" id="criterios">')
+                     '  ' + seccion.strip() + '\n\n  ' + seccion_mapa.strip() + '\n\n  ' + '\n\n  '.join(secciones_plan) + '\n\n  <details class="gx-card gx-details" id="criterios">')
     tab = tab.rstrip() + "\n<script>\ndocument.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('click', () => { abrirTab(b.dataset.tabGo); window.scrollTo({ top: 0 }); }));\n</script>\n"
 
     estilos_seg = (RAIZ / 'seguimiento' / 'captura_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'mapa_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'plan_estilos.css').read_text(encoding='utf-8')
@@ -183,7 +208,7 @@ def main():
         tab,
         '<script>' + script_seg,
         '<script>' + script_mapa,
-        '<script>' + script_plan,
+        *scripts_plan,
         '</div>',
         '',
     ])

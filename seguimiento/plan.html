@@ -1,25 +1,25 @@
-<section class="gx-tab" id="t-plan" hidden>
+<section class="gx-tab" id="{{TAB}}" hidden>
   <article class="gx-card pl">
-    <h2>Planeación Gourmetería 2027</h2>
+    <h2>{{TITULO}}</h2>
     <p class="note">Propuesta de jornadas para todo el club con el nuevo horario de fin de semana. Parte del horario 2027 de cada persona (lo validado o propuesto en el Seguimiento; el horario actual para quien no está en seguimiento). Los coaches (Deportivo, Estiramiento y Mobility) pasan a dos descansos con su mismo turno diario: uno entre semana que rota (aquí se sugiere uno para repartir la carga) y su día de fin de semana de siempre. Qué áreas cubren cada hora del fin de semana lo decide Operaciones: esta vista marca los huecos y permite ajustar cada horario.</p>
     <div class="pl-club" aria-label="Horario del club en 2027">
       <div><span class="lbl">Lunes a viernes</span><b>Sin cambio</b></div>
-      <div class="is-a"><span class="lbl">Sábado</span><b>7:00–17:00</b><span class="h">antes 7:00–16:00</span></div>
-      <div class="is-a"><span class="lbl">Domingo</span><b>8:30–15:00</b><span class="h">antes 9:00–15:00</span></div>
+      <div class="is-a"><span class="lbl">Sábado</span><b>{{SAB}}</b>{{SAB_ANTES}}</div>
+      <div class="is-a"><span class="lbl">Domingo</span><b>{{DOM}}</b>{{DOM_ANTES}}</div>
     </div>
     <div class="mp-stats">
-      <div><span class="lbl">Personas en el club</span><span class="val" id="pl-n">—</span></div>
-      <div><span class="lbl">Horas por semana, hoy</span><span class="val" id="pl-hh">—</span></div>
-      <div class="is-a"><span class="lbl">Horas por semana, plan 2027</span><span class="val" id="pl-hp">—</span></div>
-      <div><span class="lbl">Coaches con dos descansos</span><span class="val" id="pl-co">—</span></div>
+      <div><span class="lbl">Personas en el club</span><span class="val" id="{{P}}-n">—</span></div>
+      <div><span class="lbl">Horas por semana, hoy</span><span class="val" id="{{P}}-hh">—</span></div>
+      <div class="is-a"><span class="lbl">Horas por semana, plan 2027</span><span class="val" id="{{P}}-hp">—</span></div>
+      <div><span class="lbl">Coaches con dos descansos</span><span class="val" id="{{P}}-co">—</span></div>
     </div>
 
     <h3 class="mp-h3">Cobertura del fin de semana por área</h3>
     <p class="note">Cuántas personas de cada área hay en el club durante el horario de apertura, y qué horas quedan sin nadie.</p>
     <div class="mp-scroll">
       <table class="gx-table pl-cob">
-        <thead><tr><th>Área</th><th>Sábado 7:00–17:00</th><th>Domingo 8:30–15:00</th></tr></thead>
-        <tbody id="pl-cob"></tbody>
+        <thead><tr><th>Área</th><th>Sábado {{SAB}}</th><th>Domingo {{DOM}}</th></tr></thead>
+        <tbody id="{{P}}-cob"></tbody>
       </table>
     </div>
 
@@ -28,30 +28,31 @@
     <div class="mp-scroll">
       <table class="gx-table pl-coach">
         <thead><tr><th>Turno</th><th class="num">Lun</th><th class="num">Mar</th><th class="num">Mié</th><th class="num">Jue</th><th class="num">Vie</th><th class="num">Sáb</th><th class="num">Dom</th></tr></thead>
-        <tbody id="pl-coach"></tbody>
+        <tbody id="{{P}}-coach"></tbody>
       </table>
     </div>
 
     <h3 class="mp-h3">Plantilla planeada</h3>
     <div class="mp-tools">
-      <label for="pl-area">Área<select class="gx-select" id="pl-area"></select></label>
-      <button type="button" class="gx-btn mp-xlsx" id="pl-xlsx">Descargar planeación (.xlsx)</button>
+      <label for="{{P}}-area">Área<select class="gx-select" id="{{P}}-area"></select></label>
+      <button type="button" class="gx-btn mp-xlsx" id="{{P}}-xlsx">Descargar planeación (.xlsx)</button>
     </div>
     <p class="note">Los días sombreados cambian contra hoy. «Ajustado» indica que Operaciones modificó la propuesta; «Volver a la propuesta» la restablece.</p>
     <div class="gx-tablebox mp-plantilla">
       <table class="gx-table gx-sem mp-tabla pl-tabla">
         <thead><tr><th>Nombre</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th><th></th></tr></thead>
-        <tbody id="pl-rows"></tbody>
+        <tbody id="{{P}}-rows"></tbody>
       </table>
     </div>
-    <p class="status" id="pl-status"></p>
+    <p class="status" id="{{P}}-status"></p>
   </article>
 </section>
 
 <script>
 (() => {
-  const CLUB = 'Gourmeteria';
-  const APERTURA = { sab: ['07:00', '17:00'], dom: ['08:30', '15:00'] };
+  const CFG = {{CONFIG}};
+  const CLUB = CFG.club;
+  const APERTURA = CFG.apertura;
   const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'], LV = DIAS.slice(0, 5);
   const DN = { lun: 'Lun', mar: 'Mar', mie: 'Mié', jue: 'Jue', vie: 'Vie', sab: 'Sáb', dom: 'Dom' };
   const DL = { lun: 'lunes', mar: 'martes', mie: 'miércoles', jue: 'jueves', vie: 'viernes', sab: 'sábado', dom: 'domingo' };
@@ -128,22 +129,22 @@
 
   // ── Dibujo ──
   function dibujar() {
-    const sec = $('t-plan'); if (!sec || sec.closest('[hidden]') || sec.hidden) return;
+    const sec = $('{{TAB}}'); if (!sec || sec.closest('[hidden]') || sec.hidden) return;
     const lista = personas();
-    if (!lista) { $('pl-rows').replaceChildren(el('tr', '', '')); $('pl-status').textContent = 'Cargando horarios…'; return; }
-    $('pl-status').textContent = db ? '' : 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
-    $('pl-n').textContent = lista.length;
-    $('pl-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
-    $('pl-hp').textContent = fmt(d3.sum(lista, (p) => p.hPlan));
-    $('pl-co').textContent = lista.filter((p) => p.coach && (p.rota || LV.filter((d) => p.plan[d]).length <= 4)).length + ' de ' + lista.filter((p) => p.coach).length;
+    if (!lista) { $('{{P}}-rows').replaceChildren(el('tr', '', '')); $('{{P}}-status').textContent = 'Cargando horarios…'; return; }
+    $('{{P}}-status').textContent = db ? '' : 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
+    $('{{P}}-n').textContent = lista.length;
+    $('{{P}}-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
+    $('{{P}}-hp').textContent = fmt(d3.sum(lista, (p) => p.hPlan));
+    $('{{P}}-co').textContent = lista.filter((p) => p.coach && (p.rota || LV.filter((d) => p.plan[d]).length <= 4)).length + ' de ' + lista.filter((p) => p.coach).length;
     // Áreas
     const areas = [...new Set(lista.map((p) => p.area))].sort((a, b) => (ORDEN_AREA.indexOf(a) + 1 || 99) - (ORDEN_AREA.indexOf(b) + 1 || 99) || a.localeCompare(b, 'es'));
-    const sel = $('pl-area');
+    const sel = $('{{P}}-area');
     if (S.area && !areas.includes(S.area)) S.area = '';
     sel.replaceChildren(new Option('Todas las áreas', ''), ...areas.map((a) => new Option(`${a} (${lista.filter((p) => p.area === a).length})`, a)));
     sel.value = S.area;
     // Cobertura del fin de semana
-    const cb = $('pl-cob'); cb.replaceChildren();
+    const cb = $('{{P}}-cob'); cb.replaceChildren();
     areas.forEach((a) => {
       const l = lista.filter((p) => p.area === a); const tr = el('tr'); tr.appendChild(el('td', 'mp-av-n', a));
       ['sab', 'dom'].forEach((d) => {
@@ -155,7 +156,7 @@
       cb.appendChild(tr);
     });
     // Coaches entre semana
-    const ct = $('pl-coach'); ct.replaceChildren();
+    const ct = $('{{P}}-coach'); ct.replaceChildren();
     const coaches = lista.filter((p) => p.coach);
     ['Mañana', 'Tarde'].forEach((t) => {
       const l = coaches.filter((p) => p.turno === t); if (!l.length) return;
@@ -170,7 +171,7 @@
   }
 
   function renderTabla(lista, areas) {
-    const tb = $('pl-rows'); tb.replaceChildren();
+    const tb = $('{{P}}-rows'); tb.replaceChildren();
     areas.filter((a) => !S.area || a === S.area).forEach((a) => {
       const l = lista.filter((p) => p.area === a).sort((x, y) => entrada(x, x.plan) - entrada(y, y.plan) || x.puesto.localeCompare(y.puesto, 'es') || x.nombre.localeCompare(y.nombre, 'es'));
       const trh = el('tr', 'mp-grupo'); const th = el('td'); th.colSpan = 10;
@@ -192,11 +193,11 @@
         tr.appendChild(th2);
         const ca = el('td', 'pl-acc');
         if (canWrite && db) {
-          const be = el('button', 'btn-sm gx-btn', S.editando === p.id ? 'Editando…' : 'Editar'); be.type = 'button'; be.id = `pl-ed-${p.id}`; be.disabled = S.editando === p.id;
+          const be = el('button', 'btn-sm gx-btn', S.editando === p.id ? 'Editando…' : 'Editar'); be.type = 'button'; be.id = `{{P}}-ed-${p.id}`; be.disabled = S.editando === p.id;
           be.setAttribute('aria-label', `Ajustar el horario planeado de ${p.nombre}`);
           be.addEventListener('click', () => { S.editando = p.id; dibujar(); });
           ca.appendChild(be);
-          if (p.ajustado) { const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `pl-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br); }
+          if (p.ajustado) { const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `{{P}}-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br); }
         }
         tr.appendChild(ca); tb.appendChild(tr);
         if (S.editando === p.id) tb.appendChild(editor(p));
@@ -211,8 +212,8 @@
     td.appendChild(el('b', '', `Ajustar el horario planeado de ${p.nombre}`));
     const grid = el('div', 'pl-ed-dias'); td.appendChild(grid);
     const pie = el('div', 'pl-ed-pie'); const tot = el('span', 'pl-ed-tot'); const msg = el('span', 'flag');
-    const bG = el('button', 'gx-btn gx-btn-acc', 'Guardar'); bG.type = 'button'; bG.id = `pl-g-${p.id}`;
-    const bC = el('button', 'gx-btn', 'Cancelar'); bC.type = 'button'; bC.id = `pl-c-${p.id}`;
+    const bG = el('button', 'gx-btn gx-btn-acc', 'Guardar'); bG.type = 'button'; bG.id = `{{P}}-g-${p.id}`;
+    const bC = el('button', 'gx-btn', 'Cancelar'); bC.type = 'button'; bC.id = `{{P}}-c-${p.id}`;
     pie.append(tot, msg, bC, bG); td.appendChild(pie);
     const actualizar = () => {
       const dias = Object.fromEntries(DIAS.map((d) => [d, b[d] && b[d].e && b[d].s ? `${b[d].e}–${b[d].s}` : null]));
@@ -224,9 +225,9 @@
     };
     DIAS.forEach((d) => {
       const box = el('div', 'ed-dia');
-      const e = el('input'); e.type = 'time'; e.step = 300; e.id = `pl-${p.id}-${d}-e`; e.setAttribute('aria-label', `Entrada del ${DL[d]}`);
-      const s = el('input'); s.type = 'time'; s.step = 300; s.id = `pl-${p.id}-${d}-s`; s.setAttribute('aria-label', `Salida del ${DL[d]}`);
-      const lab = el('label', 'ed-desc'); const cb = el('input'); cb.type = 'checkbox'; cb.id = `pl-${p.id}-${d}-d`; lab.append(cb, el('span', '', 'Descanso'));
+      const e = el('input'); e.type = 'time'; e.step = 300; e.id = `{{P}}-${p.id}-${d}-e`; e.setAttribute('aria-label', `Entrada del ${DL[d]}`);
+      const s = el('input'); s.type = 'time'; s.step = 300; s.id = `{{P}}-${p.id}-${d}-s`; s.setAttribute('aria-label', `Salida del ${DL[d]}`);
+      const lab = el('label', 'ed-desc'); const cb = el('input'); cb.type = 'checkbox'; cb.id = `{{P}}-${p.id}-${d}-d`; lab.append(cb, el('span', '', 'Descanso'));
       const sync = () => { const x = b[d]; cb.checked = !x; e.disabled = s.disabled = !x; e.value = x ? x.e : ''; s.value = x ? x.s : ''; box.classList.toggle('off', !x); };
       e.addEventListener('input', () => { if (b[d]) { b[d].e = e.value; actualizar(); } });
       s.addEventListener('input', () => { if (b[d]) { b[d].s = s.value; actualizar(); } });
@@ -238,8 +239,8 @@
     bG.addEventListener('click', async () => {
       const dias = Object.fromEntries(DIAS.map((d) => [d, b[d] ? `${b[d].e}–${b[d].s}` : null]));
       const doc = { nombre: p.nombre, dias, editado: hoyISO(), editado_por: uid || null };
-      try { bG.classList.add('saving'); await db.doc('plan_gourmeteria/' + p.id).set(doc); ajustes[p.id] = doc; $('pl-status').textContent = 'Guardado.'; }
-      catch (err) { $('pl-status').textContent = 'No se pudo guardar. Revisa que tengas permiso de edición.'; return; }
+      try { bG.classList.add('saving'); await db.doc(CFG.coleccion + '/' + p.id).set(doc); ajustes[p.id] = doc; $('{{P}}-status').textContent = 'Guardado.'; }
+      catch (err) { $('{{P}}-status').textContent = 'No se pudo guardar. Revisa que tengas permiso de edición.'; return; }
       finally { bG.classList.remove('saving'); }
       delete S.borradores[p.id]; S.editando = null; dibujar();
     });
@@ -247,50 +248,50 @@
     return tr;
   }
   async function restablecer(p, btn) {
-    try { btn.classList.add('saving'); await db.doc('plan_gourmeteria/' + p.id).delete(); delete ajustes[p.id]; $('pl-status').textContent = 'Se restableció la propuesta.'; }
-    catch (e) { $('pl-status').textContent = 'No se pudo restablecer. Revisa que tengas permiso de edición.'; }
+    try { btn.classList.add('saving'); await db.doc(CFG.coleccion + '/' + p.id).delete(); delete ajustes[p.id]; $('{{P}}-status').textContent = 'Se restableció la propuesta.'; }
+    catch (e) { $('{{P}}-status').textContent = 'No se pudo restablecer. Revisa que tengas permiso de edición.'; }
     dibujar();
   }
 
   // ── Excel de la planeación ──
   async function descargar() {
-    const st = $('pl-status'); const lista = personas();
+    const st = $('{{P}}-status'); const lista = personas();
     if (!lista || !window.XLSX) { st.textContent = 'No se pudo preparar el Excel. Recarga la página.'; return; }
     const wb = XLSX.utils.book_new();
     const areas = [...new Set(lista.map((p) => p.area))].sort((a, b) => (ORDEN_AREA.indexOf(a) + 1 || 99) - (ORDEN_AREA.indexOf(b) + 1 || 99) || a.localeCompare(b, 'es'));
-    const aoa = [['Planeación Gourmetería 2027 · sábado 7:00–17:00 · domingo 8:30–15:00'], [], ['Área', 'Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', 'Nota']];
+    const aoa = [[`${CFG.titulo} · sábado ${CFG.texto.sab} · domingo ${CFG.texto.dom}`], [], ['Área', 'Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', 'Nota']];
     areas.forEach((a) => lista.filter((p) => p.area === a).sort((x, y) => entrada(x, x.plan) - entrada(y, y.plan) || x.nombre.localeCompare(y.nombre, 'es')).forEach((p) => {
       const nota = [p.coach ? 'Coach: 2 descansos' + (p.rota ? ` (entre semana rota; sugerido ${DL[p.rota]})` : '') : '', p.ajustado ? 'Ajustado por Operaciones' : ''].filter(Boolean).join(' · ');
       aoa.push([a, p.nombre, p.puesto, p.tipo, ...DIAS.map((d) => p.plan[d] || 'Descanso'), p.hPlan, ...DIAS.map((d) => p.hoy[d] || 'Descanso'), p.hHoy, nota]);
     }));
     const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = [{ wch: 16 }, { wch: 34 }, { wch: 26 }, { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, { wch: 48 }];
     XLSX.utils.book_append_sheet(wb, ws, 'Plan 2027');
-    const cob = [['Cobertura del fin de semana por área (2027)'], [], ['Área', 'Sábado 7:00–17:00', 'Huecos sábado', 'Domingo 8:30–15:00', 'Huecos domingo']];
+    const cob = [[`Cobertura del fin de semana por área · ${CFG.titulo}`], [], ['Área', `Sábado ${CFG.texto.sab}`, 'Huecos sábado', `Domingo ${CFG.texto.dom}`, 'Huecos domingo']];
     areas.forEach((a) => { const l = lista.filter((p) => p.area === a); const s = cobertura(l, 'sab'), d = cobertura(l, 'dom'); const h = (c) => c.huecos.map((x) => `${hora(x.m)}–${hora(x.fin)}`).join(', ') || 'Cubierto'; cob.push([a, `${s.min} a ${s.max}`, h(s), `${d.min} a ${d.max}`, h(d)]); });
     const ws2 = XLSX.utils.aoa_to_sheet(cob); ws2['!cols'] = [{ wch: 18 }, { wch: 18 }, { wch: 30 }, { wch: 18 }, { wch: 30 }];
     XLSX.utils.book_append_sheet(wb, ws2, 'Cobertura fin de semana');
     const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
     if (!dl) { st.textContent = 'Esta vista no permite descargar archivos. Abre la página en claude.ai.'; return; }
-    try { await dl.save({ filename: `Planeacion Gourmeteria 2027 - ${hoyISO()}.xlsx`, data: new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]) }); st.textContent = 'Planeación descargada.'; }
+    try { await dl.save({ filename: `${CFG.archivo} - ${hoyISO()}.xlsx`, data: new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]) }); st.textContent = 'Planeación descargada.'; }
     catch (e) { st.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : 'No se pudo descargar el archivo. Inténtalo de nuevo.'; }
   }
 
-  $('pl-area').addEventListener('change', (e) => { S.area = e.target.value; dibujar(); });
-  $('pl-xlsx').addEventListener('click', descargar);
+  $('{{P}}-area').addEventListener('change', (e) => { S.area = e.target.value; dibujar(); });
+  $('{{P}}-xlsx').addEventListener('click', descargar);
   window.addEventListener('seg:datos', dibujar);
   const medidas = new Map();
-  new ResizeObserver((es) => { let c = false; es.forEach((e) => { const w = Math.round(e.contentRect.width); if (w !== medidas.get(e.target)) { medidas.set(e.target, w); if (w) c = true; } }); if (c) dibujar(); }).observe(document.querySelector('#t-plan .pl'));
+  new ResizeObserver((es) => { let c = false; es.forEach((e) => { const w = Math.round(e.contentRect.width); if (w !== medidas.get(e.target)) { medidas.set(e.target, w); if (w) c = true; } }); if (c) dibujar(); }).observe(document.querySelector('#{{TAB}} .pl'));
 
   (async () => {
     const claude = window.claude; if (!claude || !claude.use) return;
     db = await claude.use('db'); if (!db) return;
     const user = await claude.use('user');
     if (user) { try { uid = await user.id(); } catch (e) { uid = null; } const c = await user.can('data.write'); canWrite = c !== false; }
-    db.collection('plan_gourmeteria').onSnapshot((snap) => {
+    db.collection(CFG.coleccion).onSnapshot((snap) => {
       const docs = snap.docs || snap;
       ajustes = Object.fromEntries(docs.map((d) => [d.id, typeof d.data === 'function' ? d.data() : d.data]));
       dibujar();
-    }, () => { $('pl-status').textContent = 'No se pudieron cargar los ajustes de Operaciones. Recarga la página.'; });
+    }, () => { $('{{P}}-status').textContent = 'No se pudieron cargar los ajustes de Operaciones. Recarga la página.'; });
   })();
 })();
 </script>

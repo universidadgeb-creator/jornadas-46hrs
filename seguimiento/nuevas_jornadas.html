@@ -449,7 +449,8 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
     <button type="button" role="tab" data-tab="t-resumen" aria-selected="true">Resumen</button>
     <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>
     <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>
-    <button type="button" role="tab" data-tab="t-plan" aria-selected="false">Planeación Gourmetería</button>
+    <button type="button" role="tab" data-tab="t-plan" aria-selected="false">Planeación Gourmetería 2027</button>
+    <button type="button" role="tab" data-tab="t-planvr" aria-selected="false">Planeación Valle Real 2028</button>
     <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>
   </nav>
 
@@ -772,6 +773,56 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       </table>
     </div>
     <p class="status" id="pl-status"></p>
+  </article>
+</section>
+
+  <section class="gx-tab" id="t-planvr" hidden>
+  <article class="gx-card pl">
+    <h2>Planeación Valle Real 2028</h2>
+    <p class="note">Propuesta de jornadas para todo el club con el nuevo horario de fin de semana. Parte del horario 2027 de cada persona (lo validado o propuesto en el Seguimiento; el horario actual para quien no está en seguimiento). Los coaches (Deportivo, Estiramiento y Mobility) pasan a dos descansos con su mismo turno diario: uno entre semana que rota (aquí se sugiere uno para repartir la carga) y su día de fin de semana de siempre. Qué áreas cubren cada hora del fin de semana lo decide Operaciones: esta vista marca los huecos y permite ajustar cada horario.</p>
+    <div class="pl-club" aria-label="Horario del club en 2027">
+      <div><span class="lbl">Lunes a viernes</span><b>Sin cambio</b></div>
+      <div class="is-a"><span class="lbl">Sábado</span><b>7:00–17:00</b></div>
+      <div class="is-a"><span class="lbl">Domingo</span><b>8:30–15:00</b><span class="h">antes 9:00–15:00</span></div>
+    </div>
+    <div class="mp-stats">
+      <div><span class="lbl">Personas en el club</span><span class="val" id="plv-n">—</span></div>
+      <div><span class="lbl">Horas por semana, hoy</span><span class="val" id="plv-hh">—</span></div>
+      <div class="is-a"><span class="lbl">Horas por semana, plan 2027</span><span class="val" id="plv-hp">—</span></div>
+      <div><span class="lbl">Coaches con dos descansos</span><span class="val" id="plv-co">—</span></div>
+    </div>
+
+    <h3 class="mp-h3">Cobertura del fin de semana por área</h3>
+    <p class="note">Cuántas personas de cada área hay en el club durante el horario de apertura, y qué horas quedan sin nadie.</p>
+    <div class="mp-scroll">
+      <table class="gx-table pl-cob">
+        <thead><tr><th>Área</th><th>Sábado 7:00–17:00</th><th>Domingo 8:30–15:00</th></tr></thead>
+        <tbody id="plv-cob"></tbody>
+      </table>
+    </div>
+
+    <h3 class="mp-h3">Coaches en piso entre semana</h3>
+    <p class="note">Con el descanso rotativo sugerido. El número entre paréntesis es cuántos descansan ese día.</p>
+    <div class="mp-scroll">
+      <table class="gx-table pl-coach">
+        <thead><tr><th>Turno</th><th class="num">Lun</th><th class="num">Mar</th><th class="num">Mié</th><th class="num">Jue</th><th class="num">Vie</th><th class="num">Sáb</th><th class="num">Dom</th></tr></thead>
+        <tbody id="plv-coach"></tbody>
+      </table>
+    </div>
+
+    <h3 class="mp-h3">Plantilla planeada</h3>
+    <div class="mp-tools">
+      <label for="plv-area">Área<select class="gx-select" id="plv-area"></select></label>
+      <button type="button" class="gx-btn mp-xlsx" id="plv-xlsx">Descargar planeación (.xlsx)</button>
+    </div>
+    <p class="note">Los días sombreados cambian contra hoy. «Ajustado» indica que Operaciones modificó la propuesta; «Volver a la propuesta» la restablece.</p>
+    <div class="gx-tablebox mp-plantilla">
+      <table class="gx-table gx-sem mp-tabla pl-tabla">
+        <thead><tr><th>Nombre</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th><th></th></tr></thead>
+        <tbody id="plv-rows"></tbody>
+      </table>
+    </div>
+    <p class="status" id="plv-status"></p>
   </article>
 </section>
 
@@ -2161,8 +2212,9 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
 
 <script>
 (() => {
-  const CLUB = 'Gourmeteria';
-  const APERTURA = { sab: ['07:00', '17:00'], dom: ['08:30', '15:00'] };
+  const CFG = {"club": "Gourmeteria", "titulo": "Planeación Gourmetería 2027", "coleccion": "plan_gourmeteria", "archivo": "Planeacion Gourmeteria 2027", "apertura": {"sab": ["07:00", "17:00"], "dom": ["08:30", "15:00"]}, "texto": {"sab": "7:00–17:00", "dom": "8:30–15:00"}};
+  const CLUB = CFG.club;
+  const APERTURA = CFG.apertura;
   const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'], LV = DIAS.slice(0, 5);
   const DN = { lun: 'Lun', mar: 'Mar', mie: 'Mié', jue: 'Jue', vie: 'Vie', sab: 'Sáb', dom: 'Dom' };
   const DL = { lun: 'lunes', mar: 'martes', mie: 'miércoles', jue: 'jueves', vie: 'viernes', sab: 'sábado', dom: 'domingo' };
@@ -2349,7 +2401,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     bG.addEventListener('click', async () => {
       const dias = Object.fromEntries(DIAS.map((d) => [d, b[d] ? `${b[d].e}–${b[d].s}` : null]));
       const doc = { nombre: p.nombre, dias, editado: hoyISO(), editado_por: uid || null };
-      try { bG.classList.add('saving'); await db.doc('plan_gourmeteria/' + p.id).set(doc); ajustes[p.id] = doc; $('pl-status').textContent = 'Guardado.'; }
+      try { bG.classList.add('saving'); await db.doc(CFG.coleccion + '/' + p.id).set(doc); ajustes[p.id] = doc; $('pl-status').textContent = 'Guardado.'; }
       catch (err) { $('pl-status').textContent = 'No se pudo guardar. Revisa que tengas permiso de edición.'; return; }
       finally { bG.classList.remove('saving'); }
       delete S.borradores[p.id]; S.editando = null; dibujar();
@@ -2358,7 +2410,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     return tr;
   }
   async function restablecer(p, btn) {
-    try { btn.classList.add('saving'); await db.doc('plan_gourmeteria/' + p.id).delete(); delete ajustes[p.id]; $('pl-status').textContent = 'Se restableció la propuesta.'; }
+    try { btn.classList.add('saving'); await db.doc(CFG.coleccion + '/' + p.id).delete(); delete ajustes[p.id]; $('pl-status').textContent = 'Se restableció la propuesta.'; }
     catch (e) { $('pl-status').textContent = 'No se pudo restablecer. Revisa que tengas permiso de edición.'; }
     dibujar();
   }
@@ -2369,20 +2421,20 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     if (!lista || !window.XLSX) { st.textContent = 'No se pudo preparar el Excel. Recarga la página.'; return; }
     const wb = XLSX.utils.book_new();
     const areas = [...new Set(lista.map((p) => p.area))].sort((a, b) => (ORDEN_AREA.indexOf(a) + 1 || 99) - (ORDEN_AREA.indexOf(b) + 1 || 99) || a.localeCompare(b, 'es'));
-    const aoa = [['Planeación Gourmetería 2027 · sábado 7:00–17:00 · domingo 8:30–15:00'], [], ['Área', 'Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', 'Nota']];
+    const aoa = [[`${CFG.titulo} · sábado ${CFG.texto.sab} · domingo ${CFG.texto.dom}`], [], ['Área', 'Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', 'Nota']];
     areas.forEach((a) => lista.filter((p) => p.area === a).sort((x, y) => entrada(x, x.plan) - entrada(y, y.plan) || x.nombre.localeCompare(y.nombre, 'es')).forEach((p) => {
       const nota = [p.coach ? 'Coach: 2 descansos' + (p.rota ? ` (entre semana rota; sugerido ${DL[p.rota]})` : '') : '', p.ajustado ? 'Ajustado por Operaciones' : ''].filter(Boolean).join(' · ');
       aoa.push([a, p.nombre, p.puesto, p.tipo, ...DIAS.map((d) => p.plan[d] || 'Descanso'), p.hPlan, ...DIAS.map((d) => p.hoy[d] || 'Descanso'), p.hHoy, nota]);
     }));
     const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = [{ wch: 16 }, { wch: 34 }, { wch: 26 }, { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, { wch: 48 }];
     XLSX.utils.book_append_sheet(wb, ws, 'Plan 2027');
-    const cob = [['Cobertura del fin de semana por área (2027)'], [], ['Área', 'Sábado 7:00–17:00', 'Huecos sábado', 'Domingo 8:30–15:00', 'Huecos domingo']];
+    const cob = [[`Cobertura del fin de semana por área · ${CFG.titulo}`], [], ['Área', `Sábado ${CFG.texto.sab}`, 'Huecos sábado', `Domingo ${CFG.texto.dom}`, 'Huecos domingo']];
     areas.forEach((a) => { const l = lista.filter((p) => p.area === a); const s = cobertura(l, 'sab'), d = cobertura(l, 'dom'); const h = (c) => c.huecos.map((x) => `${hora(x.m)}–${hora(x.fin)}`).join(', ') || 'Cubierto'; cob.push([a, `${s.min} a ${s.max}`, h(s), `${d.min} a ${d.max}`, h(d)]); });
     const ws2 = XLSX.utils.aoa_to_sheet(cob); ws2['!cols'] = [{ wch: 18 }, { wch: 18 }, { wch: 30 }, { wch: 18 }, { wch: 30 }];
     XLSX.utils.book_append_sheet(wb, ws2, 'Cobertura fin de semana');
     const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
     if (!dl) { st.textContent = 'Esta vista no permite descargar archivos. Abre la página en claude.ai.'; return; }
-    try { await dl.save({ filename: `Planeacion Gourmeteria 2027 - ${hoyISO()}.xlsx`, data: new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]) }); st.textContent = 'Planeación descargada.'; }
+    try { await dl.save({ filename: `${CFG.archivo} - ${hoyISO()}.xlsx`, data: new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]) }); st.textContent = 'Planeación descargada.'; }
     catch (e) { st.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : 'No se pudo descargar el archivo. Inténtalo de nuevo.'; }
   }
 
@@ -2397,11 +2449,259 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     db = await claude.use('db'); if (!db) return;
     const user = await claude.use('user');
     if (user) { try { uid = await user.id(); } catch (e) { uid = null; } const c = await user.can('data.write'); canWrite = c !== false; }
-    db.collection('plan_gourmeteria').onSnapshot((snap) => {
+    db.collection(CFG.coleccion).onSnapshot((snap) => {
       const docs = snap.docs || snap;
       ajustes = Object.fromEntries(docs.map((d) => [d.id, typeof d.data === 'function' ? d.data() : d.data]));
       dibujar();
     }, () => { $('pl-status').textContent = 'No se pudieron cargar los ajustes de Operaciones. Recarga la página.'; });
+  })();
+})();
+</script>
+
+<script>
+(() => {
+  const CFG = {"club": "Valle Real", "titulo": "Planeación Valle Real 2028", "coleccion": "plan_valle_real", "archivo": "Planeacion Valle Real 2028", "apertura": {"sab": ["07:00", "17:00"], "dom": ["08:30", "15:00"]}, "texto": {"sab": "7:00–17:00", "dom": "8:30–15:00"}};
+  const CLUB = CFG.club;
+  const APERTURA = CFG.apertura;
+  const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'], LV = DIAS.slice(0, 5);
+  const DN = { lun: 'Lun', mar: 'Mar', mie: 'Mié', jue: 'Jue', vie: 'Vie', sab: 'Sáb', dom: 'Dom' };
+  const DL = { lun: 'lunes', mar: 'martes', mie: 'miércoles', jue: 'jueves', vie: 'viernes', sab: 'sábado', dom: 'domingo' };
+  const META = { Diurna: 46, Mixta: 45 };
+  const ORDEN_AREA = ['Deportes', 'Mtto y Servicios', 'Administración', 'Comercial', 'Ludoteca'];
+  const esCoach = (p) => /^coach\b/i.test(p.puesto || '');
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  const aMin = (t) => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+  const hora = (m) => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+  const dur = (e, s) => { const a = aMin(e), b = aMin(s); if (a == null || b == null || a === b) return null; return b > a ? b - a : b + 1440 - a; };
+  const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('es-MX', { maximumFractionDigits: 1 });
+  const slug = (t) => String(t || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const hoyISO = () => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
+  const S = { area: '', editando: null, borradores: {} };
+  let db = null, uid = null, canWrite = false, ajustes = {};
+
+  // ── Datos ──
+  function personas() {
+    const H = window.dash && window.dash.data ? window.dash.data('horarios') : null;
+    const P = window.dash && window.dash.data ? window.dash.data('plantilla') : null;
+    if (!H || H.status !== 'ok' || !P || P.status !== 'ok') return null;
+    const info = new Map(P.data.map((r) => [r.nombre, r]));
+    const seg = window.SEG || { rows: [] };
+    const enSeg = new Map(seg.rows.map((r) => [r.nombre, r]));
+    const lista = H.data.filter((h) => h.ubicacion === CLUB && h.tipo_jornada !== 'Sin captura').map((h) => {
+      const hoy = Object.fromEntries(DIAS.map((d) => [d, h[d] || null]));
+      const comida = {}; const vals = [];
+      DIAS.forEach((d) => { if (!h[d]) return; const [e, s] = String(h[d]).split('–'); const t = dur(e, s); if (t != null) { comida[d] = Math.max(0, t - Math.round(Number(h[d + '_h']) * 60)); vals.push(comida[d]); } });
+      const moda = vals.length ? vals.slice().sort((a, b) => vals.filter((v) => v === b).length - vals.filter((v) => v === a).length)[0] : 0;
+      DIAS.forEach((d) => { if (comida[d] == null) comida[d] = moda; });
+      const s = enSeg.get(h.nombre); const g = s && seg.diasDe ? seg.diasDe(s) : null;
+      const base = g ? Object.fromEntries(DIAS.map((d) => [d, g[d] || null])) : { ...hoy };
+      const inf = info.get(h.nombre) || {};
+      return { id: slug(h.nombre), nombre: h.nombre, puesto: h.puesto || 'Sin puesto', area: inf.area || 'Sin área', tipo: h.tipo_jornada, hoy, base, comida, hHoy: Number(h.horas_reales), coach: false, rota: null };
+    });
+    // Coaches: un descanso entre semana que rota, repartido dentro de cada turno
+    const turnoDe = (p) => { const d = LV.find((x) => p.base[x]); return d && aMin(String(p.base[d]).split('–')[0]) < 720 ? 'Mañana' : 'Tarde'; };
+    const cuenta = {};
+    lista.filter(esCoach).sort((a, b) => turnoDe(a).localeCompare(turnoDe(b)) || a.puesto.localeCompare(b.puesto, 'es') || a.nombre.localeCompare(b.nombre, 'es')).forEach((p) => {
+      p.coach = true; p.turno = turnoDe(p);
+      if (LV.filter((d) => p.base[d]).length < 5) return;  // ya tiene un descanso entre semana
+      const k = cuenta[p.turno] = (cuenta[p.turno] || 0) + 1;
+      p.rota = LV[(k - 1) % 5];
+      p.base = { ...p.base, [p.rota]: null };
+    });
+    lista.forEach((p) => {
+      const a = ajustes[p.id];
+      p.ajustado = !!a;
+      p.plan = a && a.dias ? Object.fromEntries(DIAS.map((d) => [d, a.dias[d] || null])) : p.base;
+      if (p.ajustado) p.rota = null;
+      p.hPlan = horas(p, p.plan);
+    });
+    return lista;
+  }
+  function horas(p, dias) {
+    let t = 0; DIAS.forEach((d) => { const v = dias[d]; if (!v) return; const [e, s] = String(v).split('–'); const m = dur(e, s); if (m != null) t += Math.max(0, m - p.comida[d]); });
+    return Math.round(t / 60 * 100) / 100;
+  }
+  const entrada = (p, dias) => { const d = DIAS.find((x) => dias[x]); return d ? aMin(String(dias[d]).split('–')[0]) : 9999; };
+
+  // Personas de un área presentes en cada media hora del horario del club; huecos sin nadie
+  function cobertura(lista, d) {
+    const [ab, ci] = APERTURA[d].map(aMin); const slots = [];
+    for (let m = ab; m < ci; m += 30) {
+      const fin = Math.min(m + 30, ci);
+      const n = lista.filter((p) => { const v = p.plan[d]; if (!v) return false; const [e, s] = String(v).split('–'); let a = aMin(e), b = aMin(s); if (b <= a) b += 1440; return Math.min(b, fin) - Math.max(a, m) >= Math.min(15, fin - m); }).length;
+      slots.push({ m, fin, n });
+    }
+    const huecos = []; let cur = null;
+    slots.forEach((s) => { if (!s.n) { if (cur) cur.fin = s.fin; else { cur = { m: s.m, fin: s.fin }; huecos.push(cur); } } else cur = null; });
+    return { min: d3.min(slots, (s) => s.n) || 0, max: d3.max(slots, (s) => s.n) || 0, huecos };
+  }
+
+  // ── Dibujo ──
+  function dibujar() {
+    const sec = $('t-planvr'); if (!sec || sec.closest('[hidden]') || sec.hidden) return;
+    const lista = personas();
+    if (!lista) { $('plv-rows').replaceChildren(el('tr', '', '')); $('plv-status').textContent = 'Cargando horarios…'; return; }
+    $('plv-status').textContent = db ? '' : 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
+    $('plv-n').textContent = lista.length;
+    $('plv-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
+    $('plv-hp').textContent = fmt(d3.sum(lista, (p) => p.hPlan));
+    $('plv-co').textContent = lista.filter((p) => p.coach && (p.rota || LV.filter((d) => p.plan[d]).length <= 4)).length + ' de ' + lista.filter((p) => p.coach).length;
+    // Áreas
+    const areas = [...new Set(lista.map((p) => p.area))].sort((a, b) => (ORDEN_AREA.indexOf(a) + 1 || 99) - (ORDEN_AREA.indexOf(b) + 1 || 99) || a.localeCompare(b, 'es'));
+    const sel = $('plv-area');
+    if (S.area && !areas.includes(S.area)) S.area = '';
+    sel.replaceChildren(new Option('Todas las áreas', ''), ...areas.map((a) => new Option(`${a} (${lista.filter((p) => p.area === a).length})`, a)));
+    sel.value = S.area;
+    // Cobertura del fin de semana
+    const cb = $('plv-cob'); cb.replaceChildren();
+    areas.forEach((a) => {
+      const l = lista.filter((p) => p.area === a); const tr = el('tr'); tr.appendChild(el('td', 'mp-av-n', a));
+      ['sab', 'dom'].forEach((d) => {
+        const c = cobertura(l, d); const td = el('td', 'pl-cob-c' + (c.huecos.length ? ' hueco' : ' ok'));
+        td.appendChild(el('b', '', c.max ? (c.min === c.max ? `${c.max} en piso` : `${c.min} a ${c.max} en piso`) : 'Nadie'));
+        td.appendChild(el('span', 'h', c.huecos.length ? 'Sin nadie: ' + c.huecos.map((h) => `${hora(h.m)}–${hora(h.fin)}`).join(', ') : 'Cubre todo el horario'));
+        tr.appendChild(td);
+      });
+      cb.appendChild(tr);
+    });
+    // Coaches entre semana
+    const ct = $('plv-coach'); ct.replaceChildren();
+    const coaches = lista.filter((p) => p.coach);
+    ['Mañana', 'Tarde'].forEach((t) => {
+      const l = coaches.filter((p) => p.turno === t); if (!l.length) return;
+      const tr = el('tr'); tr.appendChild(el('td', 'mp-av-n', `${t} (${l.length})`));
+      DIAS.forEach((d) => {
+        const n = l.filter((p) => p.plan[d]).length, r = l.filter((p) => p.rota === d).length;
+        const td = el('td', 'num', String(n)); if (r) td.appendChild(el('span', 'h', `(${r} descansa${r > 1 ? 'n' : ''})`)); tr.appendChild(td);
+      });
+      ct.appendChild(tr);
+    });
+    renderTabla(lista, areas);
+  }
+
+  function renderTabla(lista, areas) {
+    const tb = $('plv-rows'); tb.replaceChildren();
+    areas.filter((a) => !S.area || a === S.area).forEach((a) => {
+      const l = lista.filter((p) => p.area === a).sort((x, y) => entrada(x, x.plan) - entrada(y, y.plan) || x.puesto.localeCompare(y.puesto, 'es') || x.nombre.localeCompare(y.nombre, 'es'));
+      const trh = el('tr', 'mp-grupo'); const th = el('td'); th.colSpan = 10;
+      th.append(el('b', '', a), el('span', '', ` · ${l.length} ${l.length === 1 ? 'persona' : 'personas'} · ${fmt(d3.sum(l, (p) => p.hPlan))} hrs por semana (hoy ${fmt(d3.sum(l, (p) => p.hHoy))})`));
+      trh.appendChild(th); tb.appendChild(trh);
+      l.forEach((p) => {
+        const tr = el('tr');
+        const cn = el('td'); cn.append(el('span', '', p.nombre), el('span', 'h pl-sub', p.puesto + (p.coach ? ' · 2 descansos' : '')));
+        if (p.ajustado) cn.appendChild(el('span', 'okflag', 'Ajustado por Operaciones'));
+        tr.appendChild(cn);
+        DIAS.forEach((d) => {
+          const v = p.plan[d]; const c = el('td', 'd' + (v ? '' : ' libre'), v || (p.rota === d ? 'Descanso' : 'Descanso'));
+          if (p.rota === d) c.appendChild(el('span', 'h', 'rota cada semana'));
+          if ((v || '') !== (p.hoy[d] || '')) { c.classList.add('full'); if (p.rota !== d) c.appendChild(el('span', 'h', p.hoy[d] ? `hoy ${p.hoy[d]}` : 'hoy descanso')); }
+          tr.appendChild(c);
+        });
+        const meta = META[p.tipo]; const th2 = el('td', 'num', fmt(p.hPlan)); th2.appendChild(el('span', 'h', `hoy ${fmt(p.hHoy)}`));
+        if (meta != null && p.hPlan > meta + 0.01) th2.appendChild(el('span', 'flag', `Pasa de ${meta}`));
+        tr.appendChild(th2);
+        const ca = el('td', 'pl-acc');
+        if (canWrite && db) {
+          const be = el('button', 'btn-sm gx-btn', S.editando === p.id ? 'Editando…' : 'Editar'); be.type = 'button'; be.id = `plv-ed-${p.id}`; be.disabled = S.editando === p.id;
+          be.setAttribute('aria-label', `Ajustar el horario planeado de ${p.nombre}`);
+          be.addEventListener('click', () => { S.editando = p.id; dibujar(); });
+          ca.appendChild(be);
+          if (p.ajustado) { const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `plv-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br); }
+        }
+        tr.appendChild(ca); tb.appendChild(tr);
+        if (S.editando === p.id) tb.appendChild(editor(p));
+      });
+    });
+  }
+
+  // ── Editor del horario planeado ──
+  function editor(p) {
+    const b = S.borradores[p.id] || (S.borradores[p.id] = Object.fromEntries(DIAS.map((d) => { const v = p.plan[d]; if (!v) return [d, null]; const [e, s] = String(v).split('–'); return [d, { e, s }]; })));
+    const tr = el('tr', 'editor pl-editor'); const td = el('td'); td.colSpan = 10; tr.appendChild(td);
+    td.appendChild(el('b', '', `Ajustar el horario planeado de ${p.nombre}`));
+    const grid = el('div', 'pl-ed-dias'); td.appendChild(grid);
+    const pie = el('div', 'pl-ed-pie'); const tot = el('span', 'pl-ed-tot'); const msg = el('span', 'flag');
+    const bG = el('button', 'gx-btn gx-btn-acc', 'Guardar'); bG.type = 'button'; bG.id = `plv-g-${p.id}`;
+    const bC = el('button', 'gx-btn', 'Cancelar'); bC.type = 'button'; bC.id = `plv-c-${p.id}`;
+    pie.append(tot, msg, bC, bG); td.appendChild(pie);
+    const actualizar = () => {
+      const dias = Object.fromEntries(DIAS.map((d) => [d, b[d] && b[d].e && b[d].s ? `${b[d].e}–${b[d].s}` : null]));
+      const falta = DIAS.filter((d) => b[d] && (!b[d].e || !b[d].s || b[d].e === b[d].s));
+      const h = horas(p, dias), meta = META[p.tipo];
+      tot.textContent = `Total: ${fmt(h)} hrs por semana`;
+      msg.textContent = falta.length ? `Revisa el ${DL[falta[0]]}: falta una hora o son iguales.` : (meta != null && h > meta + 0.01 ? `Pasa de ${meta} hrs.` : '');
+      bG.disabled = !!falta.length;
+    };
+    DIAS.forEach((d) => {
+      const box = el('div', 'ed-dia');
+      const e = el('input'); e.type = 'time'; e.step = 300; e.id = `plv-${p.id}-${d}-e`; e.setAttribute('aria-label', `Entrada del ${DL[d]}`);
+      const s = el('input'); s.type = 'time'; s.step = 300; s.id = `plv-${p.id}-${d}-s`; s.setAttribute('aria-label', `Salida del ${DL[d]}`);
+      const lab = el('label', 'ed-desc'); const cb = el('input'); cb.type = 'checkbox'; cb.id = `plv-${p.id}-${d}-d`; lab.append(cb, el('span', '', 'Descanso'));
+      const sync = () => { const x = b[d]; cb.checked = !x; e.disabled = s.disabled = !x; e.value = x ? x.e : ''; s.value = x ? x.s : ''; box.classList.toggle('off', !x); };
+      e.addEventListener('input', () => { if (b[d]) { b[d].e = e.value; actualizar(); } });
+      s.addEventListener('input', () => { if (b[d]) { b[d].s = s.value; actualizar(); } });
+      cb.addEventListener('change', () => { const ref = DIAS.map((x) => b[x]).find((x) => x && x.e && x.s) || { e: '', s: '' }; b[d] = cb.checked ? null : { ...ref }; sync(); actualizar(); });
+      const fila = (t, i) => { const w = el('label', 'ed-t'); w.append(el('span', '', t), i); return w; };
+      box.append(el('span', 'ed-d', DN[d]), fila('Entra', e), fila('Sale', s), lab); grid.appendChild(box); sync();
+    });
+    bC.addEventListener('click', () => { delete S.borradores[p.id]; S.editando = null; dibujar(); });
+    bG.addEventListener('click', async () => {
+      const dias = Object.fromEntries(DIAS.map((d) => [d, b[d] ? `${b[d].e}–${b[d].s}` : null]));
+      const doc = { nombre: p.nombre, dias, editado: hoyISO(), editado_por: uid || null };
+      try { bG.classList.add('saving'); await db.doc(CFG.coleccion + '/' + p.id).set(doc); ajustes[p.id] = doc; $('plv-status').textContent = 'Guardado.'; }
+      catch (err) { $('plv-status').textContent = 'No se pudo guardar. Revisa que tengas permiso de edición.'; return; }
+      finally { bG.classList.remove('saving'); }
+      delete S.borradores[p.id]; S.editando = null; dibujar();
+    });
+    actualizar();
+    return tr;
+  }
+  async function restablecer(p, btn) {
+    try { btn.classList.add('saving'); await db.doc(CFG.coleccion + '/' + p.id).delete(); delete ajustes[p.id]; $('plv-status').textContent = 'Se restableció la propuesta.'; }
+    catch (e) { $('plv-status').textContent = 'No se pudo restablecer. Revisa que tengas permiso de edición.'; }
+    dibujar();
+  }
+
+  // ── Excel de la planeación ──
+  async function descargar() {
+    const st = $('plv-status'); const lista = personas();
+    if (!lista || !window.XLSX) { st.textContent = 'No se pudo preparar el Excel. Recarga la página.'; return; }
+    const wb = XLSX.utils.book_new();
+    const areas = [...new Set(lista.map((p) => p.area))].sort((a, b) => (ORDEN_AREA.indexOf(a) + 1 || 99) - (ORDEN_AREA.indexOf(b) + 1 || 99) || a.localeCompare(b, 'es'));
+    const aoa = [[`${CFG.titulo} · sábado ${CFG.texto.sab} · domingo ${CFG.texto.dom}`], [], ['Área', 'Nombre', 'Puesto', 'Tipo', ...DIAS.map((d) => `${DN[d]} 2027`), 'Hrs 2027', ...DIAS.map((d) => `${DN[d]} hoy`), 'Hrs hoy', 'Nota']];
+    areas.forEach((a) => lista.filter((p) => p.area === a).sort((x, y) => entrada(x, x.plan) - entrada(y, y.plan) || x.nombre.localeCompare(y.nombre, 'es')).forEach((p) => {
+      const nota = [p.coach ? 'Coach: 2 descansos' + (p.rota ? ` (entre semana rota; sugerido ${DL[p.rota]})` : '') : '', p.ajustado ? 'Ajustado por Operaciones' : ''].filter(Boolean).join(' · ');
+      aoa.push([a, p.nombre, p.puesto, p.tipo, ...DIAS.map((d) => p.plan[d] || 'Descanso'), p.hPlan, ...DIAS.map((d) => p.hoy[d] || 'Descanso'), p.hHoy, nota]);
+    }));
+    const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = [{ wch: 16 }, { wch: 34 }, { wch: 26 }, { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, ...Array(7).fill({ wch: 13 }), { wch: 8 }, { wch: 48 }];
+    XLSX.utils.book_append_sheet(wb, ws, 'Plan 2027');
+    const cob = [[`Cobertura del fin de semana por área · ${CFG.titulo}`], [], ['Área', `Sábado ${CFG.texto.sab}`, 'Huecos sábado', `Domingo ${CFG.texto.dom}`, 'Huecos domingo']];
+    areas.forEach((a) => { const l = lista.filter((p) => p.area === a); const s = cobertura(l, 'sab'), d = cobertura(l, 'dom'); const h = (c) => c.huecos.map((x) => `${hora(x.m)}–${hora(x.fin)}`).join(', ') || 'Cubierto'; cob.push([a, `${s.min} a ${s.max}`, h(s), `${d.min} a ${d.max}`, h(d)]); });
+    const ws2 = XLSX.utils.aoa_to_sheet(cob); ws2['!cols'] = [{ wch: 18 }, { wch: 18 }, { wch: 30 }, { wch: 18 }, { wch: 30 }];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Cobertura fin de semana');
+    const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+    if (!dl) { st.textContent = 'Esta vista no permite descargar archivos. Abre la página en claude.ai.'; return; }
+    try { await dl.save({ filename: `${CFG.archivo} - ${hoyISO()}.xlsx`, data: new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]) }); st.textContent = 'Planeación descargada.'; }
+    catch (e) { st.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : 'No se pudo descargar el archivo. Inténtalo de nuevo.'; }
+  }
+
+  $('plv-area').addEventListener('change', (e) => { S.area = e.target.value; dibujar(); });
+  $('plv-xlsx').addEventListener('click', descargar);
+  window.addEventListener('seg:datos', dibujar);
+  const medidas = new Map();
+  new ResizeObserver((es) => { let c = false; es.forEach((e) => { const w = Math.round(e.contentRect.width); if (w !== medidas.get(e.target)) { medidas.set(e.target, w); if (w) c = true; } }); if (c) dibujar(); }).observe(document.querySelector('#t-planvr .pl'));
+
+  (async () => {
+    const claude = window.claude; if (!claude || !claude.use) return;
+    db = await claude.use('db'); if (!db) return;
+    const user = await claude.use('user');
+    if (user) { try { uid = await user.id(); } catch (e) { uid = null; } const c = await user.can('data.write'); canWrite = c !== false; }
+    db.collection(CFG.coleccion).onSnapshot((snap) => {
+      const docs = snap.docs || snap;
+      ajustes = Object.fromEntries(docs.map((d) => [d.id, typeof d.data === 'function' ? d.data() : d.data]));
+      dibujar();
+    }, () => { $('plv-status').textContent = 'No se pudieron cargar los ajustes de Operaciones. Recarga la página.'; });
   })();
 })();
 </script>
