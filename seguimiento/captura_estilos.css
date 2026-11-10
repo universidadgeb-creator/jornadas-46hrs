@@ -20,7 +20,14 @@
 #t-seg .tipo .rule { font-size: 12px; font-weight: 600; color: var(--accent); }
 #t-seg .tipo .rule.pend { color: var(--warn); }
 #t-seg .tipo .av { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-#t-seg .sucs { display: flex; flex-wrap: wrap; gap: 8px; }
+#t-seg .sucs { display: flex; flex-direction: column; gap: 14px; }
+#t-seg .cad-grupo { display: flex; flex-direction: column; gap: 6px; }
+#t-seg .cad-h { font: inherit; color: inherit; background: none; border: 0; border-bottom: 2px solid var(--accent-soft); padding: 2px 0 4px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; cursor: pointer; text-align: left; }
+#t-seg .cad-h b { font-size: 14px; color: var(--accent); }
+#t-seg .cad-h span { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+#t-seg .cad-h[aria-pressed="true"] { border-bottom-color: var(--accent); }
+#t-seg .cad-h:hover b { text-decoration: underline; }
+#t-seg .sucs-in { display: flex; flex-wrap: wrap; gap: 8px; }
 #t-seg .suc { font: inherit; display: flex; flex-direction: column; gap: 2px; min-width: 9.5rem; flex: 1 1 9.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 12px; cursor: pointer; text-align: left; color: inherit; }
 #t-seg .suc[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 #t-seg .suc .nm { font-weight: 600; font-size: 13px; }
@@ -132,3 +139,9 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 #t-seg .adn-chk { margin-top: 6px; font-size: 12px; }
 #t-seg .adn-chk input { width: 16px; height: 16px; }
 #t-seg .adn-rec { font-weight: 600; }
+#t-seg .cad-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px; }
+#t-seg .cad-top .lbl { font-size: 12px; color: var(--muted); margin-right: 4px; }
+#t-seg .cad-chip { font: inherit; font-size: 13px; color: inherit; background: var(--panel); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; cursor: pointer; }
+#t-seg .cad-chip small { color: var(--muted); font-variant-numeric: tabular-nums; }
+#t-seg .cad-chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 600; }
+#t-seg .cad-chip[aria-pressed="true"] small { color: inherit; opacity: .85; }

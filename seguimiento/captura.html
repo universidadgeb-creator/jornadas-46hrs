@@ -1,8 +1,9 @@
 <section class="gx-tab" id="t-seg" hidden>
   <p class="seg-intro">Captura el líder, el nuevo horario y marca cuando el nuevo contrato esté firmado. Todo se guarda solo y lo ve todo el equipo. El nuevo horario viene precargado con la propuesta 2027; valídalo o corrígelo con cada gerente.</p>
+    <div class="cad-top" role="group" aria-label="Cadena" id="cad-top"></div>
     <div class="top">
       <section class="card prog" aria-label="Avance">
-        <div class="lbl">Nuevo contrato realizado</div>
+        <div class="lbl">Nuevo contrato realizado<span id="p-cad"></span></div>
         <div class="big"><span id="p-done">—</span> <span>de <span id="p-total">—</span></span></div>
         <div class="bar" aria-hidden="true"><i id="p-bar"></i></div>
         <div class="sub"><b id="p-pct">—</b> de avance · <span id="p-hor">—</span> con horario validado · <span id="p-lid">—</span> con líder asignado</div>
@@ -24,7 +25,7 @@
     </div>
 
     <section aria-label="Por sucursal">
-      <h2 class="h2">Propuesta por sucursal</h2>
+      <h2 class="h2">Propuesta por cadena y sucursal</h2>
       <div class="sucs" id="sucs"><span class="status">Cargando sucursales…</span></div>
     </section>
 
@@ -110,30 +111,52 @@
       && (!q || `${r.nombre} ${r.puesto} ${r.lider || ''}`.toLowerCase().includes(q)));
   }
 
+  const cadDe = (r) => r.division || '—';
   function renderSummary() {
-    const total = rows.length, done = rows.filter((r) => r.contrato).length;
+    // El resumen de arriba sigue el filtro de cadena
+    const base = F.cad ? rows.filter((r) => cadDe(r) === F.cad) : rows;
+    $('p-cad').textContent = F.cad ? ' · ' + F.cad : '';
+    const ct = $('cad-top'); ct.replaceChildren(el('span', 'lbl', 'Cadena'));
+    [['', 'Todas', rows.length], ...[...d3group(rows.map((r) => ({ _cad: cadDe(r) })), '_cad').entries()].sort((x, y) => y[1].length - x[1].length).map(([c, g]) => [c, c, g.length])].forEach(([v, txt, n]) => {
+      const b = el('button', 'cad-chip'); b.type = 'button'; b.setAttribute('aria-pressed', String(F.cad === v));
+      b.append(document.createTextNode(txt + ' '), el('small', '', String(n)));
+      b.addEventListener('click', () => { F.cad = v; $('f-cad').value = v; render(); });
+      ct.appendChild(b);
+    });
+    const total = base.length, done = base.filter((r) => r.contrato).length;
     $('p-done').textContent = done; $('p-total').textContent = total;
     $('p-pct').textContent = pct(done, total);
     $('p-bar').style.width = total ? (done / total * 100) + '%' : '0';
-    $('p-hor').textContent = rows.filter((r) => r.horario_validado).length;
-    $('p-lid').textContent = rows.filter((r) => (r.lider || '').trim()).length;
+    $('p-hor').textContent = base.filter((r) => r.horario_validado).length;
+    $('p-lid').textContent = base.filter((r) => (r.lider || '').trim()).length;
     TIPOS.forEach((t) => {
-      const g = rows.filter((r) => r.tipo === t);
+      const g = base.filter((r) => r.tipo === t);
       document.querySelectorAll(`[data-k="${t}-n"]`).forEach((n) => { n.textContent = g.length; });
       document.querySelectorAll(`[data-k="${t}-pct"]`).forEach((n) => { n.textContent = pct(g.length, total); });
       document.querySelectorAll(`[data-k="${t}-done"]`).forEach((n) => { n.textContent = `${g.filter((r) => r.contrato).length} de ${g.length}`; });
     });
     document.querySelectorAll('.tipo').forEach((b) => b.setAttribute('aria-pressed', String(F.tipo === b.dataset.tipo)));
-    const m = d3group(rows, 'sucursal');
     const box = $('sucs'); box.replaceChildren();
-    [...m.entries()].sort((a, b) => b[1].length - a[1].length).forEach(([s, g]) => {
-      const d = g.filter((r) => r.contrato).length;
-      const b = el('button', 'suc'); b.type = 'button'; b.setAttribute('aria-pressed', String(F.suc === s));
-      const mix = g.filter((r) => r.tipo === 'Mixta').length, diu = g.filter((r) => r.tipo === 'Diurna').length, noc = g.length - mix - diu;
-      b.append(el('span', 'nm', s), el('span', 'ct', `${g.length} personas · ${diu} diurna · ${mix} mixta${noc ? ' · ' + noc + ' nocturna' : ''}`), el('span', 'ct', `${d} de ${g.length} con contrato nuevo`));
-      const mini = el('span', 'mini'); const i = el('i'); i.style.width = (d / g.length * 100) + '%'; mini.appendChild(i); b.appendChild(mini);
-      b.addEventListener('click', () => { F.suc = F.suc === s ? '' : s; $('f-suc').value = F.suc; render(); });
-      box.appendChild(b);
+    const cadenas = [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((x, y) => y[1].length - x[1].length);
+    cadenas.forEach(([c, gc]) => {
+      if (F.cad && F.cad !== c) return;
+      const grupo = el('div', 'cad-grupo');
+      const dc = gc.filter((r) => r.contrato).length;
+      const h = el('button', 'cad-h'); h.type = 'button'; h.setAttribute('aria-pressed', String(F.cad === c));
+      h.title = F.cad === c ? 'Ver todas las cadenas' : 'Ver solo ' + c;
+      h.append(el('b', '', c), el('span', '', `${gc.length} personas · ${dc} de ${gc.length} con contrato nuevo (${pct(dc, gc.length)})`));
+      h.addEventListener('click', () => { F.cad = F.cad === c ? '' : c; $('f-cad').value = F.cad; render(); });
+      const fila = el('div', 'sucs-in');
+      [...d3group(gc, 'sucursal').entries()].sort((x, y) => y[1].length - x[1].length).forEach(([s, g]) => {
+        const d = g.filter((r) => r.contrato).length;
+        const bt = el('button', 'suc'); bt.type = 'button'; bt.setAttribute('aria-pressed', String(F.suc === s));
+        const mix = g.filter((r) => r.tipo === 'Mixta').length, diu = g.filter((r) => r.tipo === 'Diurna').length, noc = g.length - mix - diu;
+        bt.append(el('span', 'nm', s), el('span', 'ct', `${g.length} personas · ${diu} diurna · ${mix} mixta${noc ? ' · ' + noc + ' nocturna' : ''}`), el('span', 'ct', `${d} de ${g.length} con contrato nuevo`));
+        const mini = el('span', 'mini'); const i = el('i'); i.style.width = (d / g.length * 100) + '%'; mini.appendChild(i); bt.appendChild(mini);
+        bt.addEventListener('click', () => { F.suc = F.suc === s ? '' : s; $('f-suc').value = F.suc; render(); });
+        fila.appendChild(bt);
+      });
+      grupo.append(h, fila); box.appendChild(grupo);
     });
     if (!rows.length) box.replaceChildren(el('span', 'status', 'Sin datos todavía.'));
     setOptions($('f-cad'), [...new Set(rows.map((r) => r.division || '—'))].sort((a, b) => a.localeCompare(b, 'es')), 'Todas');
