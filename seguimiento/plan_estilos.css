@@ -31,3 +31,4 @@
 .pl-ed-pie { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .pl-ed-pie .pl-ed-tot { font-weight: 600; margin-right: auto; }
 .pl-ed-pie .flag { color: var(--color-warn); font-size: 12px; }
+.pl-tabla td.pl-acc .gx-btn-acc { background: var(--gx-accent); border-color: var(--gx-accent); color: var(--color-bg); font-weight: 600; }

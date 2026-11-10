@@ -258,6 +258,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 .pl-ed-pie { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .pl-ed-pie .pl-ed-tot { font-weight: 600; margin-right: auto; }
 .pl-ed-pie .flag { color: var(--color-warn); font-size: 12px; }
+.pl-tabla td.pl-acc .gx-btn-acc { background: var(--gx-accent); border-color: var(--gx-accent); color: var(--color-bg); font-weight: 600; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -765,7 +766,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       <label for="pl-area">Área<select class="gx-select" id="pl-area"></select></label>
       <button type="button" class="gx-btn mp-xlsx" id="pl-xlsx">Descargar planeación (.xlsx)</button>
     </div>
-    <p class="note">Los días sombreados cambian contra hoy. «Ajustado» indica que Operaciones modificó la propuesta; «Volver a la propuesta» la restablece.</p>
+    <p class="note">Los días sombreados cambian contra hoy. «Ajustado» indica que Operaciones modificó la propuesta; «Pasar al Seguimiento» lleva ese horario al Seguimiento (queda validado y el adendum se vuelve a descargar) y «Volver a la propuesta» deshace el ajuste. Orden: primero el gerente valida en el Seguimiento, después Operaciones ajusta aquí.</p>
     <div class="gx-tablebox mp-plantilla">
       <table class="gx-table gx-sem mp-tabla pl-tabla">
         <thead><tr><th>Nombre</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th><th></th></tr></thead>
@@ -815,7 +816,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       <label for="plv-area">Área<select class="gx-select" id="plv-area"></select></label>
       <button type="button" class="gx-btn mp-xlsx" id="plv-xlsx">Descargar planeación (.xlsx)</button>
     </div>
-    <p class="note">Los días sombreados cambian contra hoy. «Ajustado» indica que Operaciones modificó la propuesta; «Volver a la propuesta» la restablece.</p>
+    <p class="note">Los días sombreados cambian contra hoy. «Ajustado» indica que Operaciones modificó la propuesta; «Pasar al Seguimiento» lleva ese horario al Seguimiento (queda validado y el adendum se vuelve a descargar) y «Volver a la propuesta» deshace el ajuste. Orden: primero el gerente valida en el Seguimiento, después Operaciones ajusta aquí.</p>
     <div class="gx-tablebox mp-plantilla">
       <table class="gx-table gx-sem mp-tabla pl-tabla">
         <thead><tr><th>Nombre</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th><th></th></tr></thead>
@@ -1578,7 +1579,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       const c = calcular(r, b.dias); if (c.errores.length) return;
       const dias = Object.fromEntries(DIAS.map((d) => [d, b.dias[d] ? `${b.dias[d].e}–${b.dias[d].s}` : null]));
       const patch = { nuevo_horario: textoSemana(dias), nuevo_horario_dias: dias, nuevas_horas: Math.round(c.total / 60 * 100) / 100,
-        horario_validado: hoyISO(), horario_validado_por: uid || null };
+        horario_validado: hoyISO(), horario_validado_por: uid || null, horario_origen: null };
       if (r.comentario === 'Propuesta inicial, por validar') patch.comentario = '';  // la nota de la precarga ya no aplica
       if (r.adendum_generado) patch.adendum_generado = null;  // el Word descargado ya no corresponde: hay que volver a descargarlo
       Object.assign(r, patch); delete drafts[r.id]; editing = null;
@@ -1826,7 +1827,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       const legible = !(r.nuevo_horario || '').trim() || diasGuardados(r);
       cn.appendChild(el('span', 'nh-txt' + ((r.nuevo_horario || '').trim() ? '' : ' vacio'), (r.nuevo_horario || '').trim() || 'Sin capturar'));
       if (!legible) cn.appendChild(el('span', 'flag', 'No se puede leer: ábrelo y corrígelo'));
-      else if (r.horario_validado) cn.appendChild(el('span', 'okflag', `Validado el ${fechaTxt(r.horario_validado)}`));
+      else if (r.horario_validado) cn.appendChild(el('span', 'okflag', `Validado el ${fechaTxt(r.horario_validado)}${r.horario_origen ? ' · desde ' + r.horario_origen : ''}`));
       else if ((r.nuevo_horario || '').trim()) cn.appendChild(el('span', 'adn-pend', 'Propuesta sin validar'));
       if (canWrite) {
         const bt = el('button', 'btn btn-sm', editing === r.id ? 'Editando…' : ((r.nuevo_horario || '').trim() ? 'Editar' : 'Capturar'));
@@ -2274,6 +2275,32 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     let t = 0; DIAS.forEach((d) => { const v = dias[d]; if (!v) return; const [e, s] = String(v).split('–'); const m = dur(e, s); if (m != null) t += Math.max(0, m - p.comida[d]); });
     return Math.round(t / 60 * 100) / 100;
   }
+  const LETRA = { lun: 'L', mar: 'M', mie: 'Mi', jue: 'J', vie: 'V', sab: 'S', dom: 'D' };
+  function textoSemana(dias) {
+    const gr = [];
+    DIAS.forEach((d) => { const v = dias[d] || 'descanso'; const g = gr[gr.length - 1]; if (g && g.v === v) g.ds.push(d); else gr.push({ ds: [d], v }); });
+    return gr.map((g) => `${g.ds.length === 1 ? LETRA[g.ds[0]] : LETRA[g.ds[0]] + '–' + LETRA[g.ds[g.ds.length - 1]]} ${g.v}`).join(' · ');
+  }
+  const enSeguimiento = (p) => { const seg = window.SEG; return seg ? seg.rows.find((r) => r.id === p.id) || null : null; };
+  // Pasa al Seguimiento el horario que ajustó Operaciones: queda validado, el adendum se vuelve a descargar
+  // y se quita el ajuste de la planeación (desde ahí la planeación vuelve a leer del Seguimiento).
+  async function pasarASeguimiento(p, btn) {
+    const r = enSeguimiento(p); const meta = META[p.tipo];
+    if (!r) { $('pl-status').textContent = `${p.nombre} no está en el Seguimiento (no pasa de 46 hrs).`; return; }
+    if (meta != null && p.hPlan > meta + 0.01) { $('pl-status').textContent = `No se pasó: el horario de ${p.nombre} suma ${fmt(p.hPlan)} hrs y pasa de ${meta}. Ajústalo primero.`; return; }
+    const patch = { nuevo_horario: textoSemana(p.plan), nuevo_horario_dias: { ...p.plan }, nuevas_horas: p.hPlan,
+      horario_validado: hoyISO(), horario_validado_por: uid || null, horario_origen: CFG.titulo };
+    if (r.adendum_generado) patch.adendum_generado = null;
+    if (r.comentario === 'Propuesta inicial, por validar') patch.comentario = '';
+    try {
+      btn.classList.add('saving');
+      await db.doc('personas/' + p.id).update(patch);
+      await db.doc(CFG.coleccion + '/' + p.id).delete(); delete ajustes[p.id];
+      $('pl-status').textContent = `Listo: el horario de ${p.nombre} ya está en el Seguimiento, validado. Su adendum se puede descargar de nuevo.`;
+    } catch (e) { $('pl-status').textContent = 'No se pudo pasar al Seguimiento. Revisa que tengas permiso de edición e inténtalo de nuevo.'; }
+    finally { btn.classList.remove('saving'); }
+    dibujar();
+  }
   const entrada = (p, dias) => { const d = DIAS.find((x) => dias[x]); return d ? aMin(String(dias[d]).split('–')[0]) : 9999; };
 
   // Personas de un área presentes en cada media hora del horario del club; huecos sin nadie
@@ -2294,7 +2321,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     const sec = $('t-plan'); if (!sec || sec.closest('[hidden]') || sec.hidden) return;
     const lista = personas();
     if (!lista) { $('pl-rows').replaceChildren(el('tr', '', '')); $('pl-status').textContent = 'Cargando horarios…'; return; }
-    $('pl-status').textContent = db ? '' : 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
+    if (!db) $('pl-status').textContent = 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
     $('pl-n').textContent = lista.length;
     $('pl-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
     $('pl-hp').textContent = fmt(d3.sum(lista, (p) => p.hPlan));
@@ -2359,7 +2386,11 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
           be.setAttribute('aria-label', `Ajustar el horario planeado de ${p.nombre}`);
           be.addEventListener('click', () => { S.editando = p.id; dibujar(); });
           ca.appendChild(be);
-          if (p.ajustado) { const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `pl-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br); }
+          if (p.ajustado) {
+            if (enSeguimiento(p)) { const bp = el('button', 'btn-sm gx-btn gx-btn-acc', 'Pasar al Seguimiento'); bp.type = 'button'; bp.id = `pl-ps-${p.id}`; bp.setAttribute('aria-label', `Pasar al Seguimiento el horario planeado de ${p.nombre}`); bp.addEventListener('click', () => pasarASeguimiento(p, bp)); ca.appendChild(bp); }
+            else ca.appendChild(el('span', 'h pl-sub', 'No está en Seguimiento'));
+            const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `pl-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br);
+          }
         }
         tr.appendChild(ca); tb.appendChild(tr);
         if (S.editando === p.id) tb.appendChild(editor(p));
@@ -2522,6 +2553,32 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     let t = 0; DIAS.forEach((d) => { const v = dias[d]; if (!v) return; const [e, s] = String(v).split('–'); const m = dur(e, s); if (m != null) t += Math.max(0, m - p.comida[d]); });
     return Math.round(t / 60 * 100) / 100;
   }
+  const LETRA = { lun: 'L', mar: 'M', mie: 'Mi', jue: 'J', vie: 'V', sab: 'S', dom: 'D' };
+  function textoSemana(dias) {
+    const gr = [];
+    DIAS.forEach((d) => { const v = dias[d] || 'descanso'; const g = gr[gr.length - 1]; if (g && g.v === v) g.ds.push(d); else gr.push({ ds: [d], v }); });
+    return gr.map((g) => `${g.ds.length === 1 ? LETRA[g.ds[0]] : LETRA[g.ds[0]] + '–' + LETRA[g.ds[g.ds.length - 1]]} ${g.v}`).join(' · ');
+  }
+  const enSeguimiento = (p) => { const seg = window.SEG; return seg ? seg.rows.find((r) => r.id === p.id) || null : null; };
+  // Pasa al Seguimiento el horario que ajustó Operaciones: queda validado, el adendum se vuelve a descargar
+  // y se quita el ajuste de la planeación (desde ahí la planeación vuelve a leer del Seguimiento).
+  async function pasarASeguimiento(p, btn) {
+    const r = enSeguimiento(p); const meta = META[p.tipo];
+    if (!r) { $('plv-status').textContent = `${p.nombre} no está en el Seguimiento (no pasa de 46 hrs).`; return; }
+    if (meta != null && p.hPlan > meta + 0.01) { $('plv-status').textContent = `No se pasó: el horario de ${p.nombre} suma ${fmt(p.hPlan)} hrs y pasa de ${meta}. Ajústalo primero.`; return; }
+    const patch = { nuevo_horario: textoSemana(p.plan), nuevo_horario_dias: { ...p.plan }, nuevas_horas: p.hPlan,
+      horario_validado: hoyISO(), horario_validado_por: uid || null, horario_origen: CFG.titulo };
+    if (r.adendum_generado) patch.adendum_generado = null;
+    if (r.comentario === 'Propuesta inicial, por validar') patch.comentario = '';
+    try {
+      btn.classList.add('saving');
+      await db.doc('personas/' + p.id).update(patch);
+      await db.doc(CFG.coleccion + '/' + p.id).delete(); delete ajustes[p.id];
+      $('plv-status').textContent = `Listo: el horario de ${p.nombre} ya está en el Seguimiento, validado. Su adendum se puede descargar de nuevo.`;
+    } catch (e) { $('plv-status').textContent = 'No se pudo pasar al Seguimiento. Revisa que tengas permiso de edición e inténtalo de nuevo.'; }
+    finally { btn.classList.remove('saving'); }
+    dibujar();
+  }
   const entrada = (p, dias) => { const d = DIAS.find((x) => dias[x]); return d ? aMin(String(dias[d]).split('–')[0]) : 9999; };
 
   // Personas de un área presentes en cada media hora del horario del club; huecos sin nadie
@@ -2542,7 +2599,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     const sec = $('t-planvr'); if (!sec || sec.closest('[hidden]') || sec.hidden) return;
     const lista = personas();
     if (!lista) { $('plv-rows').replaceChildren(el('tr', '', '')); $('plv-status').textContent = 'Cargando horarios…'; return; }
-    $('plv-status').textContent = db ? '' : 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
+    if (!db) $('plv-status').textContent = 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
     $('plv-n').textContent = lista.length;
     $('plv-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
     $('plv-hp').textContent = fmt(d3.sum(lista, (p) => p.hPlan));
@@ -2607,7 +2664,11 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
           be.setAttribute('aria-label', `Ajustar el horario planeado de ${p.nombre}`);
           be.addEventListener('click', () => { S.editando = p.id; dibujar(); });
           ca.appendChild(be);
-          if (p.ajustado) { const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `plv-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br); }
+          if (p.ajustado) {
+            if (enSeguimiento(p)) { const bp = el('button', 'btn-sm gx-btn gx-btn-acc', 'Pasar al Seguimiento'); bp.type = 'button'; bp.id = `plv-ps-${p.id}`; bp.setAttribute('aria-label', `Pasar al Seguimiento el horario planeado de ${p.nombre}`); bp.addEventListener('click', () => pasarASeguimiento(p, bp)); ca.appendChild(bp); }
+            else ca.appendChild(el('span', 'h pl-sub', 'No está en Seguimiento'));
+            const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `plv-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br);
+          }
         }
         tr.appendChild(ca); tb.appendChild(tr);
         if (S.editando === p.id) tb.appendChild(editor(p));

@@ -37,7 +37,7 @@
       <label for="{{P}}-area">Área<select class="gx-select" id="{{P}}-area"></select></label>
       <button type="button" class="gx-btn mp-xlsx" id="{{P}}-xlsx">Descargar planeación (.xlsx)</button>
     </div>
-    <p class="note">Los días sombreados cambian contra hoy. «Ajustado» indica que Operaciones modificó la propuesta; «Volver a la propuesta» la restablece.</p>
+    <p class="note">Los días sombreados cambian contra hoy. «Ajustado» indica que Operaciones modificó la propuesta; «Pasar al Seguimiento» lleva ese horario al Seguimiento (queda validado y el adendum se vuelve a descargar) y «Volver a la propuesta» deshace el ajuste. Orden: primero el gerente valida en el Seguimiento, después Operaciones ajusta aquí.</p>
     <div class="gx-tablebox mp-plantilla">
       <table class="gx-table gx-sem mp-tabla pl-tabla">
         <thead><tr><th>Nombre</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th><th></th></tr></thead>
@@ -112,6 +112,32 @@
     let t = 0; DIAS.forEach((d) => { const v = dias[d]; if (!v) return; const [e, s] = String(v).split('–'); const m = dur(e, s); if (m != null) t += Math.max(0, m - p.comida[d]); });
     return Math.round(t / 60 * 100) / 100;
   }
+  const LETRA = { lun: 'L', mar: 'M', mie: 'Mi', jue: 'J', vie: 'V', sab: 'S', dom: 'D' };
+  function textoSemana(dias) {
+    const gr = [];
+    DIAS.forEach((d) => { const v = dias[d] || 'descanso'; const g = gr[gr.length - 1]; if (g && g.v === v) g.ds.push(d); else gr.push({ ds: [d], v }); });
+    return gr.map((g) => `${g.ds.length === 1 ? LETRA[g.ds[0]] : LETRA[g.ds[0]] + '–' + LETRA[g.ds[g.ds.length - 1]]} ${g.v}`).join(' · ');
+  }
+  const enSeguimiento = (p) => { const seg = window.SEG; return seg ? seg.rows.find((r) => r.id === p.id) || null : null; };
+  // Pasa al Seguimiento el horario que ajustó Operaciones: queda validado, el adendum se vuelve a descargar
+  // y se quita el ajuste de la planeación (desde ahí la planeación vuelve a leer del Seguimiento).
+  async function pasarASeguimiento(p, btn) {
+    const r = enSeguimiento(p); const meta = META[p.tipo];
+    if (!r) { $('{{P}}-status').textContent = `${p.nombre} no está en el Seguimiento (no pasa de 46 hrs).`; return; }
+    if (meta != null && p.hPlan > meta + 0.01) { $('{{P}}-status').textContent = `No se pasó: el horario de ${p.nombre} suma ${fmt(p.hPlan)} hrs y pasa de ${meta}. Ajústalo primero.`; return; }
+    const patch = { nuevo_horario: textoSemana(p.plan), nuevo_horario_dias: { ...p.plan }, nuevas_horas: p.hPlan,
+      horario_validado: hoyISO(), horario_validado_por: uid || null, horario_origen: CFG.titulo };
+    if (r.adendum_generado) patch.adendum_generado = null;
+    if (r.comentario === 'Propuesta inicial, por validar') patch.comentario = '';
+    try {
+      btn.classList.add('saving');
+      await db.doc('personas/' + p.id).update(patch);
+      await db.doc(CFG.coleccion + '/' + p.id).delete(); delete ajustes[p.id];
+      $('{{P}}-status').textContent = `Listo: el horario de ${p.nombre} ya está en el Seguimiento, validado. Su adendum se puede descargar de nuevo.`;
+    } catch (e) { $('{{P}}-status').textContent = 'No se pudo pasar al Seguimiento. Revisa que tengas permiso de edición e inténtalo de nuevo.'; }
+    finally { btn.classList.remove('saving'); }
+    dibujar();
+  }
   const entrada = (p, dias) => { const d = DIAS.find((x) => dias[x]); return d ? aMin(String(dias[d]).split('–')[0]) : 9999; };
 
   // Personas de un área presentes en cada media hora del horario del club; huecos sin nadie
@@ -132,7 +158,7 @@
     const sec = $('{{TAB}}'); if (!sec || sec.closest('[hidden]') || sec.hidden) return;
     const lista = personas();
     if (!lista) { $('{{P}}-rows').replaceChildren(el('tr', '', '')); $('{{P}}-status').textContent = 'Cargando horarios…'; return; }
-    $('{{P}}-status').textContent = db ? '' : 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
+    if (!db) $('{{P}}-status').textContent = 'Vista de solo consulta: abre la página en claude.ai para ajustar horarios.';
     $('{{P}}-n').textContent = lista.length;
     $('{{P}}-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));
     $('{{P}}-hp').textContent = fmt(d3.sum(lista, (p) => p.hPlan));
@@ -197,7 +223,11 @@
           be.setAttribute('aria-label', `Ajustar el horario planeado de ${p.nombre}`);
           be.addEventListener('click', () => { S.editando = p.id; dibujar(); });
           ca.appendChild(be);
-          if (p.ajustado) { const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `{{P}}-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br); }
+          if (p.ajustado) {
+            if (enSeguimiento(p)) { const bp = el('button', 'btn-sm gx-btn gx-btn-acc', 'Pasar al Seguimiento'); bp.type = 'button'; bp.id = `{{P}}-ps-${p.id}`; bp.setAttribute('aria-label', `Pasar al Seguimiento el horario planeado de ${p.nombre}`); bp.addEventListener('click', () => pasarASeguimiento(p, bp)); ca.appendChild(bp); }
+            else ca.appendChild(el('span', 'h pl-sub', 'No está en Seguimiento'));
+            const br = el('button', 'btn-sm gx-btn', 'Volver a la propuesta'); br.type = 'button'; br.id = `{{P}}-rs-${p.id}`; br.addEventListener('click', () => restablecer(p, br)); ca.appendChild(br);
+          }
         }
         tr.appendChild(ca); tb.appendChild(tr);
         if (S.editando === p.id) tb.appendChild(editor(p));

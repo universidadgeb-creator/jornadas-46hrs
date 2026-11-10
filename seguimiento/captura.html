@@ -300,7 +300,7 @@
       const c = calcular(r, b.dias); if (c.errores.length) return;
       const dias = Object.fromEntries(DIAS.map((d) => [d, b.dias[d] ? `${b.dias[d].e}–${b.dias[d].s}` : null]));
       const patch = { nuevo_horario: textoSemana(dias), nuevo_horario_dias: dias, nuevas_horas: Math.round(c.total / 60 * 100) / 100,
-        horario_validado: hoyISO(), horario_validado_por: uid || null };
+        horario_validado: hoyISO(), horario_validado_por: uid || null, horario_origen: null };
       if (r.comentario === 'Propuesta inicial, por validar') patch.comentario = '';  // la nota de la precarga ya no aplica
       if (r.adendum_generado) patch.adendum_generado = null;  // el Word descargado ya no corresponde: hay que volver a descargarlo
       Object.assign(r, patch); delete drafts[r.id]; editing = null;
@@ -548,7 +548,7 @@
       const legible = !(r.nuevo_horario || '').trim() || diasGuardados(r);
       cn.appendChild(el('span', 'nh-txt' + ((r.nuevo_horario || '').trim() ? '' : ' vacio'), (r.nuevo_horario || '').trim() || 'Sin capturar'));
       if (!legible) cn.appendChild(el('span', 'flag', 'No se puede leer: ábrelo y corrígelo'));
-      else if (r.horario_validado) cn.appendChild(el('span', 'okflag', `Validado el ${fechaTxt(r.horario_validado)}`));
+      else if (r.horario_validado) cn.appendChild(el('span', 'okflag', `Validado el ${fechaTxt(r.horario_validado)}${r.horario_origen ? ' · desde ' + r.horario_origen : ''}`));
       else if ((r.nuevo_horario || '').trim()) cn.appendChild(el('span', 'adn-pend', 'Propuesta sin validar'));
       if (canWrite) {
         const bt = el('button', 'btn btn-sm', editing === r.id ? 'Editando…' : ((r.nuevo_horario || '').trim() ? 'Editar' : 'Capturar'));
