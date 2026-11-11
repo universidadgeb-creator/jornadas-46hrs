@@ -82,14 +82,14 @@ RESUMEN_AVANCE = """  <article class="gx-card" id="avance-contratos">
 
 
 # Planeación de jornadas por club (misma plantilla seguimiento/plan.html). Metas de 2027 (46 diurna, 45 mixta):
-# Patty pidió que el enfoque sea solo 2027, aunque Valle Real cambia su horario de club en 2028.
+# Las dos planeaciones son de 2027 (Patty corrigió Valle Real de 2028 a 2027 el 11 nov 2026).
 PLANES = [
     {'prefijo': 'pl', 'tab': 't-plan', 'club': 'Gourmeteria', 'pestana': 'Planeación Gourmetería 2027',
      'titulo': 'Planeación Gourmetería 2027', 'coleccion': 'plan_gourmeteria', 'archivo': 'Planeacion Gourmeteria 2027',
      'apertura': {'sab': ['07:00', '17:00'], 'dom': ['08:30', '15:00']}, 'sab': '7:00–17:00', 'dom': '8:30–15:00',
      'sab_antes': '7:00–16:00', 'dom_antes': '9:00–15:00'},
-    {'prefijo': 'plv', 'tab': 't-planvr', 'club': 'Valle Real', 'pestana': 'Planeación Valle Real 2028',
-     'titulo': 'Planeación Valle Real 2028', 'coleccion': 'plan_valle_real', 'archivo': 'Planeacion Valle Real 2028',
+    {'prefijo': 'plv', 'tab': 't-planvr', 'club': 'Valle Real', 'pestana': 'Planeación Valle Real 2027',
+     'titulo': 'Planeación Valle Real 2027', 'coleccion': 'plan_valle_real', 'archivo': 'Planeacion Valle Real 2027',
      'apertura': {'sab': ['07:00', '17:00'], 'dom': ['08:30', '15:00']}, 'sab': '7:00–17:00', 'dom': '8:30–15:00',
      'sab_antes': '', 'dom_antes': '9:00–15:00'},
 ]
