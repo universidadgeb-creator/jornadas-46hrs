@@ -7,3 +7,15 @@
 .p40-tabla td.d .p40-t { display: block; font-variant-numeric: tabular-nums; font-weight: 600; }
 .p40-tabla td.num .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
 .p40-tabla td.num b { font-weight: 600; color: var(--gx-accent); }
+.p40-proy { margin-bottom: var(--cds-gap-md); }
+.p40-ficha { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-sm); margin-top: var(--cds-gap-sm); }
+.p40-ficha div { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); }
+.p40-ficha div.is-a { background: var(--gx-accent-soft); }
+.p40-ficha .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.p40-ficha p { margin: .2rem 0 0; font-size: var(--cds-font-size-body); }
+.p40-ficha b { font-weight: 600; color: var(--gx-accent); font-variant-numeric: tabular-nums; }
+.p40-comp { min-width: 36rem; }
+.p40-comp td { vertical-align: top; }
+.p40-comp td:first-child { font-weight: 600; white-space: nowrap; }
+.p40-comp b { color: var(--gx-accent); font-weight: 600; }
+.p40-dec { list-style: decimal; }

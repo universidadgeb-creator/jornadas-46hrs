@@ -352,6 +352,18 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 .p40-tabla td.d .p40-t { display: block; font-variant-numeric: tabular-nums; font-weight: 600; }
 .p40-tabla td.num .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
 .p40-tabla td.num b { font-weight: 600; color: var(--gx-accent); }
+.p40-proy { margin-bottom: var(--cds-gap-md); }
+.p40-ficha { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-sm); margin-top: var(--cds-gap-sm); }
+.p40-ficha div { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); }
+.p40-ficha div.is-a { background: var(--gx-accent-soft); }
+.p40-ficha .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.p40-ficha p { margin: .2rem 0 0; font-size: var(--cds-font-size-body); }
+.p40-ficha b { font-weight: 600; color: var(--gx-accent); font-variant-numeric: tabular-nums; }
+.p40-comp { min-width: 36rem; }
+.p40-comp td { vertical-align: top; }
+.p40-comp td:first-child { font-weight: 600; white-space: nowrap; }
+.p40-comp b { color: var(--gx-accent); font-weight: 600; }
+.p40-dec { list-style: decimal; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -546,7 +558,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
     <button type="button" role="tab" data-tab="t-plan" aria-selected="false">Planeación Gourmetería 2027</button>
     <button type="button" role="tab" data-tab="t-planvr" aria-selected="false">Planeación Valle Real 2027</button>
     <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>
-    <button type="button" role="tab" data-tab="t-p40" aria-selected="false">Propuesta 40 hrs</button>
+    <button type="button" role="tab" data-tab="t-p40" aria-selected="false">Proyecto 40 hrs</button>
   </nav>
 
   <section class="gx-tab" id="t-resumen">
@@ -889,12 +901,42 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 </section>
 
   <section class="gx-tab" id="t-p40" hidden>
+  <article class="gx-card p40-proy">
+    <h2>Proyecto: directo a 40 hrs con 1 hora de comida</h2>
+    <p class="note">En lugar de bajar la jornada cuatro veces (46 en 2027, 44, 42 y 40 en 2030), se hace un solo cambio a 40 hrs por semana con 1 hora de comida externa: la persona sale del centro de trabajo y esa hora no cuenta como jornada. Es un escenario para decidir: no cambia el Seguimiento ni los adendums de 2027.</p>
+    <div class="p40-ficha">
+      <div><span class="lbl">Objetivo</span><p>Dejar a todo el personal en <b>40 hrs de trabajo por semana</b>, con 1 hora de comida externa (no cuenta como jornada), de una sola vez.</p></div>
+      <div><span class="lbl">Alcance</span><p><b data-p40="n">—</b> personas que hoy trabajan más de 40 hrs, en <b data-p40="clubes">—</b> clubes.</p></div>
+      <div><span class="lbl">Cómo</span><p>Mismos días y misma hora de entrada; cada día baja en proporción. Respeta transporte y el máximo legal por día.</p></div>
+      <div class="is-a"><span class="lbl">Impacto</span><p><b data-p40="dif">—</b> hrs por semana menos, que equivalen a <b data-p40="eq">—</b> personas de 40 hrs.</p></div>
+    </div>
+    <h3 class="rs-h3">Directo vs. por etapas</h3>
+    <div class="cap-scroll">
+      <table class="gx-table cap-tabla p40-comp">
+        <thead><tr><th></th><th>Por etapas (46 → 44 → 42 → 40)</th><th>Directo a 40</th></tr></thead>
+        <tbody>
+          <tr><td>Cambios de horario y adendums</td><td><b data-p40="g-cambios">—</b> (cada año se vuelve a ajustar a quien queda arriba del límite)</td><td><b data-p40="n2">—</b> (uno por persona)</td></tr>
+          <tr><td>Capacidad a reacomodar en 2027</td><td><b data-p40="g-2027">—</b> personas equivalentes</td><td><b data-p40="eq2">—</b> personas equivalentes</td></tr>
+          <tr><td>Capacidad a reacomodar en 2030</td><td><b data-p40="g-2030">—</b> personas equivalentes</td><td><b data-p40="eq3">—</b> personas equivalentes</td></tr>
+          <tr><td>Ventaja</td><td>El costo en capacidad se reparte en 4 años.</td><td>Un solo cambio, una sola negociación y un solo adendum; queda listo para 2030.</td></tr>
+          <tr><td>Reto</td><td>Cuatro rondas de horarios, adendums y comunicación.</td><td>Toda la capacidad se reacomoda desde el arranque.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 class="rs-h3">Decisiones antes de arrancar</h3>
+    <ol class="p40-reglas p40-dec">
+      <li><b>Hora de comida externa:</b> con 1 hora, <b data-p40="tarde">—</b> personas saldrían algunos días más tarde que hoy (hoy no salen a comer). Definir dónde y a qué hora sale a comer cada turno para no dejar huecos de cobertura.</li>
+      <li><b>Cobertura por club:</b> la revisa Operaciones con el Mapa por sucursal y las planeaciones.</li>
+      <li><b>Mixta y nocturna a 40 hrs:</b> confirmar con el abogado si bajan a 37 y 35.</li>
+      <li><b>Cómo cubrir la capacidad:</b> reacomodo de turnos, contratación o ajuste de horarios del club.</li>
+      <li><b>Fecha de arranque</b> y adendum único a 40 hrs.</li>
+    </ol>
+  </article>
   <article class="gx-card p40">
-    <h2>Propuesta de horarios a 40 hrs</h2>
-    <p class="note">Escenario para ir directo a 40 hrs por semana (la meta de 2030), sin pasar por 46, 44 y 42. Incluye a todas las personas que hoy trabajan más de 40 hrs. Es una propuesta para revisar: no cambia el Seguimiento ni los adendums de 2027.</p>
+    <h2>Horarios propuestos por persona</h2>
     <ul class="p40-reglas">
       <li><b>Mismos días que hoy</b> y misma hora de entrada. Cada día se reduce en proporción, así que un sábado corto sigue siendo corto. Con 6 días queda en 6 h 40 min de trabajo al día.</li>
-      <li><b>1 hora de comida dentro del turno</b> en los días de 5 hrs de trabajo o más (no cuenta como trabajo). Ejemplo: 07:00–15:40 = 6 h 40 min + 1 h de comida.</li>
+      <li><b>1 hora de comida externa</b> en los días de 5 hrs de trabajo o más: la persona sale del centro de trabajo y esa hora no cuenta como jornada (si se queda en el lugar, contaría como trabajo). Ejemplo: 07:00–15:40 = 6 h 40 min de trabajo + 1 h de comida.</li>
       <li><b>Transporte:</b> quien hoy sale a las 23:00 o después conserva su salida y entra más tarde.</li>
       <li><b>Máximo legal por día:</b> diurna 8 hrs, mixta 7 h 30 min, nocturna 7 hrs. Si con sus días no alcanza las 40 sin pasarse, queda abajo de 40 y se marca.</li>
     </ul>
@@ -3082,6 +3124,16 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     const hoy = l.reduce((s, p) => s + p.hoyH, 0), nue = l.reduce((s, p) => s + p.nueH, 0);
     $('p40-n').textContent = l.length; $('p40-hoy').textContent = fmt(hoy); $('p40-nue').textContent = fmt(nue);
     $('p40-dif').textContent = fmt(hoy - nue); $('p40-eq').textContent = fmt((hoy - nue) / 40);
+    // Ficha del proyecto (sigue los filtros de la tabla)
+    const def = (k, v) => document.querySelectorAll(`[data-p40="${k}"]`).forEach((n) => { n.textContent = v; });
+    const pl = datos('plantilla').filter((r) => r.captura === 'Capturado' && (!S.cad || r.division === S.cad) && (!S.suc || r.ubicacion === S.suc) && (!S.pue || r.puesto === S.pue));
+    const sobre = (lim) => pl.filter((r) => Number(r.horas_reales) > lim);
+    const eqDe = (lim) => sobre(lim).reduce((s2, r) => s2 + Number(r.horas_reales) - lim, 0) / lim;
+    const tarde = l.filter((p) => Object.values(p.nuevo).some((x) => { const [e, sa] = x.hoy.split('–'); let a = aMin(e), b = aMin(sa); if (b <= a) b += 1440; const [ne, ns] = x.txt.split('–'); let c = aMin(ne), d = aMin(ns); if (d <= c) d += 1440; if (c < a - 600) { c += 1440; d += 1440; } return d > b; })).length;
+    def('n', l.length); def('n2', l.length); def('clubes', new Set(l.map((p) => p.club)).size);
+    def('dif', fmt(hoy - nue)); def('eq', fmt((hoy - nue) / 40)); def('eq2', fmt((hoy - nue) / 40)); def('eq3', fmt((hoy - nue) / 40));
+    def('g-cambios', [46, 44, 42, 40].reduce((s2, lim) => s2 + sobre(lim).length, 0)); def('g-2027', fmt(eqDe(46))); def('g-2030', fmt(eqDe(40)));
+    def('tarde', tarde);
     const abajo = l.filter((p) => p.nueH < 40).length;
     $('p40-status').textContent = abajo ? `${abajo} ${abajo === 1 ? 'persona queda' : 'personas quedan'} abajo de 40 hrs por el máximo legal por día (están marcadas).` : '';
     const tb = $('p40-rows'); tb.replaceChildren();
@@ -3108,7 +3160,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     if (!window.XLSX) { st.textContent = 'No se pudo preparar el Excel. Recarga la página.'; return; }
     const l = filtrar(todos()).sort((a, b) => a.cadena.localeCompare(b.cadena, 'es') || a.club.localeCompare(b.club, 'es') || a.entrada - b.entrada);
     const wb = XLSX.utils.book_new();
-    const hoja = [['Cadena', 'Club', 'Nombre', 'Puesto', 'Tipo', 'Días', 'Hrs hoy', 'Hrs propuesta', 'Horario hoy', 'Horario propuesto (incluye 1 h de comida)', ...DIAS.map((d) => `${DN[d]} hoy`), ...DIAS.map((d) => `${DN[d]} 40 hrs`), 'Notas']];
+    const hoja = [['Cadena', 'Club', 'Nombre', 'Puesto', 'Tipo', 'Días', 'Hrs hoy', 'Hrs propuesta', 'Horario hoy', 'Horario propuesto (incluye 1 h de comida externa)', ...DIAS.map((d) => `${DN[d]} hoy`), ...DIAS.map((d) => `${DN[d]} 40 hrs`), 'Notas']];
     l.forEach((p) => hoja.push([p.cadena, p.club, p.nombre, p.puesto, p.tipo, p.dias, +p.hoyH.toFixed(2), +p.nueH.toFixed(2),
       textoSemana(Object.fromEntries(DIAS.map((d) => [d, p.nuevo[d] ? p.nuevo[d].hoy : null]))), textoSemana(Object.fromEntries(DIAS.map((d) => [d, p.nuevo[d] ? p.nuevo[d].txt : null]))),
       ...DIAS.map((d) => (p.nuevo[d] ? p.nuevo[d].hoy : 'Descanso')), ...DIAS.map((d) => (p.nuevo[d] ? p.nuevo[d].txt : 'Descanso')), p.notas.join('; ')]));

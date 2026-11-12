@@ -164,7 +164,7 @@ def main():
         '    <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>\n'
         + ''.join(f'    <button type="button" role="tab" data-tab="{c["tab"]}" aria-selected="false">{c["pestana"]}</button>\n' for c in PLANES) +
         '    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>\n'
-        '    <button type="button" role="tab" data-tab="t-p40" aria-selected="false">Propuesta 40 hrs</button>\n') + tab[fin:]
+        '    <button type="button" role="tab" data-tab="t-p40" aria-selected="false">Proyecto 40 hrs</button>\n') + tab[fin:]
     ini = tab.index('  <section class="gx-tab" id="t-personas" hidden>')
     fin = tab.index('  <section class="gx-tab" id="t-etapas" hidden>')
     tab = tab[:ini] + tab[fin:]
