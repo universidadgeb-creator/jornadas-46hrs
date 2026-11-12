@@ -184,6 +184,19 @@ def main():
     i = tab.index('  <article class="gx-card" id="por-tipo">')
     tab = tab[:i] + tab[tab.index('</article>', i) + len('</article>\n'):]
     tab = re.sub(r'\s*<div class="gx-tl-roles"[^>]*></div>', '', tab)
+    # «Lo que viene»: personas equivalentes por año y tabla por club (12 nov 2026, pedido de Patty)
+    tab = re.sub(r'(<div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=(\d{4})">—</b>[^<]*</div>)',
+                 lambda m: m.group(1) + f'\n        <div class="rs-tl-eq">≈ <b data-rs-eqy="{m.group(2)}">—</b> personas de tiempo completo</div>', tab)
+    i = tab.index('<article class="gx-card" id="lo-que-viene">'); j = tab.index('</article>', i)
+    tab = tab[:j] + '''  <h3 class="rs-h3">¿A cuántas personas equivale en cada club?</h3>
+    <p class="note">Horas por semana arriba del límite de cada año, divididas entre ese límite (una jornada completa de ese año). Con los horarios de hoy, sin ningún ajuste, y con el límite de ley para todos (por eso 2027 da menos que la propuesta de arriba, que baja las mixtas a 45). Es una referencia de capacidad, no una propuesta de contratación.</p>
+    <div class="cap-scroll">
+      <table class="gx-table cap-tabla rs-etapas">
+        <thead><tr><th>Cadena / club</th><th class="num">2027 · 46 hrs</th><th class="num">2028 · 44 hrs</th><th class="num">2029 · 42 hrs</th><th class="num">2030 · 40 hrs</th><th class="num">Pasan de 40 hrs</th></tr></thead>
+        <tbody data-rs-etapas></tbody>
+      </table>
+    </div>
+  ''' + tab[j:]
     tab = reemplazar(tab, 'Debajo de cada año están los puestos que entran en esa etapa; abre un puesto para ver los nombres.',
                      'El detalle de puestos y nombres está en Próximas etapas.')
     tab = reemplazar(tab, """dash.draw('puestos', (el) => {
