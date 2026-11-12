@@ -253,6 +253,8 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 .mp-av tr.mp-av-total td { border-top: 2px solid var(--color-border-line); font-weight: 600; }
 .mp-av .mp-av-ir { white-space: nowrap; }
 .mp table.gx-table th { padding: .5rem .5rem; }
+.mp-av tr.mp-av-cad td { background: var(--color-bg); font-weight: 600; color: var(--gx-accent); }
+.mp-av tr.mp-av-cad td .mp-av-t { color: var(--gx-accent); }
 
 /* Pestaña «Planeación Gourmetería» */
 .pl-club { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--cds-gap-sm); }
@@ -731,6 +733,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
     <h2>Mapa de horarios por sucursal</h2>
     <p class="note">Cómo queda cubierta cada sucursal a lo largo de la semana. «2027» usa el nuevo horario de quienes están en el Seguimiento (lo capturado o la propuesta) y el horario actual de los demás. «Cambio» muestra dónde queda más o menos gente.</p>
     <div class="mp-tools">
+      <label for="mp-cad">Cadena<select class="gx-select" id="mp-cad"></select></label>
       <label for="mp-suc">Sucursal<select class="gx-select" id="mp-suc"></select></label>
       <label for="mp-pue">Puesto<select class="gx-select" id="mp-pue"></select></label>
       <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-mp="hoy" aria-pressed="false">Hoy</button><button type="button" data-mp="nuevo" aria-pressed="true">2027</button><button type="button" data-mp="cambio" aria-pressed="false">Cambio</button></span></div>
@@ -2044,15 +2047,21 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
   const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('es-MX', { maximumFractionDigits: 1 });
   const SL = 48;  // bloques de media hora
   const hh = (k) => { const m = ((k % SL) + SL) % SL * 30; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
-  const M = { suc: '', pue: '', modo: 'nuevo' };
+  const M = { cad: '', suc: '', pue: '', modo: 'nuevo' };
 
   function horarios() {
     const d = window.dash && window.dash.data ? window.dash.data('horarios') : null;
     return d && d.status === 'ok' ? d.data.filter((r) => r.tipo_jornada !== 'Sin captura') : [];
   }
   // Cada persona con su horario de hoy y el de 2027
+  // Cadena (división) de cada persona, del CSV de plantilla
+  function cadenas() {
+    const d = window.dash && window.dash.data ? window.dash.data('plantilla') : null;
+    return new Map(d && d.status === 'ok' ? d.data.map((r) => [r.nombre, r.division || '—']) : []);
+  }
   function personas() {
     const seg = window.SEG || { rows: [] };
+    const cad = cadenas();
     const porNombre = new Map(seg.rows.map((r) => [r.nombre, r]));
     return horarios().map((h) => {
       const hoy = Object.fromEntries(DIAS.map((d) => [d, h[d] || null]));
@@ -2060,7 +2069,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       const g = s && seg.diasDe ? seg.diasDe(s) : null;
       const nuevo = g ? Object.fromEntries(DIAS.map((d) => [d, g[d] || null])) : hoy;
       const hn = g && seg.horasDe ? (seg.horasDe(s) ?? Number(h.horas_reales)) : Number(h.horas_reales);
-      return { nombre: h.nombre, puesto: h.puesto || 'Sin puesto', sucursal: h.ubicacion, tipo: h.tipo_jornada, hoy, nuevo, hHoy: Number(h.horas_reales), hNuevo: hn, cambia: !!g };
+      return { nombre: h.nombre, puesto: h.puesto || 'Sin puesto', cadena: cad.get(h.nombre) || '—', sucursal: h.ubicacion, tipo: h.tipo_jornada, hoy, nuevo, hHoy: Number(h.horas_reales), hNuevo: hn, cambia: !!g };
     });
   }
   // Personas en piso por día y media hora (cuenta si trabaja ≥ 15 min del bloque; cruza medianoche)
@@ -2133,9 +2142,10 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       (r) => !!(r.adendum_generado || r.adendum_recibido),
       (r) => !!r.adendum_recibido,
     ];
-    const grupos = d3.groups(seg.rows, (r) => r.sucursal).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'es'));
-    const fila = (nombre, lista, total) => {
-      const tr = el('tr', total ? 'mp-av-total' : (nombre === M.suc ? 'mp-av-sel' : ''));
+    const cadR = (r) => r.division || '—';
+    const base = seg.rows.filter((r) => !M.cad || cadR(r) === M.cad);
+    const fila = (nombre, lista, total, cls) => {
+      const tr = el('tr', cls || (total ? 'mp-av-total' : (nombre === M.suc ? 'mp-av-sel' : '')));
       tr.append(el('td', 'mp-av-n', nombre), el('td', 'num', String(lista.length)));
       pasos.forEach((f) => {
         const n = lista.filter(f).length, pc = lista.length ? n / lista.length : 0;
@@ -2146,16 +2156,28 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       if (!total && seg.verSucursal) { const bt = el('button', 'gx-btn mp-av-ir', 'Ver captura'); bt.type = 'button'; bt.setAttribute('aria-label', `Ver la captura de ${nombre}`); bt.addEventListener('click', () => { seg.verSucursal(nombre); if (window.abrirTab) abrirTab('t-seg'); window.scrollTo({ top: 0 }); }); tdb.appendChild(bt); }
       tr.appendChild(tdb); tb.appendChild(tr);
     };
-    grupos.forEach(([s, l]) => fila(s, l, false));
-    fila('Total', seg.rows, true);
+    d3.groups(base, cadR).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'es')).forEach(([c, lc]) => {
+      const sucs = d3.groups(lc, (r) => r.sucursal).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'es'));
+      const solo = sucs.length === 1 && sucs[0][0] === c;  // cadena de un solo club con el mismo nombre
+      if (!solo && !M.cad) fila(c, lc, true, 'mp-av-cad');
+      sucs.forEach(([s, l]) => fila(s, l, false));
+    });
+    fila(M.cad ? 'Total ' + M.cad : 'Total', base, true);
   }
-  function filtradas() { return personas().filter((p) => (!M.suc || p.sucursal === M.suc) && (!M.pue || p.puesto === M.pue)); }
+  function filtradas() { return personas().filter((p) => (!M.cad || p.cadena === M.cad) && (!M.suc || p.sucursal === M.suc) && (!M.pue || p.puesto === M.pue)); }
 
   function opciones() {
-    const ps = personas(); if (!ps.length) return false;
+    const todas = personas(); if (!todas.length) return false;
+    const cc = d3.rollup(todas, (v) => v.length, (p) => p.cadena);
+    const cads = [...cc.keys()].sort((a, b) => cc.get(b) - cc.get(a) || a.localeCompare(b, 'es'));
+    if (M.cad && !cc.has(M.cad)) M.cad = '';
+    $('mp-cad').replaceChildren(new Option(`Todas las cadenas (${todas.length})`, ''), ...cads.map((c) => new Option(`${c} (${cc.get(c)})`, c)));
+    $('mp-cad').value = M.cad;
+    const ps = todas.filter((p) => !M.cad || p.cadena === M.cad);
     const cnt = d3.rollup(ps, (v) => v.length, (p) => p.sucursal);
     const sucs = [...cnt.keys()].sort((a, b) => cnt.get(b) - cnt.get(a) || a.localeCompare(b, 'es'));
     if (M.suc === '' && !$('mp-suc').dataset.init) { M.suc = sucs[0]; $('mp-suc').dataset.init = '1'; }
+    if (M.suc && !cnt.has(M.suc)) M.suc = '';
     $('mp-suc').replaceChildren(new Option(`Todas las sucursales (${ps.length})`, ''), ...sucs.map((s) => new Option(`${s} (${cnt.get(s)})`, s)));
     $('mp-suc').value = M.suc;
     const enSuc = ps.filter((p) => !M.suc || p.sucursal === M.suc);
@@ -2262,11 +2284,12 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
   async function descargarMaestro() {
     const st = $('mp-status');
     if (!window.XLSX) { st.textContent = 'No se pudo preparar el Excel. Recarga la página.'; return; }
-    const ps = personas(); const wb = XLSX.utils.book_new();
-    const sucs = [...new Set(ps.map((p) => p.sucursal))].sort((a, b) => a.localeCompare(b, 'es'));
-    const res = [['Sucursal', 'Personas', 'Pasan de 46 hrs hoy', 'Horas por semana hoy', 'Horas por semana 2027', 'Diferencia']];
-    sucs.forEach((s) => { const l = ps.filter((p) => p.sucursal === s); const a = d3.sum(l, (p) => p.hHoy), b = d3.sum(l, (p) => p.hNuevo); res.push([s, l.length, l.filter((p) => p.hHoy > 46).length, +a.toFixed(2), +b.toFixed(2), +(b - a).toFixed(2)]); });
-    const ws0 = XLSX.utils.aoa_to_sheet(res); ws0['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 18 }, { wch: 20 }, { wch: 20 }, { wch: 11 }];
+    const ps = personas().filter((p) => !M.cad || p.cadena === M.cad); const wb = XLSX.utils.book_new();
+    const cadDeSuc = new Map(ps.map((p) => [p.sucursal, p.cadena]));
+    const sucs = [...new Set(ps.map((p) => p.sucursal))].sort((a, b) => (cadDeSuc.get(a) || '').localeCompare(cadDeSuc.get(b) || '', 'es') || a.localeCompare(b, 'es'));
+    const res = [['Cadena', 'Sucursal', 'Personas', 'Pasan de 46 hrs hoy', 'Horas por semana hoy', 'Horas por semana 2027', 'Diferencia']];
+    sucs.forEach((s) => { const l = ps.filter((p) => p.sucursal === s); const a = d3.sum(l, (p) => p.hHoy), b = d3.sum(l, (p) => p.hNuevo); res.push([cadDeSuc.get(s), s, l.length, l.filter((p) => p.hHoy > 46).length, +a.toFixed(2), +b.toFixed(2), +(b - a).toFixed(2)]); });
+    const ws0 = XLSX.utils.aoa_to_sheet(res); ws0['!cols'] = [{ wch: 16 }, { wch: 18 }, { wch: 10 }, { wch: 18 }, { wch: 20 }, { wch: 20 }, { wch: 11 }];
     XLSX.utils.book_append_sheet(wb, ws0, 'Resumen');
     sucs.forEach((s) => {
       const l = ps.filter((p) => p.sucursal === s).sort(porHora('nuevo'));
@@ -2291,10 +2314,11 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
     if (!dl) { st.textContent = 'Esta vista no permite descargar archivos. Abre la página en claude.ai.'; return; }
     const hoy = new Date(); const f = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-    try { await dl.save({ filename: `Archivo maestro de horarios - ${f}.xlsx`, data: new Blob([buf]) }); st.textContent = 'Archivo maestro descargado.'; }
+    try { await dl.save({ filename: `Archivo maestro de horarios${M.cad ? ' - ' + M.cad : ''} - ${f}.xlsx`, data: new Blob([buf]) }); st.textContent = 'Archivo maestro descargado.'; }
     catch (e) { st.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : 'No se pudo descargar el archivo. Inténtalo de nuevo.'; }
   }
 
+  $('mp-cad').addEventListener('change', (e) => { M.cad = e.target.value; M.suc = ''; M.pue = ''; $('mp-suc').dataset.init = '1'; dibujar(); });
   $('mp-suc').addEventListener('change', (e) => { M.suc = e.target.value; M.pue = ''; dibujar(); });
   $('mp-pue').addEventListener('change', (e) => { M.pue = e.target.value; dibujar(); });
   document.querySelectorAll('[data-mp]').forEach((b) => b.addEventListener('click', () => {
@@ -2303,7 +2327,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
   $('mp-xlsx').addEventListener('click', descargarMaestro);
   window.addEventListener('seg:datos', dibujar);
   // Desde el Resumen: ver la plantilla de un puesto en todas las sucursales
-  window.addEventListener('mapa:puesto', (e) => { $('mp-suc').dataset.init = '1'; M.suc = ''; M.pue = e.detail || ''; dibujar(); });
+  window.addEventListener('mapa:puesto', (e) => { $('mp-suc').dataset.init = '1'; M.cad = ''; M.suc = ''; M.pue = e.detail || ''; dibujar(); });
   // Dibuja al abrir la pestaña, al cambiar el ancho y al abrir el detalle por media hora
   const medidas = new Map();
   const ro = new ResizeObserver((entradas) => {

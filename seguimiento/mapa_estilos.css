@@ -48,3 +48,5 @@
 .mp-av tr.mp-av-total td { border-top: 2px solid var(--color-border-line); font-weight: 600; }
 .mp-av .mp-av-ir { white-space: nowrap; }
 .mp table.gx-table th { padding: .5rem .5rem; }
+.mp-av tr.mp-av-cad td { background: var(--color-bg); font-weight: 600; color: var(--gx-accent); }
+.mp-av tr.mp-av-cad td .mp-av-t { color: var(--gx-accent); }
