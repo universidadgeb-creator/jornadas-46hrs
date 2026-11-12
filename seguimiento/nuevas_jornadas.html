@@ -242,6 +242,13 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 #t-seg .seg-av .note { font-size: 12px; color: var(--muted); margin: 4px 0 8px; }
 #t-seg .mp-av td { padding: .4rem .5rem; border-bottom: 1px solid var(--line); }
 #t-seg .mp-av th { padding: .5rem; }
+/* Resumen: filtro de cadena */
+.rs-cad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rs-cad .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-right: 4px; }
+.rs-cad .cad-chip { font: inherit; font-size: 13px; color: inherit; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 99px; padding: 5px 12px; cursor: pointer; }
+.rs-cad .cad-chip small { color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.rs-cad .cad-chip[aria-pressed="true"] { background: var(--gx-accent); border-color: var(--gx-accent); color: var(--color-bg); font-weight: 600; }
+.rs-cad .cad-chip[aria-pressed="true"] small { color: inherit; opacity: .85; }
 
 /* Pestaña «Mapa por sucursal» */
 .mp-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: end; }
@@ -527,6 +534,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
   </nav>
 
   <section class="gx-tab" id="t-resumen">
+  <div class="rs-cad" role="group" aria-label="Cadena" id="rs-cad"></div>
   <section class="rs-kpis" aria-label="Cifras clave">
     <div class="rs-k"><span class="lbl">Personas que deben ajustar su jornada</span><b data-rs="n">—</b><span class="sub" data-rs="n-sub">—</span></div>
     <div class="rs-k"><span class="lbl">Horas por semana que se reacomodan</span><b data-rs="h">—</b><span class="sub">con la propuesta: diurna a 46, mixta a 45</span></div>
@@ -1015,8 +1023,20 @@ function filtrarPuesto(p) {
   if (GX.puesto) { const pu = GX.puesto; GX.puesto = null; dash.draw('puestos'); window.dispatchEvent(new CustomEvent('mapa:puesto', { detail: pu })); abrirTab('t-mapa'); window.scrollTo({ top: 0 }); }
 }
 
+// Con una cadena elegida (Resumen o Próximas etapas), la gráfica de puestos cuenta solo esa cadena
+function porPuestoCad() {
+  const p = dash.data('por_puesto'); const cad = window.GXE && GXE.cad; if (!cad || p.status !== 'ok') return p;
+  const pl = dash.data('plantilla'); if (pl.status !== 'ok') return p;
+  const m = {};
+  pl.data.filter((r) => r.captura === 'Capturado' && r.division === cad).forEach((r) => {
+    m[r.puesto] = m[r.puesto] || { puesto: r.puesto, afectados: 0, entre: 0, total: 0 };
+    m[r.puesto].total += 1;
+    if (Number(r.horas_reales) >= 48) m[r.puesto].afectados += 1; else if (Number(r.horas_reales) > 46) m[r.puesto].entre += 1;
+  });
+  return { status: 'ok', data: Object.values(m).filter((d) => d.afectados + d.entre > 0).sort((a, b) => (b.afectados + b.entre) - (a.afectados + a.entre) || b.afectados - a.afectados) };
+}
 dash.draw('puestos', (el) => {
-  const p = dash.data('por_puesto');
+  const p = porPuestoCad();
   if (p.status !== 'ok') { el.replaceChildren(); return; }
   const rows = GX.todos ? p.data : p.data.slice(0, 8);
   hbars(el, rows, 'puesto', filtrarPuesto, GX.puesto);
@@ -1255,7 +1275,7 @@ dash.draw('etapa-cad', (sel) => {
   sel.replaceChildren(new Option('Todas las cadenas', ''), ...l.map((c) => new Option(c, c)));
   if (GXE.cad && !l.includes(GXE.cad)) GXE.cad = '';
   sel.value = GXE.cad;
-  sel.onchange = () => { GXE.cad = sel.value; GXE.suc = ''; redrawEtapa(); };
+  sel.onchange = () => { GXE.cad = sel.value; GXE.suc = ''; redrawEtapa(); dash.draw('puestos'); window.dispatchEvent(new Event('cadena:cambio')); };
 });
 dash.draw('etapa-suc', (sel) => {
   const p = dash.data('etapas_personas'); const l = p.status === 'ok' ? [...new Set(p.data.filter((r) => !GXE.cad || r.division === GXE.cad).map((r) => r.ubicacion).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), 'es')) : [];
@@ -1936,8 +1956,27 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       return { n: g.length, c48: g.filter((r) => Number(r.horas_actuales) >= 48 && !r.aplicado_excel).length, apl: g.filter((r) => r.aplicado_excel).length, prop, ley, cap, firm: g.filter((r) => r.contrato).length, val: g.filter((r) => r.horario_validado).length };
     };
     const eq = (h) => fmt(h / 46);
-    const t = calc(rows);
-    const tipos = Object.fromEntries(TIPOS.map((x) => [x, rows.filter((r) => r.tipo === x).length]));
+    // Filtro de cadena del Resumen (el mismo que usa Próximas etapas: GXE.cad)
+    const cad = (window.GXE && GXE.cad) || '';
+    const cads = [...d3group(rows.map((r) => ({ _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => b[1].length - a[1].length).map(([c, g]) => [c, g.length]);
+    const caja = document.getElementById('rs-cad');
+    if (caja) {
+      caja.replaceChildren(el('span', 'lbl', 'Cadena'));
+      [['', 'Todas', rows.length], ...cads.map(([c, n]) => [c, c, n])].forEach(([val, txt, n]) => {
+        const b = el('button', 'cad-chip'); b.type = 'button'; b.setAttribute('aria-pressed', String(cad === val));
+        b.append(document.createTextNode(txt + ' '), el('small', '', String(n)));
+        b.addEventListener('click', () => {
+          if (window.GXE) { GXE.cad = val; GXE.suc = ''; }
+          if (window.redrawEtapa) redrawEtapa();
+          if (window.dash) dash.draw('puestos');
+          renderResumen();
+        });
+        caja.appendChild(b);
+      });
+    }
+    const base = cad ? rows.filter((r) => cadDe(r) === cad) : rows;
+    const t = calc(base);
+    const tipos = Object.fromEntries(TIPOS.map((x) => [x, base.filter((r) => r.tipo === x).length]));
     const v = {
       n: String(t.n), 'n-sub': `${t.c48} con 48 hrs · ${t.n - t.c48 - t.apl} entre 46 y 48${t.apl ? ' · ' + t.apl + ' ya ajustadas en el Excel' : ''}`,
       h: fmt(t.prop), eq: eq(t.prop), 'eq-sub': `${eq(t.ley)} por la ley (todas a 46) + ${eq(t.prop - t.ley)} por bajar las mixtas a 45`,
@@ -1956,16 +1995,17 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       return tr;
     };
     const filas = [];
-    [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([c, g]) => {
+    [...d3group(base.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([c, g]) => {
       const clubs = [...d3group(g, 'sucursal').entries()];
       const solo = clubs.length === 1 && clubs[0][0] === c;  // cadena de un solo club con el mismo nombre
-      filas.push(fila(c, calc(g), 'cap-cad', solo));
+      if (!cad || solo) filas.push(fila(c, calc(g), 'cap-cad', solo));
       if (solo) return;
       clubs.sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([s2, gs]) => filas.push(fila(s2, calc(gs), 'cap-club', true)));
     });
-    filas.push(fila('Total', t, 'cap-total'));
+    filas.push(fila(cad ? 'Total ' + cad : 'Total', t, 'cap-total'));
     tb.replaceChildren(...filas);
   }
+  window.addEventListener('cadena:cambio', () => renderResumen());
 
   function renderFuera() {
     const box = $('fuera-box'); if (!box) return;

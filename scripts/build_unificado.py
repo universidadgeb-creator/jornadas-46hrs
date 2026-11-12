@@ -67,7 +67,8 @@ body { background: var(--color-bg); color: var(--color-fg); font-family: var(--f
 .gx b, .gx strong { font-weight: 600; }
 """
 
-RESUMEN_AVANCE = """  <section class="rs-kpis" aria-label="Cifras clave">
+RESUMEN_AVANCE = """  <div class="rs-cad" role="group" aria-label="Cadena" id="rs-cad"></div>
+  <section class="rs-kpis" aria-label="Cifras clave">
     <div class="rs-k"><span class="lbl">Personas que deben ajustar su jornada</span><b data-rs="n">—</b><span class="sub" data-rs="n-sub">—</span></div>
     <div class="rs-k"><span class="lbl">Horas por semana que se reacomodan</span><b data-rs="h">—</b><span class="sub">con la propuesta: diurna a 46, mixta a 45</span></div>
     <div class="rs-k is-a"><span class="lbl">Equivale a (personas de tiempo completo)</span><b data-rs="eq">—</b><span class="sub" data-rs="eq-sub">—</span></div>
@@ -185,6 +186,23 @@ def main():
     tab = re.sub(r'\s*<div class="gx-tl-roles"[^>]*></div>', '', tab)
     tab = reemplazar(tab, 'Debajo de cada año están los puestos que entran en esa etapa; abre un puesto para ver los nombres.',
                      'El detalle de puestos y nombres está en Próximas etapas.')
+    tab = reemplazar(tab, """dash.draw('puestos', (el) => {
+  const p = dash.data('por_puesto');""", """// Con una cadena elegida (Resumen o Próximas etapas), la gráfica de puestos cuenta solo esa cadena
+function porPuestoCad() {
+  const p = dash.data('por_puesto'); const cad = window.GXE && GXE.cad; if (!cad || p.status !== 'ok') return p;
+  const pl = dash.data('plantilla'); if (pl.status !== 'ok') return p;
+  const m = {};
+  pl.data.filter((r) => r.captura === 'Capturado' && r.division === cad).forEach((r) => {
+    m[r.puesto] = m[r.puesto] || { puesto: r.puesto, afectados: 0, entre: 0, total: 0 };
+    m[r.puesto].total += 1;
+    if (Number(r.horas_reales) >= 48) m[r.puesto].afectados += 1; else if (Number(r.horas_reales) > 46) m[r.puesto].entre += 1;
+  });
+  return { status: 'ok', data: Object.values(m).filter((d) => d.afectados + d.entre > 0).sort((a, b) => (b.afectados + b.entre) - (a.afectados + a.entre) || b.afectados - a.afectados) };
+}
+dash.draw('puestos', (el) => {
+  const p = porPuestoCad();""")
+    tab = reemplazar(tab, "  sel.onchange = () => { GXE.cad = sel.value; GXE.suc = ''; redrawEtapa(); };",
+                     "  sel.onchange = () => { GXE.cad = sel.value; GXE.suc = ''; redrawEtapa(); dash.draw('puestos'); window.dispatchEvent(new Event('cadena:cambio')); };")
     tab = reemplazar(tab, '  <section class="gx-tab" id="t-resumen">\n',
                      '  <section class="gx-tab" id="t-resumen">\n' + RESUMEN_AVANCE)
     captura = (RAIZ / 'seguimiento' / 'captura.html').read_text(encoding='utf-8')

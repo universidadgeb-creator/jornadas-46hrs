@@ -201,3 +201,10 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 #t-seg .seg-av .note { font-size: 12px; color: var(--muted); margin: 4px 0 8px; }
 #t-seg .mp-av td { padding: .4rem .5rem; border-bottom: 1px solid var(--line); }
 #t-seg .mp-av th { padding: .5rem; }
+/* Resumen: filtro de cadena */
+.rs-cad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rs-cad .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-right: 4px; }
+.rs-cad .cad-chip { font: inherit; font-size: 13px; color: inherit; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 99px; padding: 5px 12px; cursor: pointer; }
+.rs-cad .cad-chip small { color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.rs-cad .cad-chip[aria-pressed="true"] { background: var(--gx-accent); border-color: var(--gx-accent); color: var(--color-bg); font-weight: 600; }
+.rs-cad .cad-chip[aria-pressed="true"] small { color: inherit; opacity: .85; }

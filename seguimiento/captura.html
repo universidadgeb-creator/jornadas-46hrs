@@ -618,8 +618,27 @@
       return { n: g.length, c48: g.filter((r) => Number(r.horas_actuales) >= 48 && !r.aplicado_excel).length, apl: g.filter((r) => r.aplicado_excel).length, prop, ley, cap, firm: g.filter((r) => r.contrato).length, val: g.filter((r) => r.horario_validado).length };
     };
     const eq = (h) => fmt(h / 46);
-    const t = calc(rows);
-    const tipos = Object.fromEntries(TIPOS.map((x) => [x, rows.filter((r) => r.tipo === x).length]));
+    // Filtro de cadena del Resumen (el mismo que usa Próximas etapas: GXE.cad)
+    const cad = (window.GXE && GXE.cad) || '';
+    const cads = [...d3group(rows.map((r) => ({ _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => b[1].length - a[1].length).map(([c, g]) => [c, g.length]);
+    const caja = document.getElementById('rs-cad');
+    if (caja) {
+      caja.replaceChildren(el('span', 'lbl', 'Cadena'));
+      [['', 'Todas', rows.length], ...cads.map(([c, n]) => [c, c, n])].forEach(([val, txt, n]) => {
+        const b = el('button', 'cad-chip'); b.type = 'button'; b.setAttribute('aria-pressed', String(cad === val));
+        b.append(document.createTextNode(txt + ' '), el('small', '', String(n)));
+        b.addEventListener('click', () => {
+          if (window.GXE) { GXE.cad = val; GXE.suc = ''; }
+          if (window.redrawEtapa) redrawEtapa();
+          if (window.dash) dash.draw('puestos');
+          renderResumen();
+        });
+        caja.appendChild(b);
+      });
+    }
+    const base = cad ? rows.filter((r) => cadDe(r) === cad) : rows;
+    const t = calc(base);
+    const tipos = Object.fromEntries(TIPOS.map((x) => [x, base.filter((r) => r.tipo === x).length]));
     const v = {
       n: String(t.n), 'n-sub': `${t.c48} con 48 hrs · ${t.n - t.c48 - t.apl} entre 46 y 48${t.apl ? ' · ' + t.apl + ' ya ajustadas en el Excel' : ''}`,
       h: fmt(t.prop), eq: eq(t.prop), 'eq-sub': `${eq(t.ley)} por la ley (todas a 46) + ${eq(t.prop - t.ley)} por bajar las mixtas a 45`,
@@ -638,16 +657,17 @@
       return tr;
     };
     const filas = [];
-    [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([c, g]) => {
+    [...d3group(base.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([c, g]) => {
       const clubs = [...d3group(g, 'sucursal').entries()];
       const solo = clubs.length === 1 && clubs[0][0] === c;  // cadena de un solo club con el mismo nombre
-      filas.push(fila(c, calc(g), 'cap-cad', solo));
+      if (!cad || solo) filas.push(fila(c, calc(g), 'cap-cad', solo));
       if (solo) return;
       clubs.sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([s2, gs]) => filas.push(fila(s2, calc(gs), 'cap-club', true)));
     });
-    filas.push(fila('Total', t, 'cap-total'));
+    filas.push(fila(cad ? 'Total ' + cad : 'Total', t, 'cap-total'));
     tb.replaceChildren(...filas);
   }
+  window.addEventListener('cadena:cambio', () => renderResumen());
 
   function renderFuera() {
     const box = $('fuera-box'); if (!box) return;
