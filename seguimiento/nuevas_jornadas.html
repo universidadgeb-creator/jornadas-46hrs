@@ -186,6 +186,22 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 #t-seg .cad-chip small { color: var(--muted); font-variant-numeric: tabular-nums; }
 #t-seg .cad-chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 600; }
 #t-seg .cad-chip[aria-pressed="true"] small { color: inherit; opacity: .85; }
+/* Resumen: ¿Cuánta capacidad se reacomoda? */
+#capacidad h2 { margin: 0; }
+#capacidad .cap-intro, #capacidad .cap-pie { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: .3rem 0 var(--cds-gap-sm); }
+#capacidad .cap-pie { margin: var(--cds-gap-sm) 0 0; }
+.cap-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-sm); margin-bottom: var(--cds-gap-md); }
+.cap-kpis div { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; }
+.cap-kpis .lbl, .cap-kpis .h { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.cap-kpis b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+.cap-kpis .is-a b { color: var(--gx-accent); }
+.cap-scroll { overflow-x: auto; }
+.cap-tabla { min-width: 30rem; }
+.cap-tabla td { padding: .35rem .5rem; border-bottom: 1px solid var(--color-border-line); }
+#capacidad .cap-tabla th { padding: .5rem; white-space: nowrap; }
+.cap-tabla tr.cap-cad td { font-weight: 600; color: var(--gx-accent); padding-top: .6rem; }
+.cap-tabla tr.cap-club td:first-child { padding-left: 1.4rem; }
+.cap-tabla tr.cap-total td { font-weight: 600; border-top: 2px solid var(--color-border-line); }
 
 /* Pestaña «Mapa por sucursal» */
 .mp-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: end; }
@@ -479,6 +495,23 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       </div>
       <button type="button" class="gx-btn-acc" data-tab-go="t-seg">Ir al seguimiento</button>
     </div>
+  </article>
+  <article class="gx-card" id="capacidad">
+    <h2>¿Cuánta capacidad se reacomoda?</h2>
+    <p class="cap-intro">Horas por semana que dejan de trabajar las personas que pasan de 46 hrs, convertidas a personas de tiempo completo (una jornada de 46 hrs).</p>
+    <div class="cap-kpis">
+      <div class="is-a"><span class="lbl">Con la propuesta (diurna 46 · mixta 45)</span><b data-cap="prop-p">—</b><span class="h"><span data-cap="prop-h">—</span> hrs por semana</span></div>
+      <div><span class="lbl">Mínimo de ley (todas a 46)</span><b data-cap="ley-p">—</b><span class="h"><span data-cap="ley-h">—</span> hrs por semana</span></div>
+      <div><span class="lbl">Por bajar las mixtas a 45</span><b data-cap="mix-p">—</b><span class="h"><span data-cap="mix-h">—</span> hrs por semana</span></div>
+      <div><span class="lbl">Con lo capturado hoy en el Seguimiento</span><b data-cap="cap-p">—</b><span class="h"><span data-cap="cap-h">—</span> hrs por semana</span></div>
+    </div>
+    <div class="cap-scroll">
+      <table class="gx-table cap-tabla">
+        <thead><tr><th>Cadena / club</th><th class="num">Personas</th><th class="num">Horas menos (propuesta)</th><th class="num">Equivale a</th><th class="num">Con lo capturado</th></tr></thead>
+        <tbody data-cap-tabla></tbody>
+      </table>
+    </div>
+    <p class="cap-pie">Equivale a = horas ÷ 46. Es una referencia de capacidad, no una propuesta de contratación. «Con lo capturado» usa el nuevo horario guardado en el Seguimiento (validado o propuesta).</p>
   </article>
   <section class="gx-kpis" aria-label="Indicadores clave">
     <div class="gx-kpi is-key">
@@ -1917,6 +1950,36 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
   }
 
+  // Tarjeta «¿Cuánta capacidad se reacomoda?» del Resumen
+  function renderCapacidad() {
+    const tb = document.querySelector('[data-cap-tabla]'); if (!tb) return;
+    const metaProp = (r) => (r.tipo === 'Mixta' ? 45 : r.tipo === 'Diurna' ? 46 : null);
+    const calc = (g) => {
+      let prop = 0, ley = 0, cap = 0;
+      g.forEach((r) => {
+        const h = Number(r.horas_actuales) || 0, m = metaProp(r);
+        ley += Math.max(0, h - 46); prop += m == null ? Math.max(0, h - 46) : Math.max(0, h - m);
+        const n = horasDe(r) ?? r.nuevas_horas; if (n != null) cap += Math.max(0, h - n);
+      });
+      return { n: g.length, prop, ley, cap };
+    };
+    const eq = (h) => fmt(h / 46);
+    const t = calc(rows);
+    const v = { 'prop-p': eq(t.prop) + ' personas', 'prop-h': fmt(t.prop), 'ley-p': eq(t.ley) + ' personas', 'ley-h': fmt(t.ley),
+      'mix-p': '+' + eq(t.prop - t.ley) + ' personas', 'mix-h': '+' + fmt(t.prop - t.ley), 'cap-p': eq(t.cap) + ' personas', 'cap-h': fmt(t.cap) };
+    document.querySelectorAll('[data-cap]').forEach((n) => { n.textContent = v[n.dataset.cap] ?? '—'; });
+    const fila = (nombre, c, cls) => { const tr = el('tr', cls); tr.append(el('td', '', nombre), el('td', 'num', String(c.n)), el('td', 'num', fmt(c.prop)), el('td', 'num', eq(c.prop)), el('td', 'num', eq(c.cap))); return tr; };
+    const filas = [];
+    [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([c, g]) => {
+      filas.push(fila(c, calc(g), 'cap-cad'));
+      const clubs = [...d3group(g, 'sucursal').entries()];
+      if (clubs.length === 1 && clubs[0][0] === c) return;  // la cadena es un solo club con el mismo nombre
+      clubs.sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([s, gs]) => filas.push(fila(s, calc(gs), 'cap-club')));
+    });
+    filas.push(fila('Total', t, 'cap-total'));
+    tb.replaceChildren(...filas);
+  }
+
   function renderFuera() {
     const box = $('fuera-box'); if (!box) return;
     box.hidden = !fueraRows.length; $('fuera-n').textContent = fueraRows.length;
@@ -1926,7 +1989,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
   }
 
   function render() {
-    renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera();
+    renderSummary(); renderRows(); renderResumen(); renderCapacidad(); renderUnidades(); renderAdnCuenta(); renderFuera();
     // Para el mapa por sucursal: horarios nuevos de quienes están en seguimiento
     window.SEG = { rows, fuera: fueraRows, diasDe: diasGuardados, horasDe, estadoAdendum,
       verSucursal: (s) => { Object.keys(F).forEach((k) => { F[k] = ''; }); F.suc = s; ['f-tipo', 'f-cad', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); renderSummary(); $('f-suc').value = s; renderRows(); } };

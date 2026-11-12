@@ -145,3 +145,19 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 #t-seg .cad-chip small { color: var(--muted); font-variant-numeric: tabular-nums; }
 #t-seg .cad-chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 600; }
 #t-seg .cad-chip[aria-pressed="true"] small { color: inherit; opacity: .85; }
+/* Resumen: ¿Cuánta capacidad se reacomoda? */
+#capacidad h2 { margin: 0; }
+#capacidad .cap-intro, #capacidad .cap-pie { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: .3rem 0 var(--cds-gap-sm); }
+#capacidad .cap-pie { margin: var(--cds-gap-sm) 0 0; }
+.cap-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-sm); margin-bottom: var(--cds-gap-md); }
+.cap-kpis div { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; }
+.cap-kpis .lbl, .cap-kpis .h { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.cap-kpis b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+.cap-kpis .is-a b { color: var(--gx-accent); }
+.cap-scroll { overflow-x: auto; }
+.cap-tabla { min-width: 30rem; }
+.cap-tabla td { padding: .35rem .5rem; border-bottom: 1px solid var(--color-border-line); }
+#capacidad .cap-tabla th { padding: .5rem; white-space: nowrap; }
+.cap-tabla tr.cap-cad td { font-weight: 600; color: var(--gx-accent); padding-top: .6rem; }
+.cap-tabla tr.cap-club td:first-child { padding-left: 1.4rem; }
+.cap-tabla tr.cap-total td { font-weight: 600; border-top: 2px solid var(--color-border-line); }

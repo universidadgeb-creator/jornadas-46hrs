@@ -625,6 +625,36 @@
     document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
   }
 
+  // Tarjeta «¿Cuánta capacidad se reacomoda?» del Resumen
+  function renderCapacidad() {
+    const tb = document.querySelector('[data-cap-tabla]'); if (!tb) return;
+    const metaProp = (r) => (r.tipo === 'Mixta' ? 45 : r.tipo === 'Diurna' ? 46 : null);
+    const calc = (g) => {
+      let prop = 0, ley = 0, cap = 0;
+      g.forEach((r) => {
+        const h = Number(r.horas_actuales) || 0, m = metaProp(r);
+        ley += Math.max(0, h - 46); prop += m == null ? Math.max(0, h - 46) : Math.max(0, h - m);
+        const n = horasDe(r) ?? r.nuevas_horas; if (n != null) cap += Math.max(0, h - n);
+      });
+      return { n: g.length, prop, ley, cap };
+    };
+    const eq = (h) => fmt(h / 46);
+    const t = calc(rows);
+    const v = { 'prop-p': eq(t.prop) + ' personas', 'prop-h': fmt(t.prop), 'ley-p': eq(t.ley) + ' personas', 'ley-h': fmt(t.ley),
+      'mix-p': '+' + eq(t.prop - t.ley) + ' personas', 'mix-h': '+' + fmt(t.prop - t.ley), 'cap-p': eq(t.cap) + ' personas', 'cap-h': fmt(t.cap) };
+    document.querySelectorAll('[data-cap]').forEach((n) => { n.textContent = v[n.dataset.cap] ?? '—'; });
+    const fila = (nombre, c, cls) => { const tr = el('tr', cls); tr.append(el('td', '', nombre), el('td', 'num', String(c.n)), el('td', 'num', fmt(c.prop)), el('td', 'num', eq(c.prop)), el('td', 'num', eq(c.cap))); return tr; };
+    const filas = [];
+    [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([c, g]) => {
+      filas.push(fila(c, calc(g), 'cap-cad'));
+      const clubs = [...d3group(g, 'sucursal').entries()];
+      if (clubs.length === 1 && clubs[0][0] === c) return;  // la cadena es un solo club con el mismo nombre
+      clubs.sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([s, gs]) => filas.push(fila(s, calc(gs), 'cap-club')));
+    });
+    filas.push(fila('Total', t, 'cap-total'));
+    tb.replaceChildren(...filas);
+  }
+
   function renderFuera() {
     const box = $('fuera-box'); if (!box) return;
     box.hidden = !fueraRows.length; $('fuera-n').textContent = fueraRows.length;
@@ -634,7 +664,7 @@
   }
 
   function render() {
-    renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera();
+    renderSummary(); renderRows(); renderResumen(); renderCapacidad(); renderUnidades(); renderAdnCuenta(); renderFuera();
     // Para el mapa por sucursal: horarios nuevos de quienes están en seguimiento
     window.SEG = { rows, fuera: fueraRows, diasDe: diasGuardados, horasDe, estadoAdendum,
       verSucursal: (s) => { Object.keys(F).forEach((k) => { F[k] = ''; }); F.suc = s; ['f-tipo', 'f-cad', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); renderSummary(); $('f-suc').value = s; renderRows(); } };

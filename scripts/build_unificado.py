@@ -78,6 +78,23 @@ RESUMEN_AVANCE = """  <article class="gx-card" id="avance-contratos">
       <button type="button" class="gx-btn-acc" data-tab-go="t-seg">Ir al seguimiento</button>
     </div>
   </article>
+  <article class="gx-card" id="capacidad">
+    <h2>¿Cuánta capacidad se reacomoda?</h2>
+    <p class="cap-intro">Horas por semana que dejan de trabajar las personas que pasan de 46 hrs, convertidas a personas de tiempo completo (una jornada de 46 hrs).</p>
+    <div class="cap-kpis">
+      <div class="is-a"><span class="lbl">Con la propuesta (diurna 46 · mixta 45)</span><b data-cap="prop-p">—</b><span class="h"><span data-cap="prop-h">—</span> hrs por semana</span></div>
+      <div><span class="lbl">Mínimo de ley (todas a 46)</span><b data-cap="ley-p">—</b><span class="h"><span data-cap="ley-h">—</span> hrs por semana</span></div>
+      <div><span class="lbl">Por bajar las mixtas a 45</span><b data-cap="mix-p">—</b><span class="h"><span data-cap="mix-h">—</span> hrs por semana</span></div>
+      <div><span class="lbl">Con lo capturado hoy en el Seguimiento</span><b data-cap="cap-p">—</b><span class="h"><span data-cap="cap-h">—</span> hrs por semana</span></div>
+    </div>
+    <div class="cap-scroll">
+      <table class="gx-table cap-tabla">
+        <thead><tr><th>Cadena / club</th><th class="num">Personas</th><th class="num">Horas menos (propuesta)</th><th class="num">Equivale a</th><th class="num">Con lo capturado</th></tr></thead>
+        <tbody data-cap-tabla></tbody>
+      </table>
+    </div>
+    <p class="cap-pie">Equivale a = horas ÷ 46. Es una referencia de capacidad, no una propuesta de contratación. «Con lo capturado» usa el nuevo horario guardado en el Seguimiento (validado o propuesta).</p>
+  </article>
 """
 
 
