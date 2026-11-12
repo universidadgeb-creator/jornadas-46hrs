@@ -197,11 +197,51 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 .cap-kpis .is-a b { color: var(--gx-accent); }
 .cap-scroll { overflow-x: auto; }
 .cap-tabla { min-width: 30rem; }
-.cap-tabla td { padding: .35rem .5rem; border-bottom: 1px solid var(--color-border-line); }
-#capacidad .cap-tabla th { padding: .5rem; white-space: nowrap; }
+.gx-table.cap-tabla td { padding: .35rem .5rem; border-bottom: 1px solid var(--color-border-line); }
+.gx-table.cap-tabla th { padding: .5rem; white-space: nowrap; }
 .cap-tabla tr.cap-cad td { font-weight: 600; color: var(--gx-accent); padding-top: .6rem; }
 .cap-tabla tr.cap-club td:first-child { padding-left: 1.4rem; }
 .cap-tabla tr.cap-total td { font-weight: 600; border-top: 2px solid var(--color-border-line); }
+/* Resumen para presentar (12 nov 2026) */
+.rs-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
+.rs-k { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
+.rs-k.is-a { background: var(--gx-accent-soft); border-color: transparent; }
+.rs-k .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rs-k b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.05; font-variant-numeric: tabular-nums; }
+.rs-k.is-a b { color: var(--gx-accent); }
+.rs-k .sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rs-bar { display: block; height: 8px; background: var(--gx-accent-soft); border-radius: 99px; overflow: hidden; }
+.rs-bar i { display: block; height: 100%; background: var(--gx-accent); width: 0; }
+.rs-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .4rem 1rem; }
+.rs-head h2 { margin: 0; }
+.rs-tipos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-sm); margin-top: var(--cds-gap-sm); }
+.rs-tipos div { background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: flex; flex-direction: column; gap: .15rem; }
+.rs-tipos .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rs-tipos b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+.rs-tipos .rule { font-size: var(--cds-font-size-caption); color: var(--gx-accent); }
+.rs-tipos .rule strong { font-weight: 600; }
+.rs-tipos .rule.pend { color: var(--color-warn); }
+.rs-nota { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-sm) 0 0; }
+.rs-nota b { color: var(--color-fg); font-weight: 600; }
+.rs-tabla { min-width: 40rem; }
+.rs-tabla td.rs-av { min-width: 8rem; }
+.rs-tabla td.rs-av .mp-av-t { display: block; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.rs-tabla td.rs-av.ok .mp-av-t { color: var(--gx-accent); font-weight: 600; }
+.rs-tabla .mp-av-bar { display: block; height: 6px; background: var(--gx-accent-soft); border-radius: 99px; overflow: hidden; margin-top: 3px; }
+.rs-tabla .mp-av-bar i { display: block; height: 100%; background: var(--gx-accent); }
+.rs-tabla td.rs-eq { font-weight: 600; }
+.seg-av-club { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--color-border-line); text-underline-offset: 3px; }
+.seg-av-club:hover, .seg-av-club[aria-pressed="true"] { color: var(--gx-accent); text-decoration-color: currentColor; }
+.cap-tabla tr.cap-cad .seg-av-club { color: inherit; font-weight: 600; }
+/* Seguimiento: avance por sucursal arriba */
+#t-seg .seg-av { margin-bottom: 14px; }
+#t-seg .seg-av-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .3rem 1rem; }
+#t-seg .seg-av-head .h2 { margin: 0; }
+#t-seg .seg-av-tot { font-size: 13px; color: var(--muted); }
+#t-seg .seg-av-tot b { color: var(--fg); }
+#t-seg .seg-av .note { font-size: 12px; color: var(--muted); margin: 4px 0 8px; }
+#t-seg .mp-av td { padding: .4rem .5rem; border-bottom: 1px solid var(--line); }
+#t-seg .mp-av th { padding: .5rem; }
 
 /* Pestaña «Mapa por sucursal» */
 .mp-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: end; }
@@ -475,7 +515,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 <div class="gx">
   <header class="gx-head" id="resumen">
     <h1>Reducción de jornada 48 → 46 hrs (2027)</h1>
-    <p><b data-draw="kpi" data-source="kpis" data-field="sobre46" data-row="0">—</b> personas trabajan más de 46 hrs y deben cambiar su jornada en 2027: <b data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</b> hacen 48 hrs y <b data-draw="kpi" data-source="kpis" data-field="entre" data-row="0">—</b> entre 46 y 48. El puesto más expuesto es <b data-draw="kpi" data-source="kpis" data-field="top_puesto" data-row="0">—</b>.</p>
+    <p>La reforma a la LFT baja la jornada máxima de 48 a <b>46 hrs en 2027</b> (44 en 2028, 42 en 2029 y 40 en 2030) sin reducir salario ni prestaciones. Aquí está a quién le toca, cuánto cuesta en horas y cómo va el cambio de contrato.</p>
   </header>
   <nav class="gx-tabs" role="tablist" aria-label="Secciones">
     <button type="button" role="tab" data-tab="t-resumen" aria-selected="true">Resumen</button>
@@ -487,62 +527,29 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
   </nav>
 
   <section class="gx-tab" id="t-resumen">
-  <article class="gx-card" id="avance-contratos">
-    <div class="seg-avance">
-      <div>
-        <h2>Avance del cambio de contrato</h2>
-        <div class="big"><span data-seg="done">—</span> <small>de <span data-seg="total">—</span> personas que pasan de 46 hrs</small></div>
-        <div class="seg-bar" aria-hidden="true"><i data-seg-bar></i></div>
-        <div class="sub"><b data-seg="pct">—</b> con contrato nuevo · <b data-seg="hor">—</b> con horario validado · <b data-seg="lid">—</b> con líder asignado</div>
-      </div>
-      <button type="button" class="gx-btn-acc" data-tab-go="t-seg">Ir al seguimiento</button>
-    </div>
-  </article>
-  <article class="gx-card" id="capacidad">
-    <h2>¿Cuánta capacidad se reacomoda?</h2>
-    <p class="cap-intro">Horas por semana que dejan de trabajar las personas que pasan de 46 hrs, convertidas a personas de tiempo completo (una jornada de 46 hrs).</p>
-    <div class="cap-kpis">
-      <div class="is-a"><span class="lbl">Con la propuesta (diurna 46 · mixta 45)</span><b data-cap="prop-p">—</b><span class="h"><span data-cap="prop-h">—</span> hrs por semana</span></div>
-      <div><span class="lbl">Mínimo de ley (todas a 46)</span><b data-cap="ley-p">—</b><span class="h"><span data-cap="ley-h">—</span> hrs por semana</span></div>
-      <div><span class="lbl">Por bajar las mixtas a 45</span><b data-cap="mix-p">—</b><span class="h"><span data-cap="mix-h">—</span> hrs por semana</span></div>
-      <div><span class="lbl">Con lo capturado hoy en el Seguimiento</span><b data-cap="cap-p">—</b><span class="h"><span data-cap="cap-h">—</span> hrs por semana</span></div>
-    </div>
-    <div class="cap-scroll">
-      <table class="gx-table cap-tabla">
-        <thead><tr><th>Cadena / club</th><th class="num">Personas</th><th class="num">Horas menos (propuesta)</th><th class="num">Equivale a</th><th class="num">Con lo capturado</th></tr></thead>
-        <tbody data-cap-tabla></tbody>
-      </table>
-    </div>
-    <p class="cap-pie">Equivale a = horas ÷ 46. Es una referencia de capacidad, no una propuesta de contratación. «Con lo capturado» usa el nuevo horario guardado en el Seguimiento (validado o propuesta).</p>
-  </article>
-  <section class="gx-kpis" aria-label="Indicadores clave">
-    <div class="gx-kpi is-key">
-      <span class="lbl">Personas con jornada de 48 hrs</span>
-      <span class="val" data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</span>
-      <span class="sub"><b data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="pct" data-row="0">—</b> de la plantilla capturada</span>
-    </div>
-    <div class="gx-kpi">
-      <span class="lbl">Entre 46 y 48 hrs</span>
-      <span class="val" data-draw="kpi" data-source="kpis" data-field="entre" data-row="0">—</span>
-      <span class="sub">también se pasan de 46 · total <b data-draw="kpi" data-source="kpis" data-field="sobre46" data-row="0">—</b></span>
-    </div>
-    <div class="gx-kpi">
-      <span class="lbl">Horas por semana a reacomodar</span>
-      <span class="val" data-draw="kpi" data-fmt="dec" data-source="kpis" data-field="horas_exceso" data-row="0">—</span>
-      <span class="sub">para bajar a todos a 46 · ≈ <b data-draw="kpi" data-fmt="dec" data-source="kpis" data-field="plazas_eq" data-row="0">—</b> plazas de 46 hrs</span>
-    </div>
-    <div class="gx-kpi">
-      <span class="lbl">Contratos firmados a 48 hrs</span>
-      <span class="val" data-draw="kpi" data-source="kpis" data-field="contrato48" data-row="0">—</span>
-      <span class="sub"><b data-draw="kpi" data-source="kpis" data-field="contrato48_ok" data-row="0">—</b> ya trabajan 46 hrs o menos</span>
-    </div>
+  <section class="rs-kpis" aria-label="Cifras clave">
+    <div class="rs-k"><span class="lbl">Personas que deben ajustar su jornada</span><b data-rs="n">—</b><span class="sub" data-rs="n-sub">—</span></div>
+    <div class="rs-k"><span class="lbl">Horas por semana que se reacomodan</span><b data-rs="h">—</b><span class="sub">con la propuesta: diurna a 46, mixta a 45</span></div>
+    <div class="rs-k is-a"><span class="lbl">Equivale a (personas de tiempo completo)</span><b data-rs="eq">—</b><span class="sub" data-rs="eq-sub">—</span></div>
+    <div class="rs-k"><span class="lbl">Contratos nuevos firmados</span><b data-rs="firm">—</b><span class="rs-bar" aria-hidden="true"><i data-rs-bar></i></span><span class="sub" data-rs="firm-sub">—</span></div>
   </section>
-  <article class="gx-card" id="por-tipo">
-    <div class="gx-tipo-head"><h2>Ajuste por tipo de jornada · <span data-draw="kpi" data-source="kpis" data-field="afectados" data-row="0">—</span> personas con 48 hrs</h2><button type="button" class="gx-link" data-tab-go="t-seg">Ver avance de contratos →</button></div>
-    <div class="gx-tipos">
-      <div class="gx-tipo"><span class="lbl">Diurna</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="d48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="d48_pct" data-row="0">—</small></span><span class="rule">Bajar 2 hrs → 46 hrs</span></div>
-      <div class="gx-tipo"><span class="lbl">Mixta</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="m48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="m48_pct" data-row="0">—</small></span><span class="rule">Bajar 3 hrs → 45 hrs (su máximo no cambia)</span></div>
-      <div class="gx-tipo"><span class="lbl">Nocturna</span><span class="val"><span data-draw="kpi" data-source="kpis" data-field="n48" data-row="0">—</span> <small data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="n48_pct" data-row="0">—</small></span><span class="rule pend">Ajuste por confirmar</span></div>
+  <article class="gx-card" id="rs-regla">
+    <div class="rs-head"><h2>La regla: cuánto baja cada tipo de jornada</h2><button type="button" class="gx-link" data-tab-go="t-seg">Ver avance de contratos →</button></div>
+    <div class="rs-tipos">
+      <div><span class="lbl">Diurna</span><b data-rs="d-n">—</b><span class="rule">personas · bajan a <strong>46 hrs</strong></span></div>
+      <div><span class="lbl">Mixta</span><b data-rs="m-n">—</b><span class="rule">personas · bajan a <strong>45 hrs</strong>, su máximo legal (no cambia)</span></div>
+      <div><span class="lbl">Nocturna</span><b data-rs="n-n">—</b><span class="rule pend">personas · ajuste por confirmar con el abogado</span></div>
+    </div>
+    <p class="rs-nota">Lo que pide la ley (todas a 46) equivale a <b data-rs="ley">—</b> personas (<span data-rs="ley-h">—</span> hrs). Bajar las mixtas a 45 suma <b data-rs="mix">—</b> (<span data-rs="mix-h">—</span> hrs). Con los horarios capturados hoy en el Seguimiento: <b data-rs="cap">—</b> personas.</p>
+  </article>
+  <article class="gx-card" id="rs-donde">
+    <h2>¿Dónde está el impacto y cómo va cada club?</h2>
+    <p class="note">Horas por semana que se dejan de trabajar con la propuesta y su equivalente en personas de 46 hrs (referencia de capacidad, no propuesta de contratación). Clic en un club para ver su captura.</p>
+    <div class="cap-scroll">
+      <table class="gx-table cap-tabla rs-tabla">
+        <thead><tr><th>Cadena / club</th><th class="num">Personas</th><th class="num">Horas menos</th><th class="num">Equivale a</th><th>Horario validado</th><th>Contrato firmado</th></tr></thead>
+        <tbody data-rs-tabla></tbody>
+      </table>
     </div>
   </article>
   <div class="gx-grid">
@@ -553,42 +560,33 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       <div class="gx-chart" data-draw="puestos" data-source="por_puesto"></div>
       <button type="button" class="gx-btn" id="gx-toggle-puestos" aria-expanded="false"><span class="t-more">Mostrar todos los puestos</span><span class="t-less" hidden>Mostrar solo los 8 principales</span></button>
     </article>
-    <article class="gx-card" id="por-ubicacion">
-        <h2>¿En qué sucursales?</h2>
-        <p class="note">Personas que se pasan de 46 hrs, sobre el total de la sucursal.</p>
-        <div class="gx-chart" data-draw="ubicaciones" data-source="por_ubicacion"></div>
-      </article>
   </div>
   <article class="gx-card" id="lo-que-viene">
     <h2>Lo que viene: quién se va sumando cada año</h2>
-    <p class="note">Con los horarios de hoy, cada año se suman personas que quedan arriba del nuevo límite. Debajo de cada año están los puestos que entran en esa etapa; abre un puesto para ver los nombres.</p>
+    <p class="note">Con los horarios de hoy, cada año se suman personas que quedan arriba del nuevo límite. El detalle de puestos y nombres está en Próximas etapas.</p>
     <div class="gx-tl">
       <div class="gx-tl-col">
         <div class="gx-tl-head"><span class="yr">2027</span><span class="lim">Límite 46 hrs</span></div>
         <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2027">—</span><span class="u">personas a ajustar</span></div>
         <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2027">—</b> personas arrancan el ajuste</div>
-        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2027" data-source="etapas_personas"></div>
         <button type="button" class="gx-btn" data-go="2027">Ver personas de 2027</button>
       </div>
       <div class="gx-tl-col is-peak">
         <div class="gx-tl-head"><span class="yr">2028</span><span class="lim">Límite 44 hrs</span></div>
         <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2028">—</span><span class="u">personas a ajustar</span></div>
         <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2028">—</b> se suman en esta etapa</div>
-        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2028" data-source="etapas_personas"></div>
         <button type="button" class="gx-btn" data-go="2028">Ver personas de 2028</button>
       </div>
       <div class="gx-tl-col">
         <div class="gx-tl-head"><span class="yr">2029</span><span class="lim">Límite 42 hrs</span></div>
         <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2029">—</span><span class="u">personas a ajustar</span></div>
         <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2029">—</b> se suman en esta etapa</div>
-        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2029" data-source="etapas_personas"></div>
         <button type="button" class="gx-btn" data-go="2029">Ver personas de 2029</button>
       </div>
       <div class="gx-tl-col">
         <div class="gx-tl-head"><span class="yr">2030</span><span class="lim">Límite 40 hrs</span></div>
         <div class="gx-tl-num"><span class="n" data-draw="etapa-n" data-source="etapas" data-field="personas" data-where="anio=2030">—</span><span class="u">personas a ajustar</span></div>
         <div class="gx-tl-new"><b data-draw="etapa-nuevos" data-source="etapas" data-field="nuevos" data-where="anio=2030">—</b> se suman en esta etapa</div>
-        <div class="gx-tl-roles" data-draw="etapa-roles" data-anio="2030" data-source="etapas_personas"></div>
         <button type="button" class="gx-btn" data-go="2030">Ver personas de 2030</button>
       </div>
     </div>
@@ -643,32 +641,15 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
   <section class="gx-tab" id="t-seg" hidden>
   <p class="seg-intro">Captura el líder, el nuevo horario y marca cuando el nuevo contrato esté firmado. Todo se guarda solo y lo ve todo el equipo. El nuevo horario viene precargado con la propuesta 2027; valídalo o corrígelo con cada gerente.</p>
     <div class="cad-top" role="group" aria-label="Cadena" id="cad-top"></div>
-    <div class="top">
-      <section class="card prog" aria-label="Avance">
-        <div class="lbl">Nuevo contrato realizado<span id="p-cad"></span></div>
-        <div class="big"><span id="p-done">—</span> <span>de <span id="p-total">—</span></span></div>
-        <div class="bar" aria-hidden="true"><i id="p-bar"></i></div>
-        <div class="sub"><b id="p-pct">—</b> de avance · <span id="p-hor">—</span> con horario validado · <span id="p-lid">—</span> con líder asignado</div>
-      </section>
-      <section class="tipos" aria-label="Por tipo de jornada">
-        <button type="button" class="tipo" data-tipo="Diurna" aria-pressed="false">
-          <span class="lbl">Diurna</span><span class="n"><span data-k="Diurna-n">—</span><small data-k="Diurna-pct">—</small></span>
-          <span class="rule">Meta: 46 hrs</span><span class="av"><span data-k="Diurna-done">—</span> con contrato nuevo</span>
-        </button>
-        <button type="button" class="tipo" data-tipo="Mixta" aria-pressed="false">
-          <span class="lbl">Mixta</span><span class="n"><span data-k="Mixta-n">—</span><small data-k="Mixta-pct">—</small></span>
-          <span class="rule">Meta: 45 hrs (máximo legal de la mixta)</span><span class="av"><span data-k="Mixta-done">—</span> con contrato nuevo</span>
-        </button>
-        <button type="button" class="tipo" data-tipo="Nocturna" aria-pressed="false">
-          <span class="lbl">Nocturna</span><span class="n"><span data-k="Nocturna-n">—</span><small data-k="Nocturna-pct">—</small></span>
-          <span class="rule pend">Ajuste por confirmar</span><span class="av"><span data-k="Nocturna-done">—</span> con contrato nuevo</span>
-        </button>
-      </section>
-    </div>
-
-    <section aria-label="Por sucursal">
-      <h2 class="h2">Propuesta por cadena y sucursal</h2>
-      <div class="sucs" id="sucs"><span class="status">Cargando sucursales…</span></div>
+    <section class="card seg-av" aria-label="Avance por sucursal">
+      <div class="seg-av-head"><h2 class="h2">Avance por sucursal<span id="p-cad"></span></h2><span class="seg-av-tot"><b id="p-done">—</b> de <b id="p-total">—</b> con contrato nuevo · <b id="p-pct">—</b></span></div>
+      <p class="note">Los cuatro pasos de cada persona. «Horario validado» cuenta solo los que el gerente ya revisó y guardó. Clic en una sucursal para ver solo a su gente en la lista de abajo.</p>
+      <div class="mp-scroll">
+        <table class="gx-table mp-av">
+          <thead><tr><th>Sucursal</th><th class="num">Personas</th><th>Horario validado</th><th>Líder</th><th>Adendum descargado</th><th>Contrato firmado</th></tr></thead>
+          <tbody id="seg-av"><tr><td class="vacio" colspan="6">Cargando el seguimiento…</td></tr></tbody>
+        </table>
+      </div>
     </section>
 
     <section class="card" aria-label="Personas">
@@ -738,14 +719,6 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       <label for="mp-pue">Puesto<select class="gx-select" id="mp-pue"></select></label>
       <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-mp="hoy" aria-pressed="false">Hoy</button><button type="button" data-mp="nuevo" aria-pressed="true">2027</button><button type="button" data-mp="cambio" aria-pressed="false">Cambio</button></span></div>
       <button type="button" class="gx-btn mp-xlsx" id="mp-xlsx">Descargar archivo maestro (.xlsx)</button>
-    </div>
-    <h3 class="mp-h3">Avance de captura por sucursal</h3>
-    <p class="note">Personas en seguimiento (pasan de 46 hrs) y en qué paso va cada sucursal. «Horario validado» cuenta los que el gerente ya revisó y guardó; las propuestas precargadas no cuentan hasta que se guardan.</p>
-    <div class="mp-scroll">
-      <table class="gx-table mp-av">
-        <thead><tr><th>Sucursal</th><th class="num">Personas</th><th>Horario validado</th><th>Líder</th><th>Adendum descargado</th><th>Recibido firmado</th><th></th></tr></thead>
-        <tbody id="mp-av"></tbody>
-      </table>
     </div>
     <div class="mp-stats">
       <div><span class="lbl">Personas</span><span class="val" id="mp-n">—</span></div>
@@ -1452,45 +1425,49 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       ct.appendChild(b);
     });
     const total = base.length, done = base.filter((r) => r.contrato).length;
-    $('p-done').textContent = done; $('p-total').textContent = total;
-    $('p-pct').textContent = pct(done, total);
-    $('p-bar').style.width = total ? (done / total * 100) + '%' : '0';
-    $('p-hor').textContent = base.filter((r) => r.horario_validado).length;
-    $('p-lid').textContent = base.filter((r) => (r.lider || '').trim()).length;
-    TIPOS.forEach((t) => {
-      const g = base.filter((r) => r.tipo === t);
-      document.querySelectorAll(`[data-k="${t}-n"]`).forEach((n) => { n.textContent = g.length; });
-      document.querySelectorAll(`[data-k="${t}-pct"]`).forEach((n) => { n.textContent = pct(g.length, total); });
-      document.querySelectorAll(`[data-k="${t}-done"]`).forEach((n) => { n.textContent = `${g.filter((r) => r.contrato).length} de ${g.length}`; });
-    });
-    document.querySelectorAll('.tipo').forEach((b) => b.setAttribute('aria-pressed', String(F.tipo === b.dataset.tipo)));
-    const box = $('sucs'); box.replaceChildren();
-    const cadenas = [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((x, y) => y[1].length - x[1].length);
-    cadenas.forEach(([c, gc]) => {
-      if (F.cad && F.cad !== c) return;
-      const grupo = el('div', 'cad-grupo');
-      const dc = gc.filter((r) => r.contrato).length;
-      const h = el('button', 'cad-h'); h.type = 'button'; h.setAttribute('aria-pressed', String(F.cad === c));
-      h.title = F.cad === c ? 'Ver todas las cadenas' : 'Ver solo ' + c;
-      h.append(el('b', '', c), el('span', '', `${gc.length} personas · ${dc} de ${gc.length} con contrato nuevo (${pct(dc, gc.length)})`));
-      h.addEventListener('click', () => { F.cad = F.cad === c ? '' : c; $('f-cad').value = F.cad; render(); });
-      const fila = el('div', 'sucs-in');
-      [...d3group(gc, 'sucursal').entries()].sort((x, y) => y[1].length - x[1].length).forEach(([s, g]) => {
-        const d = g.filter((r) => r.contrato).length;
-        const bt = el('button', 'suc'); bt.type = 'button'; bt.setAttribute('aria-pressed', String(F.suc === s));
-        const mix = g.filter((r) => r.tipo === 'Mixta').length, diu = g.filter((r) => r.tipo === 'Diurna').length, noc = g.length - mix - diu;
-        bt.append(el('span', 'nm', s), el('span', 'ct', `${g.length} personas · ${diu} diurna · ${mix} mixta${noc ? ' · ' + noc + ' nocturna' : ''}`), el('span', 'ct', `${d} de ${g.length} con contrato nuevo`));
-        const mini = el('span', 'mini'); const i = el('i'); i.style.width = (d / g.length * 100) + '%'; mini.appendChild(i); bt.appendChild(mini);
-        bt.addEventListener('click', () => { F.suc = F.suc === s ? '' : s; $('f-suc').value = F.suc; render(); });
-        fila.appendChild(bt);
-      });
-      grupo.append(h, fila); box.appendChild(grupo);
-    });
-    if (!rows.length) box.replaceChildren(el('span', 'status', 'Sin datos todavía.'));
+    $('p-done').textContent = done; $('p-total').textContent = total; $('p-pct').textContent = pct(done, total);
+    renderAvanceSeg(base);
     setOptions($('f-cad'), [...new Set(rows.map((r) => r.division || '—'))].sort((a, b) => a.localeCompare(b, 'es')), 'Todas');
     setOptions($('f-suc'), [...new Set(rows.filter((r) => !F.cad || (r.division || '—') === F.cad).map((r) => r.sucursal || '—'))].sort((a, b) => a.localeCompare(b, 'es')), 'Todas', F.suc);
     F.suc = $('f-suc').value;
     setOptions($('f-puesto'), [...new Set(rows.map((r) => r.puesto))].sort((a, b) => a.localeCompare(b, 'es')), 'Todos');
+  }
+
+  // Avance por sucursal (Seguimiento): cuatro pasos por persona, agrupado por cadena
+  const PASOS = [
+    (r) => !!r.horario_validado,
+    (r) => !!String(r.lider || '').trim(),
+    (r) => !!(r.adendum_generado || r.adendum_recibido),
+    (r) => !!r.contrato,
+  ];
+  function renderAvanceSeg(base) {
+    const tb = $('seg-av'); if (!tb) return;
+    const filas = [];
+    const fila = (nombre, lista, tipo) => {
+      const tr = el('tr', tipo === 'total' ? 'mp-av-total' : tipo === 'cad' ? 'mp-av-cad' : (nombre === F.suc ? 'mp-av-sel' : ''));
+      const td0 = el('td', 'mp-av-n');
+      if (tipo === 'club') {
+        const b = el('button', 'seg-av-club', nombre); b.type = 'button'; b.setAttribute('aria-pressed', String(F.suc === nombre));
+        b.title = F.suc === nombre ? 'Ver todas las sucursales' : 'Ver solo ' + nombre;
+        b.addEventListener('click', () => { F.suc = F.suc === nombre ? '' : nombre; $('f-suc').value = F.suc; render(); });
+        td0.appendChild(b);
+      } else td0.textContent = nombre;
+      tr.append(td0, el('td', 'num', String(lista.length)));
+      PASOS.forEach((f) => {
+        const n = lista.filter(f).length, pc = lista.length ? n / lista.length : 0;
+        const td = el('td', 'mp-av-c'); const b = el('span', 'mp-av-bar'); const i = el('i'); i.style.width = (pc * 100) + '%'; b.appendChild(i);
+        td.append(el('span', 'mp-av-t', `${n} de ${lista.length}`), b); if (pc === 1) td.classList.add('ok'); tr.appendChild(td);
+      });
+      filas.push(tr);
+    };
+    [...d3group(base.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => b[1].length - a[1].length).forEach(([c, lc]) => {
+      const clubs = [...d3group(lc, 'sucursal').entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'es'));
+      if (!F.cad && !(clubs.length === 1 && clubs[0][0] === c)) fila(c, lc, 'cad');
+      clubs.forEach(([s2, l]) => fila(s2, l, 'club'));
+    });
+    fila(F.cad ? 'Total ' + F.cad : 'Total', base, 'total');
+    if (!rows.length) { const tr = el('tr'); const td = el('td', 'vacio', 'Sin datos todavía.'); td.colSpan = 6; tr.appendChild(td); filas.splice(0, filas.length, tr); }
+    tb.replaceChildren(...filas);
   }
 
   function d3group(arr, k) { const m = new Map(); arr.forEach((r) => { const v = r[k] || '—'; if (!m.has(v)) m.set(v, []); m.get(v).push(r); }); return m; }
@@ -1945,39 +1922,46 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     });
   }
 
+  // Resumen (pestaña principal): cifras clave, regla por tipo y tabla «dónde está el impacto»
   function renderResumen() {
-    const total = rows.length, done = rows.filter((r) => r.contrato).length;
-    const v = { done, total, pct: pct(done, total), hor: rows.filter((r) => r.horario_validado).length,
-      lid: rows.filter((r) => (r.lider || '').trim()).length };
-    document.querySelectorAll('[data-seg]').forEach((n) => { n.textContent = v[n.dataset.seg]; });
-    document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
-  }
-
-  // Tarjeta «¿Cuánta capacidad se reacomoda?» del Resumen
-  function renderCapacidad() {
-    const tb = document.querySelector('[data-cap-tabla]'); if (!tb) return;
-    const metaProp = (r) => (r.tipo === 'Mixta' ? 45 : r.tipo === 'Diurna' ? 46 : null);
+    const tb = document.querySelector('[data-rs-tabla]'); if (!tb) return;
+    const metaProp = (r) => (r.tipo === 'Mixta' ? 45 : 46);
     const calc = (g) => {
       let prop = 0, ley = 0, cap = 0;
       g.forEach((r) => {
-        const h = Number(r.horas_actuales) || 0, m = metaProp(r);
-        ley += Math.max(0, h - 46); prop += m == null ? Math.max(0, h - 46) : Math.max(0, h - m);
+        const h = Number(r.horas_actuales) || 0;
+        ley += Math.max(0, h - 46); prop += Math.max(0, h - metaProp(r));
         const n = horasDe(r) ?? r.nuevas_horas; if (n != null) cap += Math.max(0, h - n);
       });
-      return { n: g.length, prop, ley, cap };
+      return { n: g.length, c48: g.filter((r) => Number(r.horas_actuales) >= 48 && !r.aplicado_excel).length, apl: g.filter((r) => r.aplicado_excel).length, prop, ley, cap, firm: g.filter((r) => r.contrato).length, val: g.filter((r) => r.horario_validado).length };
     };
     const eq = (h) => fmt(h / 46);
     const t = calc(rows);
-    const v = { 'prop-p': eq(t.prop) + ' personas', 'prop-h': fmt(t.prop), 'ley-p': eq(t.ley) + ' personas', 'ley-h': fmt(t.ley),
-      'mix-p': '+' + eq(t.prop - t.ley) + ' personas', 'mix-h': '+' + fmt(t.prop - t.ley), 'cap-p': eq(t.cap) + ' personas', 'cap-h': fmt(t.cap) };
-    document.querySelectorAll('[data-cap]').forEach((n) => { n.textContent = v[n.dataset.cap] ?? '—'; });
-    const fila = (nombre, c, cls) => { const tr = el('tr', cls); tr.append(el('td', '', nombre), el('td', 'num', String(c.n)), el('td', 'num', fmt(c.prop)), el('td', 'num', eq(c.prop)), el('td', 'num', eq(c.cap))); return tr; };
+    const tipos = Object.fromEntries(TIPOS.map((x) => [x, rows.filter((r) => r.tipo === x).length]));
+    const v = {
+      n: String(t.n), 'n-sub': `${t.c48} con 48 hrs · ${t.n - t.c48 - t.apl} entre 46 y 48${t.apl ? ' · ' + t.apl + ' ya ajustadas en el Excel' : ''}`,
+      h: fmt(t.prop), eq: eq(t.prop), 'eq-sub': `${eq(t.ley)} por la ley (todas a 46) + ${eq(t.prop - t.ley)} por bajar las mixtas a 45`,
+      firm: `${t.firm} de ${t.n}`, 'firm-sub': `${pct(t.firm, t.n)} · ${t.val} con horario validado`,
+      'd-n': String(tipos.Diurna), 'm-n': String(tipos.Mixta), 'n-n': String(tipos.Nocturna),
+      ley: eq(t.ley), mix: eq(t.prop - t.ley), 'ley-h': fmt(t.ley), 'mix-h': fmt(t.prop - t.ley), cap: eq(t.cap),
+    };
+    document.querySelectorAll('[data-rs]').forEach((n) => { n.textContent = v[n.dataset.rs] ?? '—'; });
+    document.querySelectorAll('[data-rs-bar]').forEach((n) => { n.style.width = t.n ? (t.firm / t.n * 100) + '%' : '0'; });
+    const barra = (n, m) => { const td = el('td', 'rs-av'); const b = el('span', 'mp-av-bar'); const i = el('i'); i.style.width = (m ? n / m * 100 : 0) + '%'; b.appendChild(i); td.append(el('span', 'mp-av-t', `${n} de ${m}`), b); if (m && n === m) td.classList.add('ok'); return td; };
+    const fila = (nombre, c, cls, club) => {
+      const tr = el('tr', cls); const td0 = el('td');
+      if (club) { const b = el('button', 'seg-av-club', nombre); b.type = 'button'; b.title = 'Ver su captura en el Seguimiento'; b.addEventListener('click', () => { if (window.SEG && window.SEG.verSucursal) window.SEG.verSucursal(nombre); if (window.abrirTab) abrirTab('t-seg'); window.scrollTo({ top: 0 }); }); td0.appendChild(b); }
+      else td0.textContent = nombre;
+      tr.append(td0, el('td', 'num', String(c.n)), el('td', 'num', fmt(c.prop)), el('td', 'num rs-eq', eq(c.prop)), barra(c.val, c.n), barra(c.firm, c.n));
+      return tr;
+    };
     const filas = [];
     [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([c, g]) => {
-      filas.push(fila(c, calc(g), 'cap-cad'));
       const clubs = [...d3group(g, 'sucursal').entries()];
-      if (clubs.length === 1 && clubs[0][0] === c) return;  // la cadena es un solo club con el mismo nombre
-      clubs.sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([s, gs]) => filas.push(fila(s, calc(gs), 'cap-club')));
+      const solo = clubs.length === 1 && clubs[0][0] === c;  // cadena de un solo club con el mismo nombre
+      filas.push(fila(c, calc(g), 'cap-cad', solo));
+      if (solo) return;
+      clubs.sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([s2, gs]) => filas.push(fila(s2, calc(gs), 'cap-club', true)));
     });
     filas.push(fila('Total', t, 'cap-total'));
     tb.replaceChildren(...filas);
@@ -1992,7 +1976,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
   }
 
   function render() {
-    renderSummary(); renderRows(); renderResumen(); renderCapacidad(); renderUnidades(); renderAdnCuenta(); renderFuera();
+    renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera();
     // Para el mapa por sucursal: horarios nuevos de quienes están en seguimiento
     window.SEG = { rows, fuera: fueraRows, diasDe: diasGuardados, horasDe, estadoAdendum,
       verSucursal: (s) => { Object.keys(F).forEach((k) => { F[k] = ''; }); F.suc = s; ['f-tipo', 'f-cad', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); renderSummary(); $('f-suc').value = s; renderRows(); } };
@@ -2196,7 +2180,7 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     if (!opciones()) { box.replaceChildren(el('p', 'status', 'Cargando horarios…')); return; }
     const lista = filtradas();
     const gHoy = cobertura(lista, 'hoy'), gNue = cobertura(lista, 'nuevo');
-    renderFranjas(gHoy, gNue); renderAvance();
+    renderFranjas(gHoy, gNue);
     // Estadísticas
     $('mp-n').textContent = lista.length.toLocaleString('es-MX');
     $('mp-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));

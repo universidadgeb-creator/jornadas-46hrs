@@ -67,33 +67,30 @@ body { background: var(--color-bg); color: var(--color-fg); font-family: var(--f
 .gx b, .gx strong { font-weight: 600; }
 """
 
-RESUMEN_AVANCE = """  <article class="gx-card" id="avance-contratos">
-    <div class="seg-avance">
-      <div>
-        <h2>Avance del cambio de contrato</h2>
-        <div class="big"><span data-seg="done">—</span> <small>de <span data-seg="total">—</span> personas que pasan de 46 hrs</small></div>
-        <div class="seg-bar" aria-hidden="true"><i data-seg-bar></i></div>
-        <div class="sub"><b data-seg="pct">—</b> con contrato nuevo · <b data-seg="hor">—</b> con horario validado · <b data-seg="lid">—</b> con líder asignado</div>
-      </div>
-      <button type="button" class="gx-btn-acc" data-tab-go="t-seg">Ir al seguimiento</button>
+RESUMEN_AVANCE = """  <section class="rs-kpis" aria-label="Cifras clave">
+    <div class="rs-k"><span class="lbl">Personas que deben ajustar su jornada</span><b data-rs="n">—</b><span class="sub" data-rs="n-sub">—</span></div>
+    <div class="rs-k"><span class="lbl">Horas por semana que se reacomodan</span><b data-rs="h">—</b><span class="sub">con la propuesta: diurna a 46, mixta a 45</span></div>
+    <div class="rs-k is-a"><span class="lbl">Equivale a (personas de tiempo completo)</span><b data-rs="eq">—</b><span class="sub" data-rs="eq-sub">—</span></div>
+    <div class="rs-k"><span class="lbl">Contratos nuevos firmados</span><b data-rs="firm">—</b><span class="rs-bar" aria-hidden="true"><i data-rs-bar></i></span><span class="sub" data-rs="firm-sub">—</span></div>
+  </section>
+  <article class="gx-card" id="rs-regla">
+    <div class="rs-head"><h2>La regla: cuánto baja cada tipo de jornada</h2><button type="button" class="gx-link" data-tab-go="t-seg">Ver avance de contratos →</button></div>
+    <div class="rs-tipos">
+      <div><span class="lbl">Diurna</span><b data-rs="d-n">—</b><span class="rule">personas · bajan a <strong>46 hrs</strong></span></div>
+      <div><span class="lbl">Mixta</span><b data-rs="m-n">—</b><span class="rule">personas · bajan a <strong>45 hrs</strong>, su máximo legal (no cambia)</span></div>
+      <div><span class="lbl">Nocturna</span><b data-rs="n-n">—</b><span class="rule pend">personas · ajuste por confirmar con el abogado</span></div>
     </div>
+    <p class="rs-nota">Lo que pide la ley (todas a 46) equivale a <b data-rs="ley">—</b> personas (<span data-rs="ley-h">—</span> hrs). Bajar las mixtas a 45 suma <b data-rs="mix">—</b> (<span data-rs="mix-h">—</span> hrs). Con los horarios capturados hoy en el Seguimiento: <b data-rs="cap">—</b> personas.</p>
   </article>
-  <article class="gx-card" id="capacidad">
-    <h2>¿Cuánta capacidad se reacomoda?</h2>
-    <p class="cap-intro">Horas por semana que dejan de trabajar las personas que pasan de 46 hrs, convertidas a personas de tiempo completo (una jornada de 46 hrs).</p>
-    <div class="cap-kpis">
-      <div class="is-a"><span class="lbl">Con la propuesta (diurna 46 · mixta 45)</span><b data-cap="prop-p">—</b><span class="h"><span data-cap="prop-h">—</span> hrs por semana</span></div>
-      <div><span class="lbl">Mínimo de ley (todas a 46)</span><b data-cap="ley-p">—</b><span class="h"><span data-cap="ley-h">—</span> hrs por semana</span></div>
-      <div><span class="lbl">Por bajar las mixtas a 45</span><b data-cap="mix-p">—</b><span class="h"><span data-cap="mix-h">—</span> hrs por semana</span></div>
-      <div><span class="lbl">Con lo capturado hoy en el Seguimiento</span><b data-cap="cap-p">—</b><span class="h"><span data-cap="cap-h">—</span> hrs por semana</span></div>
-    </div>
+  <article class="gx-card" id="rs-donde">
+    <h2>¿Dónde está el impacto y cómo va cada club?</h2>
+    <p class="note">Horas por semana que se dejan de trabajar con la propuesta y su equivalente en personas de 46 hrs (referencia de capacidad, no propuesta de contratación). Clic en un club para ver su captura.</p>
     <div class="cap-scroll">
-      <table class="gx-table cap-tabla">
-        <thead><tr><th>Cadena / club</th><th class="num">Personas</th><th class="num">Horas menos (propuesta)</th><th class="num">Equivale a</th><th class="num">Con lo capturado</th></tr></thead>
-        <tbody data-cap-tabla></tbody>
+      <table class="gx-table cap-tabla rs-tabla">
+        <thead><tr><th>Cadena / club</th><th class="num">Personas</th><th class="num">Horas menos</th><th class="num">Equivale a</th><th>Horario validado</th><th>Contrato firmado</th></tr></thead>
+        <tbody data-rs-tabla></tbody>
       </table>
     </div>
-    <p class="cap-pie">Equivale a = horas ÷ 46. Es una referencia de capacidad, no una propuesta de contratación. «Con lo capturado» usa el nuevo horario guardado en el Seguimiento (validado o propuesta).</p>
   </article>
 """
 
@@ -168,23 +165,26 @@ def main():
         '    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>\n') + tab[fin:]
     ini = tab.index('  <section class="gx-tab" id="t-personas" hidden>')
     fin = tab.index('  <section class="gx-tab" id="t-etapas" hidden>')
-    quitadas = tab[ini:fin]
-    a_ini = quitadas.index('      <article class="gx-card" id="por-ubicacion">')
-    a_fin = quitadas.index('</article>', a_ini) + len('</article>')
-    por_ubicacion = quitadas[a_ini:a_fin].replace('      <article', '    <article', 1)
     tab = tab[:ini] + tab[fin:]
-    # La gráfica por sucursal pasa al Resumen, junto a la de puestos
-    tab = reemplazar(tab, '      <button type="button" class="gx-btn" id="gx-toggle-puestos"',
-                     '      <button type="button" class="gx-btn" id="gx-toggle-puestos"')
-    i = tab.index('    <article class="gx-card" id="por-puesto">')
-    j = tab.index('</article>', i) + len('</article>')
-    tab = tab[:j] + '\n' + por_ubicacion + tab[j:]
+    # (12 nov 2026) La gráfica por sucursal ya no va al Resumen: la tabla «¿Dónde está el impacto?» la sustituye
     # Clic en un puesto: abre su plantilla en el Mapa por sucursal
     tab = reemplazar(tab, "  if (GX.puesto) abrirTab('t-personas');",
                      "  if (GX.puesto) { const pu = GX.puesto; GX.puesto = null; dash.draw('puestos'); window.dispatchEvent(new CustomEvent('mapa:puesto', { detail: pu })); abrirTab('t-mapa'); window.scrollTo({ top: 0 }); }")
     tab = reemplazar(tab, 'Clic en una barra para ver los nombres.</p>', 'Clic en una barra para ver su plantilla por turno en el Mapa por sucursal.</p>')
     tab = reemplazar(tab, '<a class="gx-link" href="https://claude.ai/artifact/HcTgQg9nxbEGeX3q2qks6k" target="_blank" rel="noopener">Ver avance de contratos →</a>',
                      '<button type="button" class="gx-link" data-tab-go="t-seg">Ver avance de contratos →</button>')
+    # Encabezado sin cifras: las cifras viven en el Resumen (antes decía 99 y el Seguimiento 101)
+    i = tab.index('    <p><b data-draw="kpi" data-source="kpis" data-field="sobre46"')
+    tab = tab[:i] + '    <p>La reforma a la LFT baja la jornada máxima de 48 a <b>46 hrs en 2027</b> (44 en 2028, 42 en 2029 y 40 en 2030) sin reducir salario ni prestaciones. Aquí está a quién le toca, cuánto cuesta en horas y cómo va el cambio de contrato.</p>' + tab[tab.index('</p>', i) + len('</p>'):]
+    # Resumen (12 nov 2026, para presentar): sin los 4 indicadores ni la tarjeta por tipo del tablero,
+    # sin la gráfica por sucursal y sin la lista de puestos por año (se ven en Próximas etapas).
+    i = tab.index('  <section class="gx-kpis" aria-label="Indicadores clave">')
+    tab = tab[:i] + tab[tab.index('</section>', i) + len('</section>\n'):]
+    i = tab.index('  <article class="gx-card" id="por-tipo">')
+    tab = tab[:i] + tab[tab.index('</article>', i) + len('</article>\n'):]
+    tab = re.sub(r'\s*<div class="gx-tl-roles"[^>]*></div>', '', tab)
+    tab = reemplazar(tab, 'Debajo de cada año están los puestos que entran en esa etapa; abre un puesto para ver los nombres.',
+                     'El detalle de puestos y nombres está en Próximas etapas.')
     tab = reemplazar(tab, '  <section class="gx-tab" id="t-resumen">\n',
                      '  <section class="gx-tab" id="t-resumen">\n' + RESUMEN_AVANCE)
     captura = (RAIZ / 'seguimiento' / 'captura.html').read_text(encoding='utf-8')

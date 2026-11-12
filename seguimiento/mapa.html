@@ -9,14 +9,6 @@
       <div class="gx-ver">Ver<span class="gx-seg" role="group" aria-label="Ver"><button type="button" data-mp="hoy" aria-pressed="false">Hoy</button><button type="button" data-mp="nuevo" aria-pressed="true">2027</button><button type="button" data-mp="cambio" aria-pressed="false">Cambio</button></span></div>
       <button type="button" class="gx-btn mp-xlsx" id="mp-xlsx">Descargar archivo maestro (.xlsx)</button>
     </div>
-    <h3 class="mp-h3">Avance de captura por sucursal</h3>
-    <p class="note">Personas en seguimiento (pasan de 46 hrs) y en qué paso va cada sucursal. «Horario validado» cuenta los que el gerente ya revisó y guardó; las propuestas precargadas no cuentan hasta que se guardan.</p>
-    <div class="mp-scroll">
-      <table class="gx-table mp-av">
-        <thead><tr><th>Sucursal</th><th class="num">Personas</th><th>Horario validado</th><th>Líder</th><th>Adendum descargado</th><th>Recibido firmado</th><th></th></tr></thead>
-        <tbody id="mp-av"></tbody>
-      </table>
-    </div>
     <div class="mp-stats">
       <div><span class="lbl">Personas</span><span class="val" id="mp-n">—</span></div>
       <div><span class="lbl">Horas por semana, hoy</span><span class="val" id="mp-hh">—</span></div>
@@ -209,7 +201,7 @@
     if (!opciones()) { box.replaceChildren(el('p', 'status', 'Cargando horarios…')); return; }
     const lista = filtradas();
     const gHoy = cobertura(lista, 'hoy'), gNue = cobertura(lista, 'nuevo');
-    renderFranjas(gHoy, gNue); renderAvance();
+    renderFranjas(gHoy, gNue);
     // Estadísticas
     $('mp-n').textContent = lista.length.toLocaleString('es-MX');
     $('mp-hh').textContent = fmt(d3.sum(lista, (p) => p.hHoy));

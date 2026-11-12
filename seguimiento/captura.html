@@ -1,32 +1,15 @@
 <section class="gx-tab" id="t-seg" hidden>
   <p class="seg-intro">Captura el líder, el nuevo horario y marca cuando el nuevo contrato esté firmado. Todo se guarda solo y lo ve todo el equipo. El nuevo horario viene precargado con la propuesta 2027; valídalo o corrígelo con cada gerente.</p>
     <div class="cad-top" role="group" aria-label="Cadena" id="cad-top"></div>
-    <div class="top">
-      <section class="card prog" aria-label="Avance">
-        <div class="lbl">Nuevo contrato realizado<span id="p-cad"></span></div>
-        <div class="big"><span id="p-done">—</span> <span>de <span id="p-total">—</span></span></div>
-        <div class="bar" aria-hidden="true"><i id="p-bar"></i></div>
-        <div class="sub"><b id="p-pct">—</b> de avance · <span id="p-hor">—</span> con horario validado · <span id="p-lid">—</span> con líder asignado</div>
-      </section>
-      <section class="tipos" aria-label="Por tipo de jornada">
-        <button type="button" class="tipo" data-tipo="Diurna" aria-pressed="false">
-          <span class="lbl">Diurna</span><span class="n"><span data-k="Diurna-n">—</span><small data-k="Diurna-pct">—</small></span>
-          <span class="rule">Meta: 46 hrs</span><span class="av"><span data-k="Diurna-done">—</span> con contrato nuevo</span>
-        </button>
-        <button type="button" class="tipo" data-tipo="Mixta" aria-pressed="false">
-          <span class="lbl">Mixta</span><span class="n"><span data-k="Mixta-n">—</span><small data-k="Mixta-pct">—</small></span>
-          <span class="rule">Meta: 45 hrs (máximo legal de la mixta)</span><span class="av"><span data-k="Mixta-done">—</span> con contrato nuevo</span>
-        </button>
-        <button type="button" class="tipo" data-tipo="Nocturna" aria-pressed="false">
-          <span class="lbl">Nocturna</span><span class="n"><span data-k="Nocturna-n">—</span><small data-k="Nocturna-pct">—</small></span>
-          <span class="rule pend">Ajuste por confirmar</span><span class="av"><span data-k="Nocturna-done">—</span> con contrato nuevo</span>
-        </button>
-      </section>
-    </div>
-
-    <section aria-label="Por sucursal">
-      <h2 class="h2">Propuesta por cadena y sucursal</h2>
-      <div class="sucs" id="sucs"><span class="status">Cargando sucursales…</span></div>
+    <section class="card seg-av" aria-label="Avance por sucursal">
+      <div class="seg-av-head"><h2 class="h2">Avance por sucursal<span id="p-cad"></span></h2><span class="seg-av-tot"><b id="p-done">—</b> de <b id="p-total">—</b> con contrato nuevo · <b id="p-pct">—</b></span></div>
+      <p class="note">Los cuatro pasos de cada persona. «Horario validado» cuenta solo los que el gerente ya revisó y guardó. Clic en una sucursal para ver solo a su gente en la lista de abajo.</p>
+      <div class="mp-scroll">
+        <table class="gx-table mp-av">
+          <thead><tr><th>Sucursal</th><th class="num">Personas</th><th>Horario validado</th><th>Líder</th><th>Adendum descargado</th><th>Contrato firmado</th></tr></thead>
+          <tbody id="seg-av"><tr><td class="vacio" colspan="6">Cargando el seguimiento…</td></tr></tbody>
+        </table>
+      </div>
     </section>
 
     <section class="card" aria-label="Personas">
@@ -124,45 +107,49 @@
       ct.appendChild(b);
     });
     const total = base.length, done = base.filter((r) => r.contrato).length;
-    $('p-done').textContent = done; $('p-total').textContent = total;
-    $('p-pct').textContent = pct(done, total);
-    $('p-bar').style.width = total ? (done / total * 100) + '%' : '0';
-    $('p-hor').textContent = base.filter((r) => r.horario_validado).length;
-    $('p-lid').textContent = base.filter((r) => (r.lider || '').trim()).length;
-    TIPOS.forEach((t) => {
-      const g = base.filter((r) => r.tipo === t);
-      document.querySelectorAll(`[data-k="${t}-n"]`).forEach((n) => { n.textContent = g.length; });
-      document.querySelectorAll(`[data-k="${t}-pct"]`).forEach((n) => { n.textContent = pct(g.length, total); });
-      document.querySelectorAll(`[data-k="${t}-done"]`).forEach((n) => { n.textContent = `${g.filter((r) => r.contrato).length} de ${g.length}`; });
-    });
-    document.querySelectorAll('.tipo').forEach((b) => b.setAttribute('aria-pressed', String(F.tipo === b.dataset.tipo)));
-    const box = $('sucs'); box.replaceChildren();
-    const cadenas = [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((x, y) => y[1].length - x[1].length);
-    cadenas.forEach(([c, gc]) => {
-      if (F.cad && F.cad !== c) return;
-      const grupo = el('div', 'cad-grupo');
-      const dc = gc.filter((r) => r.contrato).length;
-      const h = el('button', 'cad-h'); h.type = 'button'; h.setAttribute('aria-pressed', String(F.cad === c));
-      h.title = F.cad === c ? 'Ver todas las cadenas' : 'Ver solo ' + c;
-      h.append(el('b', '', c), el('span', '', `${gc.length} personas · ${dc} de ${gc.length} con contrato nuevo (${pct(dc, gc.length)})`));
-      h.addEventListener('click', () => { F.cad = F.cad === c ? '' : c; $('f-cad').value = F.cad; render(); });
-      const fila = el('div', 'sucs-in');
-      [...d3group(gc, 'sucursal').entries()].sort((x, y) => y[1].length - x[1].length).forEach(([s, g]) => {
-        const d = g.filter((r) => r.contrato).length;
-        const bt = el('button', 'suc'); bt.type = 'button'; bt.setAttribute('aria-pressed', String(F.suc === s));
-        const mix = g.filter((r) => r.tipo === 'Mixta').length, diu = g.filter((r) => r.tipo === 'Diurna').length, noc = g.length - mix - diu;
-        bt.append(el('span', 'nm', s), el('span', 'ct', `${g.length} personas · ${diu} diurna · ${mix} mixta${noc ? ' · ' + noc + ' nocturna' : ''}`), el('span', 'ct', `${d} de ${g.length} con contrato nuevo`));
-        const mini = el('span', 'mini'); const i = el('i'); i.style.width = (d / g.length * 100) + '%'; mini.appendChild(i); bt.appendChild(mini);
-        bt.addEventListener('click', () => { F.suc = F.suc === s ? '' : s; $('f-suc').value = F.suc; render(); });
-        fila.appendChild(bt);
-      });
-      grupo.append(h, fila); box.appendChild(grupo);
-    });
-    if (!rows.length) box.replaceChildren(el('span', 'status', 'Sin datos todavía.'));
+    $('p-done').textContent = done; $('p-total').textContent = total; $('p-pct').textContent = pct(done, total);
+    renderAvanceSeg(base);
     setOptions($('f-cad'), [...new Set(rows.map((r) => r.division || '—'))].sort((a, b) => a.localeCompare(b, 'es')), 'Todas');
     setOptions($('f-suc'), [...new Set(rows.filter((r) => !F.cad || (r.division || '—') === F.cad).map((r) => r.sucursal || '—'))].sort((a, b) => a.localeCompare(b, 'es')), 'Todas', F.suc);
     F.suc = $('f-suc').value;
     setOptions($('f-puesto'), [...new Set(rows.map((r) => r.puesto))].sort((a, b) => a.localeCompare(b, 'es')), 'Todos');
+  }
+
+  // Avance por sucursal (Seguimiento): cuatro pasos por persona, agrupado por cadena
+  const PASOS = [
+    (r) => !!r.horario_validado,
+    (r) => !!String(r.lider || '').trim(),
+    (r) => !!(r.adendum_generado || r.adendum_recibido),
+    (r) => !!r.contrato,
+  ];
+  function renderAvanceSeg(base) {
+    const tb = $('seg-av'); if (!tb) return;
+    const filas = [];
+    const fila = (nombre, lista, tipo) => {
+      const tr = el('tr', tipo === 'total' ? 'mp-av-total' : tipo === 'cad' ? 'mp-av-cad' : (nombre === F.suc ? 'mp-av-sel' : ''));
+      const td0 = el('td', 'mp-av-n');
+      if (tipo === 'club') {
+        const b = el('button', 'seg-av-club', nombre); b.type = 'button'; b.setAttribute('aria-pressed', String(F.suc === nombre));
+        b.title = F.suc === nombre ? 'Ver todas las sucursales' : 'Ver solo ' + nombre;
+        b.addEventListener('click', () => { F.suc = F.suc === nombre ? '' : nombre; $('f-suc').value = F.suc; render(); });
+        td0.appendChild(b);
+      } else td0.textContent = nombre;
+      tr.append(td0, el('td', 'num', String(lista.length)));
+      PASOS.forEach((f) => {
+        const n = lista.filter(f).length, pc = lista.length ? n / lista.length : 0;
+        const td = el('td', 'mp-av-c'); const b = el('span', 'mp-av-bar'); const i = el('i'); i.style.width = (pc * 100) + '%'; b.appendChild(i);
+        td.append(el('span', 'mp-av-t', `${n} de ${lista.length}`), b); if (pc === 1) td.classList.add('ok'); tr.appendChild(td);
+      });
+      filas.push(tr);
+    };
+    [...d3group(base.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => b[1].length - a[1].length).forEach(([c, lc]) => {
+      const clubs = [...d3group(lc, 'sucursal').entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], 'es'));
+      if (!F.cad && !(clubs.length === 1 && clubs[0][0] === c)) fila(c, lc, 'cad');
+      clubs.forEach(([s2, l]) => fila(s2, l, 'club'));
+    });
+    fila(F.cad ? 'Total ' + F.cad : 'Total', base, 'total');
+    if (!rows.length) { const tr = el('tr'); const td = el('td', 'vacio', 'Sin datos todavía.'); td.colSpan = 6; tr.appendChild(td); filas.splice(0, filas.length, tr); }
+    tb.replaceChildren(...filas);
   }
 
   function d3group(arr, k) { const m = new Map(); arr.forEach((r) => { const v = r[k] || '—'; if (!m.has(v)) m.set(v, []); m.get(v).push(r); }); return m; }
@@ -617,39 +604,46 @@
     });
   }
 
+  // Resumen (pestaña principal): cifras clave, regla por tipo y tabla «dónde está el impacto»
   function renderResumen() {
-    const total = rows.length, done = rows.filter((r) => r.contrato).length;
-    const v = { done, total, pct: pct(done, total), hor: rows.filter((r) => r.horario_validado).length,
-      lid: rows.filter((r) => (r.lider || '').trim()).length };
-    document.querySelectorAll('[data-seg]').forEach((n) => { n.textContent = v[n.dataset.seg]; });
-    document.querySelectorAll('[data-seg-bar]').forEach((n) => { n.style.width = total ? (done / total * 100) + '%' : '0'; });
-  }
-
-  // Tarjeta «¿Cuánta capacidad se reacomoda?» del Resumen
-  function renderCapacidad() {
-    const tb = document.querySelector('[data-cap-tabla]'); if (!tb) return;
-    const metaProp = (r) => (r.tipo === 'Mixta' ? 45 : r.tipo === 'Diurna' ? 46 : null);
+    const tb = document.querySelector('[data-rs-tabla]'); if (!tb) return;
+    const metaProp = (r) => (r.tipo === 'Mixta' ? 45 : 46);
     const calc = (g) => {
       let prop = 0, ley = 0, cap = 0;
       g.forEach((r) => {
-        const h = Number(r.horas_actuales) || 0, m = metaProp(r);
-        ley += Math.max(0, h - 46); prop += m == null ? Math.max(0, h - 46) : Math.max(0, h - m);
+        const h = Number(r.horas_actuales) || 0;
+        ley += Math.max(0, h - 46); prop += Math.max(0, h - metaProp(r));
         const n = horasDe(r) ?? r.nuevas_horas; if (n != null) cap += Math.max(0, h - n);
       });
-      return { n: g.length, prop, ley, cap };
+      return { n: g.length, c48: g.filter((r) => Number(r.horas_actuales) >= 48 && !r.aplicado_excel).length, apl: g.filter((r) => r.aplicado_excel).length, prop, ley, cap, firm: g.filter((r) => r.contrato).length, val: g.filter((r) => r.horario_validado).length };
     };
     const eq = (h) => fmt(h / 46);
     const t = calc(rows);
-    const v = { 'prop-p': eq(t.prop) + ' personas', 'prop-h': fmt(t.prop), 'ley-p': eq(t.ley) + ' personas', 'ley-h': fmt(t.ley),
-      'mix-p': '+' + eq(t.prop - t.ley) + ' personas', 'mix-h': '+' + fmt(t.prop - t.ley), 'cap-p': eq(t.cap) + ' personas', 'cap-h': fmt(t.cap) };
-    document.querySelectorAll('[data-cap]').forEach((n) => { n.textContent = v[n.dataset.cap] ?? '—'; });
-    const fila = (nombre, c, cls) => { const tr = el('tr', cls); tr.append(el('td', '', nombre), el('td', 'num', String(c.n)), el('td', 'num', fmt(c.prop)), el('td', 'num', eq(c.prop)), el('td', 'num', eq(c.cap))); return tr; };
+    const tipos = Object.fromEntries(TIPOS.map((x) => [x, rows.filter((r) => r.tipo === x).length]));
+    const v = {
+      n: String(t.n), 'n-sub': `${t.c48} con 48 hrs · ${t.n - t.c48 - t.apl} entre 46 y 48${t.apl ? ' · ' + t.apl + ' ya ajustadas en el Excel' : ''}`,
+      h: fmt(t.prop), eq: eq(t.prop), 'eq-sub': `${eq(t.ley)} por la ley (todas a 46) + ${eq(t.prop - t.ley)} por bajar las mixtas a 45`,
+      firm: `${t.firm} de ${t.n}`, 'firm-sub': `${pct(t.firm, t.n)} · ${t.val} con horario validado`,
+      'd-n': String(tipos.Diurna), 'm-n': String(tipos.Mixta), 'n-n': String(tipos.Nocturna),
+      ley: eq(t.ley), mix: eq(t.prop - t.ley), 'ley-h': fmt(t.ley), 'mix-h': fmt(t.prop - t.ley), cap: eq(t.cap),
+    };
+    document.querySelectorAll('[data-rs]').forEach((n) => { n.textContent = v[n.dataset.rs] ?? '—'; });
+    document.querySelectorAll('[data-rs-bar]').forEach((n) => { n.style.width = t.n ? (t.firm / t.n * 100) + '%' : '0'; });
+    const barra = (n, m) => { const td = el('td', 'rs-av'); const b = el('span', 'mp-av-bar'); const i = el('i'); i.style.width = (m ? n / m * 100 : 0) + '%'; b.appendChild(i); td.append(el('span', 'mp-av-t', `${n} de ${m}`), b); if (m && n === m) td.classList.add('ok'); return td; };
+    const fila = (nombre, c, cls, club) => {
+      const tr = el('tr', cls); const td0 = el('td');
+      if (club) { const b = el('button', 'seg-av-club', nombre); b.type = 'button'; b.title = 'Ver su captura en el Seguimiento'; b.addEventListener('click', () => { if (window.SEG && window.SEG.verSucursal) window.SEG.verSucursal(nombre); if (window.abrirTab) abrirTab('t-seg'); window.scrollTo({ top: 0 }); }); td0.appendChild(b); }
+      else td0.textContent = nombre;
+      tr.append(td0, el('td', 'num', String(c.n)), el('td', 'num', fmt(c.prop)), el('td', 'num rs-eq', eq(c.prop)), barra(c.val, c.n), barra(c.firm, c.n));
+      return tr;
+    };
     const filas = [];
     [...d3group(rows.map((r) => ({ ...r, _cad: cadDe(r) })), '_cad').entries()].sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([c, g]) => {
-      filas.push(fila(c, calc(g), 'cap-cad'));
       const clubs = [...d3group(g, 'sucursal').entries()];
-      if (clubs.length === 1 && clubs[0][0] === c) return;  // la cadena es un solo club con el mismo nombre
-      clubs.sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([s, gs]) => filas.push(fila(s, calc(gs), 'cap-club')));
+      const solo = clubs.length === 1 && clubs[0][0] === c;  // cadena de un solo club con el mismo nombre
+      filas.push(fila(c, calc(g), 'cap-cad', solo));
+      if (solo) return;
+      clubs.sort((a, b) => calc(b[1]).prop - calc(a[1]).prop).forEach(([s2, gs]) => filas.push(fila(s2, calc(gs), 'cap-club', true)));
     });
     filas.push(fila('Total', t, 'cap-total'));
     tb.replaceChildren(...filas);
@@ -664,7 +658,7 @@
   }
 
   function render() {
-    renderSummary(); renderRows(); renderResumen(); renderCapacidad(); renderUnidades(); renderAdnCuenta(); renderFuera();
+    renderSummary(); renderRows(); renderResumen(); renderUnidades(); renderAdnCuenta(); renderFuera();
     // Para el mapa por sucursal: horarios nuevos de quienes están en seguimiento
     window.SEG = { rows, fuera: fueraRows, diasDe: diasGuardados, horasDe, estadoAdendum,
       verSucursal: (s) => { Object.keys(F).forEach((k) => { F[k] = ''; }); F.suc = s; ['f-tipo', 'f-cad', 'f-puesto', 'f-est', 'f-q'].forEach((id) => { $(id).value = ''; }); renderSummary(); $('f-suc').value = s; renderRows(); } };
