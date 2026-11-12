@@ -34,6 +34,8 @@ def hhmm(v):
 # Puestos que no entran al reporte (pedido de Patty, 9 nov 2026): instructores y tutoriales.
 # «ATP» también se excluirá cuando Patty indique cómo aparece en el Excel.
 # Avisado por Patty el 10 nov 2026: pasó de Onara (Nuevos Negocios) a Naciones, turno de noche
+# Nombre con que se muestra cada marca de Nuevos Negocios
+MARCAS_NN = {'Clinica': 'Clínica', 'White mouse': 'White Mouse'}
 CAMBIO_UBICACION = {'Medina Hernandez Cesar Abraham': 'Naciones'}
 EXCLUIR_PUESTOS = re.compile(r'instructor|tutorial', re.I)
 
@@ -70,6 +72,9 @@ def main(xlsx, out):
         canon[t.lower()][t] += 1
     canon = {k: max(v, key=v.get) for k, v in canon.items()}
     p['area'] = [canon[t.lower()][:1].upper() + canon[t.lower()][1:] for t in ar]
+    # Nuevos Negocios: cada marca (columna «Área») se trata como su propio club (pedido de Patty, 12 nov 2026)
+    nn = (p['division'] == 'Nuevos Negocios') & (p['ubicacion'] == 'Nuevos Negocios') & (p['area'] != 'Sin área')
+    p.loc[nn, 'ubicacion'] = p.loc[nn, 'area'].astype(str).str.strip().replace(MARCAS_NN)
     p['tipo_jornada'] = a['TIPO DE JORNADA (LFT)'].replace({'Sin horario capturado': 'Sin captura'})
     p['horas_reales'] = pd.to_numeric(a['Total jornada reconocida'], errors='coerce').fillna(0).round(2)
     p['horas_contrato'] = pd.to_numeric(a['Jornada laboral'], errors='coerce')

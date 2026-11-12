@@ -1,16 +1,16 @@
 nombre,puesto,division,ubicacion,area,tipo_jornada,horas_reales,horas_contrato,dias,captura
-Mejia Romero Michelle,Lider de Acton Academy,Nuevos Negocios,Nuevos Negocios,Acton Academy,Diurna,40.0,48.0,5,Capturado
-Mantecon Siordia Raul Eduardo,Lider de Seven Nutrition,Nuevos Negocios,Nuevos Negocios,Seven Nutrition,Diurna,40.0,40.0,5,Capturado
-Martinez Infante Hector Alonso,Lider de White mouse,Nuevos Negocios,Nuevos Negocios,White mouse,Diurna,40.0,40.0,5,Capturado
+Mejia Romero Michelle,Lider de Acton Academy,Nuevos Negocios,Acton Academy,Acton Academy,Diurna,40.0,48.0,5,Capturado
+Mantecon Siordia Raul Eduardo,Lider de Seven Nutrition,Nuevos Negocios,Seven Nutrition,Seven Nutrition,Diurna,40.0,40.0,5,Capturado
+Martinez Infante Hector Alonso,Lider de White mouse,Nuevos Negocios,White Mouse,White mouse,Diurna,40.0,40.0,5,Capturado
 Martinez Martinez Berenice,Gerente de Sucursal,EASY FIT,La Estancia,Administración,Diurna,40.0,48.0,5,Capturado
 Santana Hernandez Francisco Joel,Gerente de Sucursal,EASY FIT,Iteso,Administración,Diurna,40.0,48.0,5,Capturado
 Rebollar Luna Irma Leticia,Gerente de Sucursal,EASY FIT,Aleira,Administración,Diurna,40.0,48.0,5,Capturado
 Orozco Aceves Erika Mercedes,Gerente de Sucursal,EASY FIT,Cañadas,Administración,Diurna,40.0,48.0,5,Capturado
-Orozco Mora Liliana,Guide Acton Academy,Nuevos Negocios,Nuevos Negocios,Acton Academy,Diurna,40.0,48.0,5,Capturado
+Orozco Mora Liliana,Guide Acton Academy,Nuevos Negocios,Acton Academy,Acton Academy,Diurna,40.0,48.0,5,Capturado
 Sotelo Delgadillo Alberto Ivan,Gerente de Sucursal,EASY FIT,Ávila Camacho,Administración,Diurna,40.0,48.0,5,Capturado
-Villarreal Damy Patricio,Lider de Nuevos negovios,Nuevos Negocios,Nuevos Negocios,Onara,Diurna,40.0,48.0,5,Capturado
+Villarreal Damy Patricio,Lider de Nuevos negovios,Nuevos Negocios,Onara,Onara,Diurna,40.0,48.0,5,Capturado
 Ortega Cardenas Marcela Arianeth,R.P.,EASY FIT,La Estancia,Comercial,Diurna,45.0,48.0,6,Capturado
-Mantecon Siordia Carlos Fernando,Lider de Seven,Nuevos Negocios,Nuevos Negocios,Seven Nutrition,Diurna,40.0,40.0,5,Capturado
+Mantecon Siordia Carlos Fernando,Lider de Seven,Nuevos Negocios,Seven Nutrition,Seven Nutrition,Diurna,40.0,40.0,5,Capturado
 Calderon Lomeli Eduardo,Guia,EASY FIT,La Estancia,Administración,Mixta,46.5,48.0,6,Capturado
 Perez Luna Cristina Alejandra,Coordinador de Turno,EASY FIT,Aleira,Administración,Mixta,47.0,48.0,6,Capturado
 Sandoval Garcia Sonia Berenice,Técnico de Orden y Limpieza,EASY FIT,Ávila Camacho,Mtto y Servicios,Diurna,47.5,48.0,6,Capturado
@@ -184,21 +184,21 @@ Guzman Soto Alejandra,Auxiliar de Kids,EASY FIT,Cañadas,Deportes,Diurna,30.0,30
 Lopez Dueñas Byron,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mtto y Servicios,Diurna,48.0,48.0,6,Capturado
 Ornelas Cerda Erika Osmin,Cajero,VIVO 47,Naciones,Administración,Mixta,47.0,48.0,6,Capturado
 Gallegos Alvarez Carlos Jahir,Coach de Estiramiento,VIVO 47,Valle Real,Deportes,Mixta,22.5,27.0,5,Capturado
-Ortiz Vazquez Jaime Alejandro,Barista,Nuevos Negocios,Nuevos Negocios,Onara,Diurna,48.0,48.0,6,Capturado
+Ortiz Vazquez Jaime Alejandro,Barista,Nuevos Negocios,Onara,Onara,Diurna,48.0,48.0,6,Capturado
 Martinez Lopez Edder,Coach Deportivo,VIVO 47,Naciones,Deportes,Diurna,42.0,40.0,6,Capturado
 De la Cruz Rodriguez Pablo Francisci Asis,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mtto y Servicios,Mixta,48.0,48.0,6,Capturado
 Aguilera Diaz Sarai Alejandra,Nutriologo,EASY FIT,Cañadas,Deportes 2,Mixta,30.0,30.0,5,Capturado
 Ledon Gomez Bernardo,Asesor deportivo,EASY FIT,Cañadas,Deportes,Diurna,40.0,40.0,6,Capturado
 Barragan Del Real María del Rosario,Técnico de Orden y Limpieza,EASY FIT,La Estancia,Mtto y Servicios,Diurna,47.0,48.0,6,Capturado
 Martinez Mendoza Alfredo Yael,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mtto y Servicios,Mixta,48.0,48.0,6,Capturado
-Sanchez Becerra Daniela Elizabeth,Fisioterapia,Nuevos Negocios,Nuevos Negocios,Clinica,Diurna,36.0,36.0,6,Capturado
-Rosas Gutierrez Getzamany Monserrat,Fisioterapia,Nuevos Negocios,Nuevos Negocios,Clinica,Diurna,36.0,36.0,6,Capturado
-Estrada Miramontes Regina Isabel,Fisioterapia,Nuevos Negocios,Nuevos Negocios,Clinica,Mixta,36.0,36.0,6,Capturado
+Sanchez Becerra Daniela Elizabeth,Fisioterapia,Nuevos Negocios,Clínica,Clinica,Diurna,36.0,36.0,6,Capturado
+Rosas Gutierrez Getzamany Monserrat,Fisioterapia,Nuevos Negocios,Clínica,Clinica,Diurna,36.0,36.0,6,Capturado
+Estrada Miramontes Regina Isabel,Fisioterapia,Nuevos Negocios,Clínica,Clinica,Mixta,36.0,36.0,6,Capturado
 Carlos Silva Francisco Zabdiel,Ejecutivo de Membresia,VIVO 47,Gourmeteria,Deportes,Mixta,48.0,48.0,6,Capturado
 Monroy Cervantes Karen Paulina,Asesor deportivo,EASY FIT,La Estancia,Deportes,Mixta,40.0,40.0,6,Capturado
-Franco Remigio Luis Eduardo,Cocinero,Nuevos Negocios,Nuevos Negocios,Onara,Diurna,48.0,48.0,6,Capturado
+Franco Remigio Luis Eduardo,Cocinero,Nuevos Negocios,Onara,Onara,Diurna,48.0,48.0,6,Capturado
 Soto Rivera Rosa Linda,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mtto y Servicios,Mixta,48.0,48.0,6,Capturado
-Cuevas Rivera Alan,Meza Fria,Nuevos Negocios,Nuevos Negocios,Onara,Mixta,48.0,48.0,6,Capturado
+Cuevas Rivera Alan,Meza Fria,Nuevos Negocios,Onara,Onara,Mixta,48.0,48.0,6,Capturado
 Lucio Espoinoza Ana Beatriz,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mtto y Servicios,Diurna,46.0,48.0,6,Capturado
 Pinedo Lopez Rubria Irene,Coach de Estiramiento,VIVO 47,Naciones,Deportes,Diurna,27.0,27.0,6,Capturado
 Huerta Garcia Juan Fernando,Coach Funcional,EASY FIT,La Estancia,Deportes,Mixta,40.0,40.0,6,Capturado
@@ -209,7 +209,7 @@ Perez Delgado Brian joshue,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mtto y 
 Juarez Martinez Christopher Tadeo,Coach de Estiramiento,VIVO 47,Naciones,Deportes,Diurna,29.5,27.0,6,Capturado
 Valerio Villagran Imelda,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mtto y Servicios,Mixta,48.0,48.0,6,Capturado
 Macias Rodriguez Carlos Fernando,Coach Mobility,EASY FIT,La Estancia,Deportes,Mixta,40.0,40.0,6,Capturado
-Hernandez Escobedo Hannah Pamela,Recepcion,Nuevos Negocios,Nuevos Negocios,Clinica,Mixta,41.0,38.0,6,Capturado
+Hernandez Escobedo Hannah Pamela,Recepcion,Nuevos Negocios,Clínica,Clinica,Mixta,41.0,38.0,6,Capturado
 Hinojosa Perez Jesus Eduardo,Auxiliar de Sistemas,Oficina de Soporte,GEBienestar,Estructura y Soporte,Diurna,40.0,48.0,6,Capturado
 Medrano Ortiz José de Jesús,Tecnico en Mantenimiento,EASY FIT,La Estancia,Mtto y Servicios,Diurna,45.0,48.0,6,Capturado
 Zavala Ortega David,Auxiliar de Sistemas,Oficina de Soporte,GEBienestar,Estructura y Soporte,Diurna,40.0,48.0,6,Capturado
@@ -220,11 +220,11 @@ Sandoval Velazquez Andrea,Coordinador Capital Humano,Oficina de Soporte,GEBienes
 De Rosas Marquez Maria Cristina,Reclutador,Oficina de Soporte,GEBienestar,Capital Humano,Diurna,40.0,40.0,5,Capturado
 Madrigal Rodriguez Gael Isaac,Auxiliar de Capital Humano,Oficina de Soporte,GEBienestar,Capital Humano,Diurna,40.0,40.0,5,Capturado
 Gomez Avila Laura Alejandra,Auxiliar de Marketing,Oficina de Soporte,GEBienestar,Comercial,Diurna,40.0,40.0,5,Capturado
-Cadena Luna César Osvaldo,Lider de Hospitalidad y Experiencia,Nuevos Negocios,Nuevos Negocios,Onara,Diurna,48.0,48.0,6,Capturado
+Cadena Luna César Osvaldo,Lider de Hospitalidad y Experiencia,Nuevos Negocios,Onara,Onara,Diurna,48.0,48.0,6,Capturado
 Ortiz Ovalle Rubi Isabel,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mtto y Servicios,Mixta,46.0,,6,Capturado
 Cabrera Flores Otmar Octavio,Coach Deportivo,VIVO 47,Valle Real,Deportes,Mixta,40.0,,6,Capturado
-Escalante Núñez Axel Michel,Mesero,Nuevos Negocios,Nuevos Negocios,Onara,Mixta,48.0,48.0,6,Capturado
-Curiel Guerra Carolina,Técnico de Orden y Limpieza,Nuevos Negocios,Nuevos Negocios,Acton Academy,Diurna,45.83,46.0,5,Capturado
+Escalante Núñez Axel Michel,Mesero,Nuevos Negocios,Onara,Onara,Mixta,48.0,48.0,6,Capturado
+Curiel Guerra Carolina,Técnico de Orden y Limpieza,Nuevos Negocios,Acton Academy,Acton Academy,Diurna,45.83,46.0,5,Capturado
 Lara Hurtado Caroline Noemí,Coach Deportivo,VIVO 47,Naciones,Deportes,Mixta,40.0,,6,Capturado
 Pérez Baltazar Simon,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mtto y Servicios,Diurna,46.0,,6,Capturado
 Almanzor Olmos Evan Zuleth,Coach de Mobility,VIVO 47,Gourmeteria,Deportes,Mixta,40.0,,6,Capturado
@@ -232,7 +232,7 @@ García Bernal Mauro Alberto,R.P.,EASY FIT,La Estancia,Comercial,Mixta,45.0,,6,C
 Puente Ríos Eric Francisco,Auditor Interno,Oficina de Soporte,GEBienestar,Finanzas,Diurna,40.0,40.0,5,Capturado
 Michel Rubio Mariajose,Líder de Proyecto,Oficina de Soporte,GEBienestar,Mtto y Servicios,Diurna,18.0,18.0,5,Capturado
 Ruvalcaba Palomera Maximus Gabriel,Coach Deportivo,VIVO 47,Gourmeteria,Deportes,Mixta,40.0,,6,Capturado
-Cardenas Castro Bertha Alejandra,Guia Acton Academy,Nuevos Negocios,Nuevos Negocios,Acton Academy,Diurna,40.0,,5,Capturado
+Cardenas Castro Bertha Alejandra,Guia Acton Academy,Nuevos Negocios,Acton Academy,Acton Academy,Diurna,40.0,,5,Capturado
 Uribe Adame Oscar Esteban,Coach de Estiramiento,VIVO 47,Gourmeteria,Deportes,Mixta,27.0,,6,Capturado
 Reyes Ramírez Yajaira Estefania,Coach de Estiramiento,VIVO 47,Gourmeteria,Deportes,Mixta,27.0,,6,Capturado
 Elizondo Olivares Isaac Israel,Coach Deportivo,VIVO 47,Naciones,Deportes,Mixta,40.0,,6,Capturado
@@ -297,11 +297,11 @@ Piñon Mora David Israel,Analista de Control interno,Oficina de Soporte,GEBienes
 Sanchez Lomeli Edgar,Contador General,Oficina de Soporte,GEBienestar,Finanzas,Diurna,40.0,,5,Capturado
 Loza Pineda Tatiana Guadalupe,Coordinador Capital Humano,Oficina de Soporte,GEBienestar,Capital Humano,Diurna,40.0,,5,Capturado
 Ibarra Infante Laura Patricia,Gerente de Capital Humano,Oficina de Soporte,GEBienestar,Capital Humano,Diurna,40.0,,5,Capturado
-Viloria Uribe Andrés,Lavaloza,Nuevos Negocios,Nuevos Negocios,Onara,Mixta,48.0,48.0,6,Capturado
-Hernandez Tarango Kenia,Fisioterapia,Nuevos Negocios,Nuevos Negocios,Clinica,Mixta,36.0,36.0,6,Capturado
+Viloria Uribe Andrés,Lavaloza,Nuevos Negocios,Onara,Onara,Mixta,48.0,48.0,6,Capturado
+Hernandez Tarango Kenia,Fisioterapia,Nuevos Negocios,Clínica,Clinica,Mixta,36.0,36.0,6,Capturado
 Isaac Espejel Christian Jafet,Lider de data,Oficina de Soporte,GEBienestar,Comercial,Diurna,40.0,,5,Capturado
 Gonzalez Alvarez Maria Del Rayo,Técnico de Orden y Limpieza,VIVO 47,Naciones,Mtto y Servicios,Mixta,48.0,48.0,6,Capturado
-Arreola Diaz Yahaira,Recepción,Nuevos Negocios,Nuevos Negocios,Clinica,Diurna,41.0,,6,Capturado
+Arreola Diaz Yahaira,Recepción,Nuevos Negocios,Clínica,Clinica,Diurna,41.0,,6,Capturado
 Reynoso Quintana María Alejandra,Técnico de Orden y Limpieza,EASY FIT,La Estancia,Mtto y Servicios,Diurna,47.0,48.0,6,Capturado
 Pérez Suárez Dafne,Coach Deportivo,VIVO 47,Gourmeteria,Deportes,Diurna,40.0,40.0,5,Capturado
 Cruz Pérez Fabiola,Técnico de Orden y Limpieza,VIVO 47,Gourmeteria,Mtto y Servicios,Diurna,48.0,48.0,6,Capturado
@@ -311,5 +311,5 @@ Tapia Cano Jesús Misael,Coach de Estiramiento,VIVO 47,Valle Real,Deportes,Mixta
 Renteria Tejeda Cristian Alyahir,Técnico de Orden y Limpieza,VIVO 47,Valle Real,Mtto y Servicios,Mixta,48.0,,6,Capturado
 Reyes Lozano Eduardo Alberto,Barista,Nuevos Negocios,Onara VR,Onara VR,Mixta,46.0,,6,Capturado
 Diaz Velazquez Gael Alejandro,Barista,Nuevos Negocios,Onara VR,Onara VR,Diurna,46.0,,6,Capturado
-Macias Cervantes Ruben,Auxiliar General,Nuevos Negocios,Nuevos Negocios,Onara,Diurna,48.0,,6,Capturado
-Chavez Rivera Montserrat,Mesero,Nuevos Negocios,Nuevos Negocios,Onara,Diurna,48.0,,6,Capturado
+Macias Cervantes Ruben,Auxiliar General,Nuevos Negocios,Onara,Onara,Diurna,48.0,,6,Capturado
+Chavez Rivera Montserrat,Mesero,Nuevos Negocios,Onara,Onara,Diurna,48.0,,6,Capturado

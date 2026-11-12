@@ -1,16 +1,16 @@
 nombre,puesto,ubicacion,tipo_jornada,horas_reales,lun,lun_h,mar,mar_h,mie,mie_h,jue,jue_h,vie,vie_h,sab,sab_h,dom,dom_h
-Mejia Romero Michelle,Lider de Acton Academy,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
-Mantecon Siordia Raul Eduardo,Lider de Seven Nutrition,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
-Martinez Infante Hector Alonso,Lider de White mouse,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
+Mejia Romero Michelle,Lider de Acton Academy,Acton Academy,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
+Mantecon Siordia Raul Eduardo,Lider de Seven Nutrition,Seven Nutrition,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
+Martinez Infante Hector Alonso,Lider de White mouse,White Mouse,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Martinez Martinez Berenice,Gerente de Sucursal,La Estancia,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Santana Hernandez Francisco Joel,Gerente de Sucursal,Iteso,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Rebollar Luna Irma Leticia,Gerente de Sucursal,Aleira,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Orozco Aceves Erika Mercedes,Gerente de Sucursal,Cañadas,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
-Orozco Mora Liliana,Guide Acton Academy,Nuevos Negocios,Diurna,40.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,,0.0,,0.0
+Orozco Mora Liliana,Guide Acton Academy,Acton Academy,Diurna,40.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,,0.0,,0.0
 Sotelo Delgadillo Alberto Ivan,Gerente de Sucursal,Ávila Camacho,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
-Villarreal Damy Patricio,Lider de Nuevos negovios,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
+Villarreal Damy Patricio,Lider de Nuevos negovios,Onara,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Ortega Cardenas Marcela Arianeth,R.P.,La Estancia,Diurna,45.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,07:00–15:00,8.0,,0.0,09:00–14:00,5.0
-Mantecon Siordia Carlos Fernando,Lider de Seven,Nuevos Negocios,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
+Mantecon Siordia Carlos Fernando,Lider de Seven,Seven Nutrition,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Calderon Lomeli Eduardo,Guia,La Estancia,Mixta,46.5,05:00–14:00,8.0,05:00–14:00,8.0,05:00–14:00,8.0,05:00–14:00,8.0,05:00–14:00,8.0,10:00–17:00,6.5,,0.0
 Perez Luna Cristina Alejandra,Coordinador de Turno,Aleira,Mixta,47.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,05:15–14:15,8.0,07:30–15:00,7.0,,0.0
 Sandoval Garcia Sonia Berenice,Técnico de Orden y Limpieza,Ávila Camacho,Diurna,47.5,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,07:30–15:00,7.5,,0.0
@@ -184,21 +184,21 @@ Guzman Soto Alejandra,Auxiliar de Kids,Cañadas,Diurna,30.0,15:00–20:00,5.0,15
 Lopez Dueñas Byron,Técnico de Orden y Limpieza,Naciones,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0
 Ornelas Cerda Erika Osmin,Cajero,Naciones,Mixta,47.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,,0.0,08:00–15:00,7.0
 Gallegos Alvarez Carlos Jahir,Coach de Estiramiento,Valle Real,Mixta,22.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,,0.0,,0.0
-Ortiz Vazquez Jaime Alejandro,Barista,Nuevos Negocios,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,,0.0
+Ortiz Vazquez Jaime Alejandro,Barista,Onara,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,,0.0
 Martinez Lopez Edder,Coach Deportivo,Naciones,Diurna,42.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,,0.0,08:00–15:00,7.0
 De la Cruz Rodriguez Pablo Francisci Asis,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0
 Aguilera Diaz Sarai Alejandra,Nutriologo,Cañadas,Mixta,30.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,,0.0,,0.0
 Ledon Gomez Bernardo,Asesor deportivo,Cañadas,Diurna,40.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,06:00–13:00,7.0,,0.0,09:00–14:00,5.0
 Barragan Del Real María del Rosario,Técnico de Orden y Limpieza,La Estancia,Diurna,47.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,10:00–17:00,7.0,,0.0
 Martinez Mendoza Alfredo Yael,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0
-Sanchez Becerra Daniela Elizabeth,Fisioterapia,Nuevos Negocios,Diurna,36.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,,0.0
-Rosas Gutierrez Getzamany Monserrat,Fisioterapia,Nuevos Negocios,Diurna,36.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,,0.0
-Estrada Miramontes Regina Isabel,Fisioterapia,Nuevos Negocios,Mixta,36.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,,0.0
+Sanchez Becerra Daniela Elizabeth,Fisioterapia,Clínica,Diurna,36.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,,0.0
+Rosas Gutierrez Getzamany Monserrat,Fisioterapia,Clínica,Diurna,36.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,07:00–13:00,6.0,,0.0
+Estrada Miramontes Regina Isabel,Fisioterapia,Clínica,Mixta,36.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,,0.0
 Carlos Silva Francisco Zabdiel,Ejecutivo de Membresia,Gourmeteria,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0
 Monroy Cervantes Karen Paulina,Asesor deportivo,La Estancia,Mixta,40.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,15:00–22:00,7.0,,0.0,09:00–14:00,5.0
-Franco Remigio Luis Eduardo,Cocinero,Nuevos Negocios,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,,0.0
+Franco Remigio Luis Eduardo,Cocinero,Onara,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,,0.0
 Soto Rivera Rosa Linda,Técnico de Orden y Limpieza,Gourmeteria,Mixta,48.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,05:00–13:00,8.0,07:00–15:00,8.0,,0.0
-Cuevas Rivera Alan,Meza Fria,Nuevos Negocios,Mixta,48.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,,0.0
+Cuevas Rivera Alan,Meza Fria,Onara,Mixta,48.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,,0.0
 Lucio Espoinoza Ana Beatriz,Técnico de Orden y Limpieza,Naciones,Diurna,46.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,08:00–14:00,6.0,,0.0
 Pinedo Lopez Rubria Irene,Coach de Estiramiento,Naciones,Diurna,27.0,07:00–11:30,4.5,07:00–11:30,4.5,07:00–11:30,4.5,07:00–11:30,4.5,07:00–11:30,4.5,08:00–12:30,4.5,,0.0
 Huerta Garcia Juan Fernando,Coach Funcional,La Estancia,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–22:00,6.0,11:00–17:00,6.0,,0.0
@@ -209,7 +209,7 @@ Perez Delgado Brian joshue,Técnico de Orden y Limpieza,Naciones,Diurna,46.0,06:
 Juarez Martinez Christopher Tadeo,Coach de Estiramiento,Naciones,Diurna,29.5,06:30–11:30,5.0,06:30–11:30,5.0,06:30–11:30,5.0,06:30–11:30,5.0,06:30–11:30,5.0,,0.0,09:00–13:30,4.5
 Valerio Villagran Imelda,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0
 Macias Rodriguez Carlos Fernando,Coach Mobility,La Estancia,Mixta,40.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,13:30–20:30,7.0,,0.0,10:00–15:00,5.0
-Hernandez Escobedo Hannah Pamela,Recepcion,Nuevos Negocios,Mixta,41.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,08:00–14:00,6.0,,0.0
+Hernandez Escobedo Hannah Pamela,Recepcion,Clínica,Mixta,41.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,14:00–21:00,7.0,08:00–14:00,6.0,,0.0
 Hinojosa Perez Jesus Eduardo,Auxiliar de Sistemas,GEBienestar,Diurna,40.0,09:00–17:00,7.0,09:00–17:00,7.0,09:00–17:00,7.0,09:00–17:00,7.0,09:00–17:00,7.0,09:00–14:00,5.0,,0.0
 Medrano Ortiz José de Jesús,Tecnico en Mantenimiento,La Estancia,Diurna,45.0,07:00–16:00,8.0,07:00–16:00,8.0,07:00–16:00,8.0,07:00–16:00,8.0,07:00–16:00,8.0,09:00–14:00,5.0,,0.0
 Zavala Ortega David,Auxiliar de Sistemas,GEBienestar,Diurna,40.0,07:00–15:00,7.0,07:00–15:00,7.0,07:00–15:00,7.0,07:00–15:00,7.0,07:00–15:00,7.0,09:00–14:00,5.0,,0.0
@@ -220,11 +220,11 @@ Sandoval Velazquez Andrea,Coordinador Capital Humano,GEBienestar,Diurna,40.0,09:
 De Rosas Marquez Maria Cristina,Reclutador,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Madrigal Rodriguez Gael Isaac,Auxiliar de Capital Humano,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Gomez Avila Laura Alejandra,Auxiliar de Marketing,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
-Cadena Luna César Osvaldo,Lider de Hospitalidad y Experiencia,Nuevos Negocios,Diurna,48.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,,0.0
+Cadena Luna César Osvaldo,Lider de Hospitalidad y Experiencia,Onara,Diurna,48.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,08:00–17:00,8.0,,0.0
 Ortiz Ovalle Rubi Isabel,Técnico de Orden y Limpieza,Naciones,Mixta,46.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,13:00–21:00,8.0,,0.0,09:00–15:00,6.0
 Cabrera Flores Otmar Octavio,Coach Deportivo,Valle Real,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,15:00–22:00,7.0,,0.0,10:00–15:00,5.0
-Escalante Núñez Axel Michel,Mesero,Nuevos Negocios,Mixta,48.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,,0.0
-Curiel Guerra Carolina,Técnico de Orden y Limpieza,Nuevos Negocios,Diurna,45.83,07:00–16:10,9.17,07:00–16:10,9.17,07:00–16:10,9.17,07:00–16:10,9.17,07:00–16:10,9.17,,0.0,,0.0
+Escalante Núñez Axel Michel,Mesero,Onara,Mixta,48.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,,0.0
+Curiel Guerra Carolina,Técnico de Orden y Limpieza,Acton Academy,Diurna,45.83,07:00–16:10,9.17,07:00–16:10,9.17,07:00–16:10,9.17,07:00–16:10,9.17,07:00–16:10,9.17,,0.0,,0.0
 Lara Hurtado Caroline Noemí,Coach Deportivo,Naciones,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,15:00–22:00,7.0,,0.0,08:00–13:00,5.0
 Pérez Baltazar Simon,Técnico de Orden y Limpieza,Gourmeteria,Diurna,46.0,12:00–20:00,8.0,12:00–20:00,8.0,12:00–20:00,8.0,12:00–20:00,8.0,12:00–20:00,8.0,,0.0,09:00–15:00,6.0
 Almanzor Olmos Evan Zuleth,Coach de Mobility,Gourmeteria,Mixta,40.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,14:30–21:30,7.0,,0.0,09:00–14:00,5.0
@@ -232,7 +232,7 @@ García Bernal Mauro Alberto,R.P.,La Estancia,Mixta,45.0,14:30–22:30,8.0,14:30
 Puente Ríos Eric Francisco,Auditor Interno,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Michel Rubio Mariajose,Líder de Proyecto,GEBienestar,Diurna,18.0,10:00–14:00,4.0,10:00–14:00,4.0,10:00–14:00,4.0,10:00–14:00,4.0,10:00–12:00,2.0,,0.0,,0.0
 Ruvalcaba Palomera Maximus Gabriel,Coach Deportivo,Gourmeteria,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–22:00,6.0,,0.0,09:00–15:00,6.0
-Cardenas Castro Bertha Alejandra,Guia Acton Academy,Nuevos Negocios,Diurna,40.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,,0.0,,0.0
+Cardenas Castro Bertha Alejandra,Guia Acton Academy,Acton Academy,Diurna,40.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,07:30–15:30,8.0,,0.0,,0.0
 Uribe Adame Oscar Esteban,Coach de Estiramiento,Gourmeteria,Mixta,27.0,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,16:30–21:00,4.5,08:00–12:30,4.5,,0.0
 Reyes Ramírez Yajaira Estefania,Coach de Estiramiento,Gourmeteria,Mixta,27.0,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,17:00–21:30,4.5,,0.0,10:00–14:30,4.5
 Elizondo Olivares Isaac Israel,Coach Deportivo,Naciones,Mixta,40.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,16:00–23:00,7.0,15:00–22:00,7.0,,0.0,08:00–13:00,5.0
@@ -297,11 +297,11 @@ Piñon Mora David Israel,Analista de Control interno,GEBienestar,Diurna,40.0,09:
 Sanchez Lomeli Edgar,Contador General,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Loza Pineda Tatiana Guadalupe,Coordinador Capital Humano,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Ibarra Infante Laura Patricia,Gerente de Capital Humano,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
-Viloria Uribe Andrés,Lavaloza,Nuevos Negocios,Mixta,48.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,,0.0
-Hernandez Tarango Kenia,Fisioterapia,Nuevos Negocios,Mixta,36.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,,0.0
+Viloria Uribe Andrés,Lavaloza,Onara,Mixta,48.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,14:00–23:00,8.0,,0.0
+Hernandez Tarango Kenia,Fisioterapia,Clínica,Mixta,36.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,15:00–21:00,6.0,,0.0
 Isaac Espejel Christian Jafet,Lider de data,GEBienestar,Diurna,40.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,09:00–18:00,8.0,,0.0,,0.0
 Gonzalez Alvarez Maria Del Rayo,Técnico de Orden y Limpieza,Naciones,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,07:00–15:00,8.0,,0.0
-Arreola Diaz Yahaira,Recepción,Nuevos Negocios,Diurna,41.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,08:00–14:00,6.0,,0.0
+Arreola Diaz Yahaira,Recepción,Clínica,Diurna,41.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,07:00–14:00,7.0,08:00–14:00,6.0,,0.0
 Reynoso Quintana María Alejandra,Técnico de Orden y Limpieza,La Estancia,Diurna,47.0,11:00–19:00,8.0,11:00–19:00,8.0,11:00–19:00,8.0,11:00–19:00,8.0,11:00–19:00,8.0,10:00–17:00,7.0,,0.0
 Pérez Suárez Dafne,Coach Deportivo,Gourmeteria,Diurna,40.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,,0.0,06:00–14:00,8.0,07:00–15:00,8.0,,0.0
 Cruz Pérez Fabiola,Técnico de Orden y Limpieza,Gourmeteria,Diurna,48.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,06:00–14:00,8.0,07:00–15:00,8.0,,0.0
@@ -311,5 +311,5 @@ Tapia Cano Jesús Misael,Coach de Estiramiento,Valle Real,Mixta,27.0,15:30–21:
 Renteria Tejeda Cristian Alyahir,Técnico de Orden y Limpieza,Valle Real,Mixta,48.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,15:00–23:00,8.0,14:00–22:00,8.0,,0.0,07:00–15:00,8.0
 Reyes Lozano Eduardo Alberto,Barista,Onara VR,Mixta,46.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,13:30–21:30,8.0,08:00–14:00,6.0,,0.0
 Diaz Velazquez Gael Alejandro,Barista,Onara VR,Diurna,46.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,06:30–14:30,8.0,,0.0,09:00–15:00,6.0
-Macias Cervantes Ruben,Auxiliar General,Nuevos Negocios,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,08:00–17:00,8.0,,0.0
-Chavez Rivera Montserrat,Mesero,Nuevos Negocios,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,08:00–17:00,8.0,,0.0
+Macias Cervantes Ruben,Auxiliar General,Onara,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,08:00–17:00,8.0,,0.0
+Chavez Rivera Montserrat,Mesero,Onara,Diurna,48.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,06:00–15:00,8.0,08:00–17:00,8.0,,0.0
