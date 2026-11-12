@@ -342,6 +342,16 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 .pl-ed-pie .pl-ed-tot { font-weight: 600; margin-right: auto; }
 .pl-ed-pie .flag { color: var(--color-warn); font-size: 12px; }
 .pl-tabla td.pl-acc .gx-btn-acc { background: var(--gx-accent); border-color: var(--gx-accent); color: var(--color-bg); font-weight: 600; }
+
+/* Pestaña «Propuesta 40 hrs» */
+.p40-reglas { margin: .2rem 0 var(--cds-gap-sm); padding-left: 1.1rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: grid; gap: .2rem; }
+.p40-reglas b { color: var(--color-fg); font-weight: 600; }
+.p40-tabla td .p40-nom { display: block; font-weight: 600; }
+.p40-tabla td .p40-sub { display: block; font-size: .72rem; color: var(--color-fg-muted); }
+.p40-tabla td .p40-nota { display: block; font-size: .7rem; color: var(--color-warn); margin-top: 2px; }
+.p40-tabla td.d .p40-t { display: block; font-variant-numeric: tabular-nums; font-weight: 600; }
+.p40-tabla td.num .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
+.p40-tabla td.num b { font-weight: 600; color: var(--gx-accent); }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -536,6 +546,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
     <button type="button" role="tab" data-tab="t-plan" aria-selected="false">Planeación Gourmetería 2027</button>
     <button type="button" role="tab" data-tab="t-planvr" aria-selected="false">Planeación Valle Real 2027</button>
     <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>
+    <button type="button" role="tab" data-tab="t-p40" aria-selected="false">Propuesta 40 hrs</button>
   </nav>
 
   <section class="gx-tab" id="t-resumen">
@@ -874,6 +885,40 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
       </table>
     </div>
     <p class="status" id="plv-status"></p>
+  </article>
+</section>
+
+  <section class="gx-tab" id="t-p40" hidden>
+  <article class="gx-card p40">
+    <h2>Propuesta de horarios a 40 hrs</h2>
+    <p class="note">Escenario para ir directo a 40 hrs por semana (la meta de 2030), sin pasar por 46, 44 y 42. Incluye a todas las personas que hoy trabajan más de 40 hrs. Es una propuesta para revisar: no cambia el Seguimiento ni los adendums de 2027.</p>
+    <ul class="p40-reglas">
+      <li><b>Mismos días que hoy</b> y misma hora de entrada. Cada día se reduce en proporción, así que un sábado corto sigue siendo corto. Con 6 días queda en 6 h 40 min de trabajo al día.</li>
+      <li><b>1 hora de comida dentro del turno</b> en los días de 5 hrs de trabajo o más (no cuenta como trabajo). Ejemplo: 07:00–15:40 = 6 h 40 min + 1 h de comida.</li>
+      <li><b>Transporte:</b> quien hoy sale a las 23:00 o después conserva su salida y entra más tarde.</li>
+      <li><b>Máximo legal por día:</b> diurna 8 hrs, mixta 7 h 30 min, nocturna 7 hrs. Si con sus días no alcanza las 40 sin pasarse, queda abajo de 40 y se marca.</li>
+    </ul>
+    <div class="mp-tools">
+      <label for="p40-cad">Cadena<select class="gx-select" id="p40-cad"></select></label>
+      <label for="p40-suc">Club<select class="gx-select" id="p40-suc"></select></label>
+      <label for="p40-pue">Puesto<select class="gx-select" id="p40-pue"></select></label>
+      <label for="p40-q">Buscar<input class="gx-select" id="p40-q" type="search" placeholder="Nombre o puesto"></label>
+      <button type="button" class="gx-btn mp-xlsx" id="p40-xlsx">Descargar propuesta (.xlsx)</button>
+    </div>
+    <div class="mp-stats">
+      <div><span class="lbl">Personas</span><span class="val" id="p40-n">—</span></div>
+      <div><span class="lbl">Horas por semana hoy</span><span class="val" id="p40-hoy">—</span></div>
+      <div class="is-a"><span class="lbl">Horas por semana a 40</span><span class="val" id="p40-nue">—</span></div>
+      <div><span class="lbl">Se dejan de trabajar</span><span class="val" id="p40-dif">—</span></div>
+      <div class="is-a"><span class="lbl">Equivale a (personas de 40 hrs)</span><span class="val" id="p40-eq">—</span></div>
+    </div>
+    <p class="status" id="p40-status"></p>
+    <div class="gx-tablebox mp-plantilla">
+      <table class="gx-table gx-sem mp-tabla p40-tabla">
+        <thead><tr><th>Nombre</th><th class="d">Lun</th><th class="d">Mar</th><th class="d">Mié</th><th class="d">Jue</th><th class="d">Vie</th><th class="d">Sáb</th><th class="d">Dom</th><th class="num">Hrs</th></tr></thead>
+        <tbody id="p40-rows"></tbody>
+      </table>
+    </div>
   </article>
 </section>
 
@@ -2959,6 +3004,141 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
       dibujar();
     }, () => { $('plv-status').textContent = 'No se pudieron cargar los ajustes de Operaciones. Recarga la página.'; });
   })();
+})();
+</script>
+
+<script>
+(() => {
+  const DIAS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+  const DN = { lun: 'Lun', mar: 'Mar', mie: 'Mié', jue: 'Jue', vie: 'Vie', sab: 'Sáb', dom: 'Dom' };
+  const LETRA = { lun: 'L', mar: 'M', mie: 'Mi', jue: 'J', vie: 'V', sab: 'S', dom: 'D' };
+  const MAX_DIA = { Diurna: 480, Mixta: 450, Nocturna: 420 };  // máximo legal de trabajo por día (min)
+  const META = 40 * 60, COMIDA = 60, CON_COMIDA = 300;           // 1 h de comida en días de 5 hrs o más
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  const aMin = (t) => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+  const hm = (m) => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+  const dur = (m) => { const h = Math.floor(m / 60), r = m % 60; return r ? `${h} h ${r} min` : `${h} h`; };
+  const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString('es-MX', { maximumFractionDigits: 1 });
+  const S = { cad: '', suc: '', pue: '', q: '' };
+
+  function datos(n) { const d = window.dash && window.dash.data ? window.dash.data(n) : null; return d && d.status === 'ok' ? d.data : []; }
+
+  // Propuesta de una persona: mismos días, reducción proporcional a 40 hrs, 1 h de comida, regla de transporte
+  function proponer(h, info) {
+    const tipo = h.tipo_jornada, maxDia = MAX_DIA[tipo] || 480;
+    const dias = DIAS.filter((d) => h[d] && Number(h[d + '_h']) > 0).map((d) => {
+      const [e, s] = String(h[d]).split('–'); let a = aMin(e), b = aMin(s); if (b <= a) b += 1440;
+      return { d, a, b, ef: Math.round(Number(h[d + '_h']) * 60) };
+    });
+    const hoy = dias.reduce((s, x) => s + x.ef, 0);
+    const notas = [];
+    if (!dias.length || hoy <= META) return null;
+    // Reparto proporcional en bloques de 5 min, sin pasar el máximo legal del día
+    let asign = dias.map((x) => Math.min(maxDia, Math.floor(x.ef * META / hoy / 5) * 5));
+    let falta = META - asign.reduce((s, v) => s + v, 0);
+    for (let guard = 0; falta > 0 && guard < 500; guard++) {
+      const libres = dias.map((x, i) => i).filter((i) => asign[i] + 5 <= maxDia);
+      if (!libres.length) break;
+      const i = libres.sort((p, q) => (dias[q].ef - asign[q]) - (dias[p].ef - asign[p]) || p - q)[0];
+      asign[i] += 5; falta -= 5;
+    }
+    const total = asign.reduce((s, v) => s + v, 0);
+    if (total < META) notas.push(`Queda en ${fmt(total / 60)} hrs: con ${dias.length} días no llega a 40 sin pasar el máximo legal por día (${dur(maxDia)})`);
+    const nuevo = {};
+    dias.forEach((x, i) => {
+      const span = asign[i] + (asign[i] >= CON_COMIDA ? COMIDA : 0);
+      const salidaFija = x.b >= 23 * 60;  // sale a las 23:00 o después (o cruza medianoche): transporte
+      const a = salidaFija ? x.b - span : x.a, b = salidaFija ? x.b : x.a + span;
+      nuevo[x.d] = { txt: `${hm(a)}–${hm(b)}`, ef: asign[i], comida: asign[i] >= CON_COMIDA, hoy: h[x.d], hoyEf: x.ef, movida: salidaFija };
+    });
+    if (dias.some((x, i) => x.b >= 23 * 60)) notas.push('Conserva su hora de salida por transporte y entra más tarde');
+    return { nombre: h.nombre, puesto: h.puesto || 'Sin puesto', club: h.ubicacion, cadena: info.division || '—', area: info.area || '', tipo,
+      hoyH: hoy / 60, nueH: total / 60, dias: dias.length, nuevo, notas, entrada: dias[0] ? dias[0].a : 0 };
+  }
+
+  function todos() {
+    const pl = new Map(datos('plantilla').map((r) => [r.nombre, r]));
+    return datos('horarios').filter((h) => h.tipo_jornada !== 'Sin captura' && Number(h.horas_reales) > 40)
+      .map((h) => proponer(h, pl.get(h.nombre) || {})).filter(Boolean);
+  }
+  const filtrar = (ps) => { const q = S.q.trim().toLowerCase(); return ps.filter((p) => (!S.cad || p.cadena === S.cad) && (!S.suc || p.club === S.suc) && (!S.pue || p.puesto === S.pue) && (!q || `${p.nombre} ${p.puesto}`.toLowerCase().includes(q))); };
+  const textoSemana = (o) => { const g = []; DIAS.forEach((d) => { const v = o[d] || 'descanso'; if (g.length && g[g.length - 1][1] === v) g[g.length - 1][0].push(d); else g.push([[d], v]); }); return g.map(([ds, v]) => `${ds.length > 1 ? LETRA[ds[0]] + '–' + LETRA[ds[ds.length - 1]] : LETRA[ds[0]]} ${v}`).join(' · '); };
+
+  function opciones(ps) {
+    const pon = (sel, vals, todos, cur) => { sel.replaceChildren(new Option(todos, ''), ...vals.map(([v, n]) => new Option(`${v} (${n})`, v))); sel.value = vals.some(([v]) => v === cur) ? cur : ''; return sel.value; };
+    const cuenta = (arr, k) => { const m = new Map(); arr.forEach((p) => m.set(p[k], (m.get(p[k]) || 0) + 1)); return [...m.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]), 'es')); };
+    S.cad = pon($('p40-cad'), cuenta(ps, 'cadena'), `Todas las cadenas (${ps.length})`, S.cad);
+    const enCad = ps.filter((p) => !S.cad || p.cadena === S.cad);
+    S.suc = pon($('p40-suc'), cuenta(enCad, 'club'), `Todos los clubes (${enCad.length})`, S.suc);
+    const enSuc = enCad.filter((p) => !S.suc || p.club === S.suc);
+    S.pue = pon($('p40-pue'), cuenta(enSuc, 'puesto').sort((a, b) => String(a[0]).localeCompare(String(b[0]), 'es')), 'Todos los puestos', S.pue);
+  }
+
+  function dibujar() {
+    const ps = todos(); if (!ps.length) { $('p40-status').textContent = 'Cargando horarios…'; return; }
+    opciones(ps);
+    const l = filtrar(ps).sort((a, b) => a.cadena.localeCompare(b.cadena, 'es') || a.club.localeCompare(b.club, 'es') || a.entrada - b.entrada || a.nombre.localeCompare(b.nombre, 'es'));
+    const hoy = l.reduce((s, p) => s + p.hoyH, 0), nue = l.reduce((s, p) => s + p.nueH, 0);
+    $('p40-n').textContent = l.length; $('p40-hoy').textContent = fmt(hoy); $('p40-nue').textContent = fmt(nue);
+    $('p40-dif').textContent = fmt(hoy - nue); $('p40-eq').textContent = fmt((hoy - nue) / 40);
+    const abajo = l.filter((p) => p.nueH < 40).length;
+    $('p40-status').textContent = abajo ? `${abajo} ${abajo === 1 ? 'persona queda' : 'personas quedan'} abajo de 40 hrs por el máximo legal por día (están marcadas).` : '';
+    const tb = $('p40-rows'); tb.replaceChildren();
+    let club = null;
+    l.forEach((p) => {
+      if (p.club !== club) { club = p.club; const n = l.filter((x) => x.club === club).length; const tr = el('tr', 'mp-grupo'); const td = el('td'); td.colSpan = 9; td.append(el('b', '', club), el('span', '', ` · ${p.cadena} · ${n} ${n === 1 ? 'persona' : 'personas'}`)); tr.appendChild(td); tb.appendChild(tr); }
+      const tr = el('tr'); const tn = el('td'); tn.append(el('span', 'p40-nom', p.nombre), el('span', 'p40-sub', `${p.puesto} · ${p.tipo}`));
+      p.notas.forEach((n) => tn.appendChild(el('span', 'p40-nota', n)));
+      tr.append(tn);
+      DIAS.forEach((d) => {
+        const x = p.nuevo[d]; const td = el('td', 'd' + (x ? '' : ' libre'));
+        if (!x) td.textContent = 'Descanso';
+        else { td.append(el('span', 'p40-t', x.txt)); td.append(el('span', 'h', `${dur(x.ef)}${x.comida ? ' + comida' : ''}`)); td.append(el('span', 'h', `hoy ${x.hoy}`)); }
+        tr.appendChild(td);
+      });
+      const th = el('td', 'num'); th.append(el('b', '', fmt(p.nueH))); th.append(el('span', 'h', `hoy ${fmt(p.hoyH)}`)); tr.appendChild(th);
+      tb.appendChild(tr);
+    });
+    if (!l.length) { const tr = el('tr'); const td = el('td', 'vacio', 'No hay personas con estos filtros.'); td.colSpan = 9; tr.appendChild(td); tb.appendChild(tr); }
+  }
+
+  async function descargar() {
+    const st = $('p40-status');
+    if (!window.XLSX) { st.textContent = 'No se pudo preparar el Excel. Recarga la página.'; return; }
+    const l = filtrar(todos()).sort((a, b) => a.cadena.localeCompare(b.cadena, 'es') || a.club.localeCompare(b.club, 'es') || a.entrada - b.entrada);
+    const wb = XLSX.utils.book_new();
+    const hoja = [['Cadena', 'Club', 'Nombre', 'Puesto', 'Tipo', 'Días', 'Hrs hoy', 'Hrs propuesta', 'Horario hoy', 'Horario propuesto (incluye 1 h de comida)', ...DIAS.map((d) => `${DN[d]} hoy`), ...DIAS.map((d) => `${DN[d]} 40 hrs`), 'Notas']];
+    l.forEach((p) => hoja.push([p.cadena, p.club, p.nombre, p.puesto, p.tipo, p.dias, +p.hoyH.toFixed(2), +p.nueH.toFixed(2),
+      textoSemana(Object.fromEntries(DIAS.map((d) => [d, p.nuevo[d] ? p.nuevo[d].hoy : null]))), textoSemana(Object.fromEntries(DIAS.map((d) => [d, p.nuevo[d] ? p.nuevo[d].txt : null]))),
+      ...DIAS.map((d) => (p.nuevo[d] ? p.nuevo[d].hoy : 'Descanso')), ...DIAS.map((d) => (p.nuevo[d] ? p.nuevo[d].txt : 'Descanso')), p.notas.join('; ')]));
+    const ws = XLSX.utils.aoa_to_sheet(hoja);
+    ws['!cols'] = [{ wch: 16 }, { wch: 16 }, { wch: 34 }, { wch: 28 }, { wch: 9 }, { wch: 6 }, { wch: 8 }, { wch: 12 }, { wch: 44 }, { wch: 48 }, ...Array(14).fill({ wch: 13 }), { wch: 60 }];
+    XLSX.utils.book_append_sheet(wb, ws, 'Propuesta 40 hrs');
+    const res = [['Cadena', 'Club', 'Personas', 'Hrs por semana hoy', 'Hrs por semana a 40', 'Se dejan de trabajar', 'Equivale a (personas de 40 hrs)']];
+    const g = new Map(); l.forEach((p) => { const k = p.cadena + '|' + p.club; if (!g.has(k)) g.set(k, []); g.get(k).push(p); });
+    [...g.entries()].forEach(([k, v]) => { const [c, u] = k.split('|'); const a = v.reduce((s, p) => s + p.hoyH, 0), b = v.reduce((s, p) => s + p.nueH, 0); res.push([c, u, v.length, +a.toFixed(1), +b.toFixed(1), +(a - b).toFixed(1), +((a - b) / 40).toFixed(1)]); });
+    const a = l.reduce((s, p) => s + p.hoyH, 0), b = l.reduce((s, p) => s + p.nueH, 0);
+    res.push(['Total', '', l.length, +a.toFixed(1), +b.toFixed(1), +(a - b).toFixed(1), +((a - b) / 40).toFixed(1)]);
+    const ws2 = XLSX.utils.aoa_to_sheet(res); ws2['!cols'] = [{ wch: 18 }, { wch: 18 }, { wch: 10 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 28 }];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Resumen por club');
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+    if (!dl) { st.textContent = 'Esta vista no permite descargar archivos. Abre la página en claude.ai.'; return; }
+    const hoy = new Date(); const f = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    try { await dl.save({ filename: `Propuesta horarios 40 hrs${S.cad ? ' - ' + S.cad : ''}${S.suc ? ' - ' + S.suc : ''} - ${f}.xlsx`, data: new Blob([buf]) }); st.textContent = 'Propuesta descargada.'; }
+    catch (e) { st.textContent = e && e.code === 'declined' ? 'Descarga cancelada.' : 'No se pudo descargar el archivo. Inténtalo de nuevo.'; }
+  }
+
+  $('p40-cad').addEventListener('change', (e) => { S.cad = e.target.value; S.suc = ''; S.pue = ''; dibujar(); });
+  $('p40-suc').addEventListener('change', (e) => { S.suc = e.target.value; S.pue = ''; dibujar(); });
+  $('p40-pue').addEventListener('change', (e) => { S.pue = e.target.value; dibujar(); });
+  $('p40-q').addEventListener('input', (e) => { S.q = e.target.value; dibujar(); });
+  $('p40-xlsx').addEventListener('click', descargar);
+  window.P40 = { todos, proponer };
+  document.querySelectorAll('[data-tab="t-p40"]').forEach((b) => b.addEventListener('click', () => setTimeout(dibujar, 0)));
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', dibujar); else setTimeout(dibujar, 0);
+  window.addEventListener('seg:datos', () => { if (!$('p40-rows').children.length) dibujar(); });
 })();
 </script>
 

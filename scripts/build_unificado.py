@@ -163,7 +163,8 @@ def main():
         '    <button type="button" role="tab" data-tab="t-seg" aria-selected="false">Seguimiento</button>\n'
         '    <button type="button" role="tab" data-tab="t-mapa" aria-selected="false">Mapa por sucursal</button>\n'
         + ''.join(f'    <button type="button" role="tab" data-tab="{c["tab"]}" aria-selected="false">{c["pestana"]}</button>\n' for c in PLANES) +
-        '    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>\n') + tab[fin:]
+        '    <button type="button" role="tab" data-tab="t-etapas" aria-selected="false">Próximas etapas</button>\n'
+        '    <button type="button" role="tab" data-tab="t-p40" aria-selected="false">Propuesta 40 hrs</button>\n') + tab[fin:]
     ini = tab.index('  <section class="gx-tab" id="t-personas" hidden>')
     fin = tab.index('  <section class="gx-tab" id="t-etapas" hidden>')
     tab = tab[:ini] + tab[fin:]
@@ -222,6 +223,8 @@ dash.draw('puestos', (el) => {
     seccion, script_seg = captura.split('\n\n<script>', 1)
     mapa = (RAIZ / 'seguimiento' / 'mapa.html').read_text(encoding='utf-8')
     seccion_mapa, script_mapa = mapa.split('\n\n<script>', 1)
+    p40 = (RAIZ / 'seguimiento' / 'propuesta40.html').read_text(encoding='utf-8')
+    seccion_p40, script_p40 = p40.split('\n\n<script>', 1)
     plan = (RAIZ / 'seguimiento' / 'plan.html').read_text(encoding='utf-8')
     secciones_plan, scripts_plan = [], []
     for c in PLANES:
@@ -236,10 +239,10 @@ dash.draw('puestos', (el) => {
         sec, scr = t.split('\n\n<script>', 1)
         secciones_plan.append(sec.strip()); scripts_plan.append('<script>' + scr)
     tab = reemplazar(tab, '  <details class="gx-card gx-details" id="criterios">',
-                     '  ' + seccion.strip() + '\n\n  ' + seccion_mapa.strip() + '\n\n  ' + '\n\n  '.join(secciones_plan) + '\n\n  <details class="gx-card gx-details" id="criterios">')
+                     '  ' + seccion.strip() + '\n\n  ' + seccion_mapa.strip() + '\n\n  ' + '\n\n  '.join(secciones_plan) + '\n\n  ' + seccion_p40.strip() + '\n\n  <details class="gx-card gx-details" id="criterios">')
     tab = tab.rstrip() + "\n<script>\ndocument.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('click', () => { abrirTab(b.dataset.tabGo); window.scrollTo({ top: 0 }); }));\n</script>\n"
 
-    estilos_seg = (RAIZ / 'seguimiento' / 'captura_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'mapa_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'plan_estilos.css').read_text(encoding='utf-8')
+    estilos_seg = (RAIZ / 'seguimiento' / 'captura_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'mapa_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'plan_estilos.css').read_text(encoding='utf-8') + '\n' + (RAIZ / 'seguimiento' / 'propuesta40_estilos.css').read_text(encoding='utf-8')
     pagina = '\n'.join([
         '<title>Jornada 46 hrs 2027</title>',
         '<meta name="claude:viewport-fit-sides" content="cover">',
@@ -257,6 +260,7 @@ dash.draw('puestos', (el) => {
         '<script>' + script_seg,
         '<script>' + script_mapa,
         *scripts_plan,
+        '<script>' + script_p40,
         '</div>',
         '',
     ])

@@ -1,0 +1,9 @@
+/* Pestaña «Propuesta 40 hrs» */
+.p40-reglas { margin: .2rem 0 var(--cds-gap-sm); padding-left: 1.1rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: grid; gap: .2rem; }
+.p40-reglas b { color: var(--color-fg); font-weight: 600; }
+.p40-tabla td .p40-nom { display: block; font-weight: 600; }
+.p40-tabla td .p40-sub { display: block; font-size: .72rem; color: var(--color-fg-muted); }
+.p40-tabla td .p40-nota { display: block; font-size: .7rem; color: var(--color-warn); margin-top: 2px; }
+.p40-tabla td.d .p40-t { display: block; font-variant-numeric: tabular-nums; font-weight: 600; }
+.p40-tabla td.num .h { display: block; font-size: .7rem; color: var(--color-fg-muted); }
+.p40-tabla td.num b { font-weight: 600; color: var(--gx-accent); }

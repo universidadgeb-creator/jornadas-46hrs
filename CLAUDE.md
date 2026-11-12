@@ -117,6 +117,14 @@ Detalles técnicos:
 
 - **Avance de captura por sucursal (9 nov 2026):** tabla arriba del Mapa con todas las sucursales (personas en seguimiento) y cuatro pasos con barra: horario validado, líder, adendum descargado y recibido firmado, más una fila Total. «Ver captura» abre el Seguimiento filtrado en esa sucursal (`SEG.verSucursal`).
 
+## Propuesta 40 hrs (12 nov 2026, pedido de Patty)
+
+- Pestaña «Propuesta 40 hrs» (`seguimiento/propuesta40.html` + `propuesta40_estilos.css`, solo lectura; va al final, después de Próximas etapas). Escenario para ir directo a 40 hrs sin pasar por 46/44/42. **No toca el Seguimiento ni los adendums de 2027.**
+- Universo: **todas las personas con más de 40 hrs** (151 al 12 nov). Decisiones de Patty: mismos días que hoy; **1 h de comida que se saca** del tiempo de trabajo (va dentro del turno y no cuenta).
+- Regla: misma hora de entrada; cada día se reduce en proporción a sus horas de hoy (bloques de 5 min) hasta sumar 40; tope legal por día (diurna 8 h, mixta 7.5 h, nocturna 7 h; si no alcanza 40 se marca); 1 h de comida en días de 5 h de trabajo o más (turno = trabajo + 1 h); transporte: si hoy sale a las 23:00 o después, conserva la salida y entra más tarde.
+- Resultado al 12 nov: 151 personas, todas quedan en 40; 7,035 → 6,040 hrs/semana (−995 = 24.9 personas de 40 hrs). Ojo: 160 de 905 turnos (49 personas) terminan más tarde que hoy, porque hoy no toman comida y la hora de comida alarga su estancia.
+- Filtros cadena / club / puesto / búsqueda; tabla agrupada por club (día por día: horario nuevo, horas + comida, y el de hoy); «Descargar propuesta (.xlsx)»: hojas «Propuesta 40 hrs» (por persona, Lun–Dom hoy y 40) y «Resumen por club». Expone `window.P40 = {todos, proponer}`.
+
 ## Planeación por club (10 nov 2026)
 
 - **Una sola plantilla** (`seguimiento/plan.html`, marcas {{P}} prefijo de ids, {{TAB}}, {{TITULO}}, {{SAB}}, {{DOM}}, {{SAB_ANTES}}, {{DOM_ANTES}}, {{CONFIG}}); `build_unificado.py` la llena una vez por club con la lista `PLANES`. Para otro club: agregar una entrada a `PLANES` (prefijo, pestaña, club, título, colección de ajustes, horario del club).
