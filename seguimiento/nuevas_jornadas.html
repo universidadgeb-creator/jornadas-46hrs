@@ -364,6 +364,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 .p40-comp td:first-child { font-weight: 600; white-space: nowrap; }
 .p40-comp b { color: var(--gx-accent); font-weight: 600; }
 .p40-dec { list-style: decimal; }
+.p40-cadtop { margin-bottom: var(--cds-gap-sm); }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -901,6 +902,7 @@ button.gx-link { background: none; border: none; padding: 0; font-family: inheri
 </section>
 
   <section class="gx-tab" id="t-p40" hidden>
+  <div class="rs-cad p40-cadtop" role="group" aria-label="Cadena" id="p40-chips"></div>
   <article class="gx-card p40-proy">
     <h2>Proyecto: directo a 40 hrs con 1 hora de comida</h2>
     <p class="note">En lugar de bajar la jornada cuatro veces (46 en 2027, 44, 42 y 40 en 2030), se hace un solo cambio a 40 hrs por semana con 1 hora de comida externa: la persona sale del centro de trabajo y esa hora no cuenta como jornada. Es un escenario para decidir: no cambia el Seguimiento ni los adendums de 2027.</p>
@@ -3111,6 +3113,14 @@ document.querySelectorAll('[data-tab-go]').forEach((b) => b.addEventListener('cl
     const pon = (sel, vals, todos, cur) => { sel.replaceChildren(new Option(todos, ''), ...vals.map(([v, n]) => new Option(`${v} (${n})`, v))); sel.value = vals.some(([v]) => v === cur) ? cur : ''; return sel.value; };
     const cuenta = (arr, k) => { const m = new Map(); arr.forEach((p) => m.set(p[k], (m.get(p[k]) || 0) + 1)); return [...m.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]), 'es')); };
     S.cad = pon($('p40-cad'), cuenta(ps, 'cadena'), `Todas las cadenas (${ps.length})`, S.cad);
+    // Botones de cadena arriba (mismo filtro que el selector de la tabla)
+    const ch = $('p40-chips'); ch.replaceChildren(el('span', 'lbl', 'Cadena'));
+    [['', 'Todas', ps.length], ...cuenta(ps, 'cadena').map(([c, n]) => [c, c, n])].forEach(([v, txt, n]) => {
+      const b = el('button', 'cad-chip'); b.type = 'button'; b.setAttribute('aria-pressed', String(S.cad === v));
+      b.append(document.createTextNode(txt + ' '), el('small', '', String(n)));
+      b.addEventListener('click', () => { S.cad = v; S.suc = ''; S.pue = ''; dibujar(); });
+      ch.appendChild(b);
+    });
     const enCad = ps.filter((p) => !S.cad || p.cadena === S.cad);
     S.suc = pon($('p40-suc'), cuenta(enCad, 'club'), `Todos los clubes (${enCad.length})`, S.suc);
     const enSuc = enCad.filter((p) => !S.suc || p.club === S.suc);

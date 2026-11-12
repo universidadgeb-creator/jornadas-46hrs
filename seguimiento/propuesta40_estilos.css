@@ -19,3 +19,4 @@
 .p40-comp td:first-child { font-weight: 600; white-space: nowrap; }
 .p40-comp b { color: var(--gx-accent); font-weight: 600; }
 .p40-dec { list-style: decimal; }
+.p40-cadtop { margin-bottom: var(--cds-gap-sm); }

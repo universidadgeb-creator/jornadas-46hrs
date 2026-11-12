@@ -120,6 +120,7 @@ Detalles técnicos:
 ## Propuesta 40 hrs (12 nov 2026, pedido de Patty)
 
 - **Es un proyecto, no solo un escenario (12 nov):** la pestaña se llama «Proyecto 40 hrs» y abre con la ficha «Proyecto: directo a 40 hrs con 1 hora de comida» (objetivo, alcance, cómo, impacto), la tabla «Directo vs. por etapas» (cambios de horario/adendums: 524 por etapas vs 151 directo; capacidad 2027: 3.6 vs 24.9; 2030: 24.9 en ambos) y «Decisiones antes de arrancar» (comida, cobertura, mixta/nocturna con el abogado, cómo cubrir la capacidad, fecha y adendum único). Todo sigue los filtros de la tabla.
+- **Filtro de cadena arriba (12 nov):** botones Todas · VIVO 47 · EASY FIT · Nuevos Negocios hasta arriba de la pestaña (`#p40-chips`), ligados al selector Cadena de la tabla; filtran la ficha, el comparativo y los horarios. Estado propio de la pestaña (no se comparte con el Resumen).
 - **Comida externa** (Patty: «1 hora de comida que se saca… externa, no se toma»): la persona sale del centro de trabajo y esa hora no cuenta como jornada (si se quedara en el lugar, contaría como trabajo).
 
 - Pestaña «Propuesta 40 hrs» (`seguimiento/propuesta40.html` + `propuesta40_estilos.css`, solo lectura; va al final, después de Próximas etapas). Escenario para ir directo a 40 hrs sin pasar por 46/44/42. **No toca el Seguimiento ni los adendums de 2027.**
